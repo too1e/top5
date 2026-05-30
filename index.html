@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TOP 5 · 15-Day Test</title>
+  <!-- command: Press Start 2P + Courier Prime -->
+  <!-- deepnavy: Orbitron + Share Tech Mono -->
+  <!-- chrome: Bebas Neue + Space Mono -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Courier+Prime:wght@400;700&family=Inter:wght@400;500;600;700&family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Rajdhani:wght@400;500;600;700&family=VT323&family=Nunito:wght@400;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    :root { }
+
+    /* ── GAMEBOY ── dark steel + amber gold (original command) ────── */
+    [data-theme="gameboy"] {
+      --font-pixel: 'Press Start 2P', 'Courier New', monospace;
+      --font-body:  'Courier Prime', 'Courier New', Courier, monospace;
+      --bg:            #0B0D13;
+      --surface:       #111620;
+      --surface2:      #192030;
+      --surface3:      #22303F;
+      --border-color:  #2C4068;
+      --border:        1px solid #2C4068;
+      --text:          #D8E8F8;
+      --text-dim:      #3E5878;
+      --accent:        #4E8EC4;
+      --gold:          #C4A44A;
+      --correct-bg:    rgba(196,164,74,0.07);
+      --correct-b:     #C4A44A;
+      --correct-t:     #D4B45A;
+      --wrong-bg:      rgba(176,64,54,0.07);
+      --wrong-b:       #B04038;
+      --wrong-t:       #C85850;
+      --wrong-chip-bg: rgba(176,64,54,0.12);
+      --wrong-chip-b:  #B04038;
+      --wrong-chip-t:  #D06060;
+      --btn:           #3A6E9C;
+      --btn-t:         #D8E8F8;
+      --btn-h:         #5090C8;
+      --input-bg:      #0D1118;
+      --input-b:       #2C4068;
+      --sugg-bg:       #111620;
+      --sugg-h:        #192030;
+      --radius:        4px;
+      --glow-accent:   0 0 10px rgba(78,142,196,0.3);
+      --glow-correct:  0 0 10px rgba(196,164,74,0.25);
+      --glow-btn:      0 0 10px rgba(78,142,196,0.35);
+    }
+
+    /* ── DEEP NAVY ── near-black blue + ice teal ────────────────── */
+    [data-theme="deepnavy"] {
+      --font-pixel: 'Inter', sans-serif;
+      --font-body:  'Inter', sans-serif;
+      --bg:            #050912;
+      --surface:       #0A1020;
+      --surface2:      #0E182C;
+      --surface3:      #142038;
+      --border-color:  #1A3060;
+      --border:        1px solid #1A3060;
+      --text:          #A8C8E8;
+      --text-dim:      #2E4868;
+      --accent:        #2E88C0;
+      --gold:          #48AAD8;
+      --correct-bg:    rgba(72,170,216,0.07);
+      --correct-b:     #48AAD8;
+      --correct-t:     #58BAE8;
+      --wrong-bg:      rgba(120,48,80,0.1);
+      --wrong-b:       #783050;
+      --wrong-t:       #A04870;
+      --wrong-chip-bg: rgba(120,48,80,0.14);
+      --wrong-chip-b:  #783050;
+      --wrong-chip-t:  #C06888;
+      --btn:           #1E6898;
+      --btn-t:         #A8C8E8;
+      --btn-h:         #2E88C0;
+      --input-bg:      #080E1A;
+      --input-b:       #1A3060;
+      --sugg-bg:       #0A1020;
+      --sugg-h:        #0E182C;
+      --radius:        14px;
+      --glow-accent:   0 0 12px rgba(46,136,192,0.25);
+      --glow-correct:  0 0 12px rgba(72,170,216,0.2);
+      --glow-btn:      0 0 10px rgba(46,136,192,0.3);
+    }
+
+
+    /* ── BASE ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* Subtle background textures */
+    [data-theme="gameboy"] body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(0,0,0,0.13) 2px, rgba(0,0,0,0.13) 3px),
+        radial-gradient(circle, rgba(78,142,196,0.04) 1px, transparent 1px);
+      background-size: 100% 3px, 28px 28px;
+    }
+    [data-theme="deepnavy"] body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        repeating-linear-gradient(90deg, transparent, transparent 44px, rgba(26,48,96,0.18) 44px, rgba(26,48,96,0.18) 45px),
+        repeating-linear-gradient(0deg,  transparent, transparent 44px, rgba(26,48,96,0.18) 44px, rgba(26,48,96,0.18) 45px);
+    }
+
+    /* ── LAYOUT ────────────────────────────────────────────────── */
+    #app { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 72px 16px 72px; position: relative; z-index: 1; }
+    .game { width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 18px; }
+
+    /* ── THEME SELECTOR (fixed) ────────────────────────────────── */
+    .theme-select {
+      position: fixed; top: 16px; right: 16px; z-index: 500;
+      font-family: var(--font-pixel); font-size: 7px;
+    }
+    .theme-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--surface2); color: var(--text-dim);
+      border: var(--border); border-radius: var(--radius);
+      padding: 6px 10px; cursor: pointer;
+      font-family: var(--font-pixel); font-size: 7px; letter-spacing: 0.5px;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .theme-btn:hover { color: var(--accent); box-shadow: var(--glow-accent); }
+    .theme-arrow { font-size: 10px; }
+    .theme-menu {
+      display: none; position: absolute; top: calc(100% + 4px); right: 0;
+      background: var(--surface); border: var(--border); border-radius: var(--radius);
+      min-width: 148px; overflow: hidden;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.6);
+    }
+    .theme-menu.open { display: block; }
+    .theme-option {
+      padding: 10px 14px; color: var(--text-dim); cursor: pointer;
+      letter-spacing: 0.5px; transition: all 0.1s;
+      border-bottom: var(--border);
+    }
+    .theme-option:last-child { border-bottom: none; }
+    .theme-option:hover { background: var(--surface2); color: var(--accent); }
+    .theme-option.active { color: var(--accent); background: var(--surface2); }
+
+    /* ── HEADER ────────────────────────────────────────────────── */
+    .header { text-align: center; padding-bottom: 2px; }
+    .logo {
+      font-family: var(--font-pixel);
+      font-size: clamp(22px, 6vw, 32px);
+      color: var(--accent);
+      letter-spacing: 5px;
+      margin-bottom: 3px;
+      text-shadow: var(--glow-accent);
+    }
+    .test-badge {
+      font-family: var(--font-pixel); font-size: 6px;
+      color: var(--text-dim); letter-spacing: 2px; margin-bottom: 6px;
+    }
+    .header-clock {
+      font-family: var(--font-pixel); font-size: 8px;
+      color: var(--text-dim); letter-spacing: 3px;
+      margin: 3px 0 2px;
+    }
+    .date-nav {
+      display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 4px;
+    }
+    .nav-btn {
+      font-family: var(--font-pixel); font-size: 9px;
+      background: var(--surface2); color: var(--text);
+      border: var(--border); border-radius: var(--radius);
+      padding: 5px 11px; cursor: pointer; transition: all 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) { background: var(--surface3); color: var(--accent); box-shadow: var(--glow-accent); }
+    .nav-btn:disabled { opacity: 0.28; cursor: default; }
+    .date-label {
+      font-family: var(--font-pixel); font-size: 9px; color: var(--text-dim);
+      letter-spacing: 1px; min-width: 84px; text-align: center;
+    }
+
+    /* ── QUESTION CARD ─────────────────────────────────────────── */
+    .q-card {
+      background: var(--surface);
+      border: var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px; text-align: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    .q-category {
+      font-family: var(--font-pixel); font-size: 7px;
+      color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;
+      text-shadow: var(--glow-accent);
+    }
+    .q-text { font-family: var(--font-pixel); font-size: clamp(10px, 2.8vw, 13px); color: var(--text); line-height: 1.9; }
+
+    /* ── LIVES ─────────────────────────────────────────────────── */
+    .lives-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .lives-label { font-family: var(--font-pixel); font-size: 8px; color: var(--text-dim); }
+    .lives-icons { display: flex; gap: 8px; align-items: center; }
+    .life-icon { font-size: 30px; line-height: 1; display: inline-block; transition: opacity 0.3s; }
+    .life-icon.lost { opacity: 0.15; filter: grayscale(1); }
+
+    /* ── ANSWER BOARD ──────────────────────────────────────────── */
+    .answer-board { display: flex; flex-direction: column; gap: 6px; }
+    .slot-hidden {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--surface); border: var(--border);
+      border-radius: var(--radius); padding: 16px 18px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+    .slot-rank { font-family: var(--font-pixel); font-size: 10px; color: var(--text-dim); min-width: 32px; text-align: right; }
+    .slot-bar { height: 9px; background: var(--surface2); border-radius: 2px; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:.7} }
+
+    .slot-revealed {
+      background: var(--correct-bg); border: 1px solid var(--correct-b);
+      border-radius: var(--radius); padding: 16px 18px;
+      animation: revealIn 0.3s ease-out; transform-origin: top;
+      box-shadow: var(--glow-correct);
+    }
+    .slot-missed {
+      background: var(--wrong-bg); border: 1px solid var(--wrong-b);
+      border-radius: var(--radius); padding: 16px 18px;
+      animation: revealIn 0.3s ease-out;
+    }
+    @keyframes revealIn { from{opacity:0;transform:scaleY(.5)} to{opacity:1;transform:scaleY(1)} }
+
+    .slot-inner { display: flex; align-items: flex-start; gap: 12px; }
+    .slot-rank-rev { font-family: var(--font-pixel); font-size: 10px; min-width: 32px; text-align: right; margin-top: 2px; }
+    .slot-revealed .slot-rank-rev { color: var(--correct-t); }
+    .slot-missed  .slot-rank-rev { color: var(--wrong-t); }
+    .slot-content { flex: 1; min-width: 0; }
+    .slot-name-row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .slot-name { font-family: var(--font-pixel); font-size: 10px; color: var(--text); }
+    .slot-primary { font-family: var(--font-pixel); font-size: 9px; }
+    .slot-revealed .slot-primary { color: var(--correct-t); }
+    .slot-missed  .slot-primary { color: var(--text-dim); }
+    .slot-got-it { font-family: var(--font-pixel); font-size: 7px; color: var(--correct-t); margin-left: auto; text-shadow: var(--glow-correct); }
+    .slot-stats { display: flex; flex-wrap: wrap; gap: 3px 16px; margin-top: 6px; }
+    .slot-stat { font-size: 10px; }
+    .slot-stat-lbl { color: var(--text-dim); }
+    .slot-revealed .slot-stat-val { color: var(--text); }
+    .slot-missed  .slot-stat-val { color: var(--text-dim); }
+
+    /* ── INPUT ─────────────────────────────────────────────────── */
+    .input-wrap { position: relative; }
+    .guess-form { display: flex; gap: 8px; }
+    .guess-input {
+      flex: 1; padding: 12px 14px;
+      font-family: var(--font-body); font-size: 13px;
+      background: var(--input-bg); color: var(--text);
+      border: var(--border); border-radius: var(--radius);
+      outline: none; transition: border-color .15s, box-shadow .15s;
+    }
+    .guess-input::placeholder { color: var(--text-dim); }
+    .guess-input:focus { border-color: var(--accent); box-shadow: var(--glow-accent); }
+    .guess-input.shake { animation: shake .45s ease-in-out; border-color: var(--wrong-b) !important; }
+    .guess-btn {
+      font-family: var(--font-pixel); font-size: 9px; letter-spacing: 1px;
+      background: var(--btn); color: var(--btn-t);
+      border: none; border-radius: var(--radius);
+      padding: 0 16px; cursor: pointer; white-space: nowrap;
+      transition: background .15s, box-shadow .15s;
+    }
+    .guess-btn:hover:not(:disabled) { background: var(--btn-h); box-shadow: var(--glow-btn); }
+    .guess-btn:disabled { opacity: .4; cursor: default; }
+
+    /* ── SUGGESTIONS ───────────────────────────────────────────── */
+    .suggestions {
+      display: none; position: absolute; top: calc(100% + 4px); left: 0;
+      width: calc(100% - 88px);
+      background: var(--sugg-bg); border: var(--border); border-radius: var(--radius);
+      overflow: hidden; z-index: 50; box-shadow: 0 10px 28px rgba(0,0,0,0.5);
+    }
+    .sugg-item { padding: 10px 14px; font-size: 12px; font-family: var(--font-body); color: var(--text); cursor: pointer; transition: background .1s; }
+    .sugg-item:hover, .sugg-item.active { background: var(--sugg-h); }
+    .sugg-match { color: var(--accent); font-weight: bold; }
+
+    /* ── FEEDBACK ──────────────────────────────────────────────── */
+    .feedback { font-family: var(--font-pixel); font-size: 8px; text-align: center; min-height: 20px; letter-spacing: 1px; }
+    .feedback.wrong { color: var(--wrong-t); }
+    .feedback.dupe  { color: var(--accent); }
+    .feedback.show  { animation: fadeUp .25s ease-out; }
+
+    /* ── WRONG GUESSES ─────────────────────────────────────────── */
+    .wrong-label { font-family: var(--font-pixel); font-size: 7px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+    .wrong-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .wrong-chip {
+      font-size: 11px; font-family: var(--font-body);
+      padding: 4px 10px; border-radius: var(--radius);
+      background: var(--wrong-chip-bg); border: 1px solid var(--wrong-chip-b); color: var(--wrong-chip-t);
+    }
+
+    /* ── RESULT PANEL ──────────────────────────────────────────── */
+    .result-panel { border-radius: var(--radius); padding: 22px; text-align: center; animation: fadeUp .3s ease-out; }
+    .result-panel.win  { background: var(--correct-bg); border: 1px solid var(--correct-b); box-shadow: var(--glow-correct); }
+    .result-panel.lose { background: var(--wrong-bg);   border: 1px solid var(--wrong-b); }
+    .result-icon  { font-size: 42px; margin-bottom: 10px; display: block; animation: popIn .4s ease-out; }
+    .result-title { font-family: var(--font-pixel); font-size: 12px; margin-bottom: 8px; }
+    .result-panel.win  .result-title { color: var(--correct-t); text-shadow: var(--glow-correct); }
+    .result-panel.lose .result-title { color: var(--wrong-t); }
+    .result-sub   { font-size: 12px; color: var(--text-dim); margin-bottom: 12px; }
+    .result-lives { display: flex; justify-content: center; gap: 6px; align-items: center; margin-bottom: 12px; }
+    .share-btn {
+      width: 100%; font-family: var(--font-pixel); font-size: 9px; letter-spacing: 1px;
+      background: var(--btn); color: var(--btn-t);
+      border: none; border-radius: var(--radius); padding: 14px; cursor: pointer;
+      transition: background .15s, box-shadow .15s; margin-top: 6px;
+    }
+    .share-btn:hover { background: var(--btn-h); box-shadow: var(--glow-btn); }
+    .next-day-nav { display: flex; gap: 8px; margin-top: 10px; }
+    .next-day-btn {
+      flex: 1; font-family: var(--font-pixel); font-size: 7px; letter-spacing: .5px;
+      background: var(--surface2); color: var(--text-dim);
+      border: var(--border); border-radius: var(--radius); padding: 10px; cursor: pointer;
+      transition: all .15s;
+    }
+    .next-day-btn:hover:not(:disabled) { color: var(--accent); box-shadow: var(--glow-accent); }
+    .next-day-btn:disabled { opacity: .28; cursor: default; }
+
+    /* ── REPLAY / FOOTER ───────────────────────────────────────── */
+    .replay-wrap { display: flex; justify-content: center; margin-top: 8px; }
+    .replay-btn {
+      font-family: var(--font-pixel); font-size: 7px; letter-spacing: 1px;
+      background: transparent; color: var(--text-dim);
+      border: 1px solid var(--border-color); border-radius: var(--radius);
+      padding: 6px 12px; cursor: pointer; opacity: .45; transition: all .15s;
+    }
+    .replay-btn:hover { color: var(--wrong-t); border-color: var(--wrong-b); opacity: 1; }
+    .footer { font-family: var(--font-pixel); font-size: 7px; color: var(--text-dim); text-align: center; margin-top: 16px; opacity: .4; letter-spacing: 1px; }
+
+    /* ── CLICKABLE TILES ───────────────────────────────────────── */
+    .slot-clickable { cursor: pointer; transition: filter .15s, box-shadow .15s; position: relative; }
+    .slot-clickable:hover { filter: brightness(1.12); }
+    .slot-clickable::after {
+      content: '↗'; position: absolute; top: 9px; right: 11px;
+      font-size: 9px; color: var(--accent); opacity: 0; transition: opacity .15s;
+      font-family: var(--font-body);
+    }
+    .slot-clickable:hover::after { opacity: 0.55; }
+
+    /* ── MAP MODAL ─────────────────────────────────────────────── */
+    .map-modal {
+      display: none; position: fixed; inset: 0; z-index: 900;
+      background: rgba(0,0,0,0.82); align-items: center; justify-content: center;
+    }
+    .map-modal.open { display: flex; animation: fadeUp .15s ease-out; }
+    .map-container {
+      width: min(520px, 94vw); height: min(440px, 82vh);
+      display: flex; flex-direction: column;
+      background: var(--surface); border: var(--border); border-radius: var(--radius);
+      overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.85);
+    }
+    .map-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; background: var(--surface2); border-bottom: var(--border);
+      flex-shrink: 0;
+    }
+    .map-label {
+      font-family: var(--font-pixel); font-size: 8px; color: var(--accent); letter-spacing: 1px;
+    }
+    .map-close {
+      background: none; border: 1px solid var(--border-color); color: var(--text-dim);
+      cursor: pointer; font-size: 13px; padding: 2px 8px; border-radius: var(--radius);
+      transition: all .15s; font-family: var(--font-body);
+    }
+    .map-close:hover { color: var(--text); border-color: var(--text-dim); }
+    #mapLeaflet { flex: 1; }
+    /* map button inside revealed slots */
+    .map-btn {
+      font-family: var(--font-pixel); font-size: 7px; letter-spacing: 0.5px;
+      background: transparent; border: 1px solid var(--accent); color: var(--accent);
+      border-radius: var(--radius); padding: 4px 9px; cursor: pointer;
+      margin-top: 8px; display: inline-flex; align-items: center; gap: 4px;
+      transition: all .15s;
+    }
+    .map-btn:hover { background: var(--accent); color: var(--bg); }
+    /* leaflet overrides */
+    .leaflet-container { background: #080d14 !important; font-family: var(--font-body) !important; }
+    .leaflet-popup-content-wrapper {
+      background: var(--surface2) !important; border: 1px solid var(--border-color) !important;
+      border-radius: var(--radius) !important; color: var(--text) !important;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6) !important;
+    }
+    .leaflet-popup-tip { background: var(--surface2) !important; }
+    .leaflet-popup-content { font-family: var(--font-pixel) !important; font-size: 8px !important; margin: 8px 12px !important; color: var(--accent) !important; letter-spacing: 0.5px; }
+    .leaflet-popup-close-button { color: var(--text-dim) !important; }
+    .leaflet-control-zoom a { background: var(--surface2) !important; color: var(--text) !important; border-color: var(--border-color) !important; }
+    .leaflet-control-attribution { background: rgba(0,0,0,0.5) !important; color: var(--text-dim) !important; font-size: 9px !important; }
+    /* pin marker */
+    .map-pin {
+      width: 14px; height: 14px; background: #FF6B35; border: 2px solid #fff;
+      border-radius: 50%; box-shadow: 0 0 14px rgba(255,107,53,0.8), 0 2px 4px rgba(0,0,0,0.5);
+      animation: mapPinPop .35s cubic-bezier(.17,.67,.3,1.4);
+    }
+    @keyframes mapPinPop { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+
+    /* ── DETAIL MODAL ──────────────────────────────────────────── */
+    .detail-modal {
+      display: none; position: fixed; inset: 0; z-index: 850;
+      background: rgba(0,0,0,0.82); align-items: center; justify-content: center;
+    }
+    .detail-modal.open { display: flex; animation: fadeUp .15s ease-out; }
+    .detail-box {
+      width: min(680px, 92vw);
+      max-height: 88vh;
+      overflow-y: auto;
+      background: var(--surface); border: var(--border); border-radius: var(--radius);
+      padding: 32px 32px 28px; position: relative;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.9);
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .detail-box .map-close { position: absolute; top: 12px; right: 12px; }
+    .detail-category { font-family: var(--font-pixel); font-size: 8px; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; text-shadow: var(--glow-accent); }
+    .detail-rank { font-family: var(--font-pixel); font-size: 9px; color: var(--text-dim); margin-bottom: 6px; }
+    .detail-name { font-family: var(--font-pixel); font-size: clamp(13px,3vw,18px); color: var(--text); line-height: 1.6; margin-bottom: 6px; font-weight: 700; }
+    .detail-primary { font-family: var(--font-pixel); font-size: 11px; color: var(--gold); margin-bottom: 20px; }
+    .detail-divider { height: 1px; background: var(--border-color); opacity: 0.4; margin: 4px 0 16px; }
+    .detail-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .detail-stat { display: flex; flex-direction: column; gap: 4px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .detail-stat:nth-last-child(-n+2) { border-bottom: none; }
+    .detail-lbl { font-family: var(--font-pixel); font-size: 8px; color: var(--text-dim); letter-spacing: 1px; }
+    .detail-val { font-size: 13px; color: var(--text); font-family: var(--font-body); font-weight: 500; }
+    .detail-extras { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .detail-extra { padding: 12px 16px; background: var(--surface2); border-radius: var(--radius); border-left: 3px solid var(--accent); }
+    .detail-extra-title { font-family: var(--font-pixel); font-size: 8px; color: var(--accent); margin-bottom: 4px; letter-spacing: 1px; }
+    .detail-extra-body { font-family: var(--font-body); font-size: 13px; color: var(--text); line-height: 1.6; }
+
+    /* ── RESULT MODAL ───────────────────────────────────────────── */
+    .result-modal {
+      display: none; position: fixed; inset: 0; z-index: 800;
+      background: rgba(0,0,0,0.88); align-items: center; justify-content: center;
+    }
+    .result-modal.open { display: flex; animation: fadeUp .2s ease-out; }
+    .rm-box {
+      width: min(400px, 92vw); max-height: 92vh; overflow-y: auto;
+      background: var(--surface); border: var(--border); border-radius: var(--radius);
+      padding: 28px 22px 22px; text-align: center; position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+    }
+    .rm-close {
+      position: absolute; top: 12px; right: 12px;
+      background: none; border: 1px solid var(--border-color); color: var(--text-dim);
+      cursor: pointer; font-size: 13px; padding: 2px 9px; border-radius: var(--radius);
+      transition: all .15s; font-family: var(--font-body);
+    }
+    .rm-close:hover { color: var(--text); border-color: var(--text-dim); }
+    .rm-icon { font-size: 44px; margin-bottom: 12px; display: block; animation: popIn .4s ease-out; }
+    .rm-title { font-family: var(--font-pixel); font-size: 11px; margin-bottom: 6px; letter-spacing: 1px; }
+    .rm-title.win { color: var(--correct-t); text-shadow: var(--glow-correct); }
+    .rm-title.lose { color: var(--wrong-t); }
+    .rm-sub { font-size: 11px; color: var(--text-dim); margin-bottom: 16px; }
+    .rm-board { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; text-align: left; }
+    .rm-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--radius); }
+    .rm-row.rm-got { background: var(--correct-bg); border: 1px solid var(--correct-b); }
+    .rm-row.rm-miss { background: var(--wrong-bg); border: 1px solid var(--wrong-b); opacity: 0.65; }
+    .rm-rank { font-family: var(--font-pixel); font-size: 7px; color: var(--text-dim); min-width: 22px; }
+    .rm-name { font-family: var(--font-pixel); font-size: 7px; flex: 1; color: var(--text); line-height: 1.6; }
+    .rm-row.rm-miss .rm-name { color: var(--text-dim); }
+    .rm-check { font-family: var(--font-pixel); font-size: 8px; }
+    .rm-row.rm-got .rm-check { color: var(--correct-t); }
+    .rm-row.rm-miss .rm-check { color: var(--wrong-t); }
+    .rm-divider { height: 1px; background: var(--border-color); margin: 14px 0; opacity: 0.4; }
+    .rm-countdown-label { font-family: var(--font-pixel); font-size: 7px; color: var(--text-dim); letter-spacing: 2px; margin-bottom: 6px; }
+    .rm-countdown { font-family: var(--font-pixel); font-size: 22px; color: var(--accent); text-shadow: var(--glow-accent); letter-spacing: 4px; margin-bottom: 16px; }
+    .rm-nav { display: flex; gap: 8px; margin-top: 10px; }
+    .show-result-btn {
+      width: 100%; font-family: var(--font-pixel); font-size: 8px; letter-spacing: 1px;
+      background: var(--surface2); color: var(--text-dim);
+      border: var(--border); border-radius: var(--radius); padding: 12px; cursor: pointer;
+      transition: all .15s; margin-top: 4px;
+    }
+    .show-result-btn:hover { color: var(--accent); box-shadow: var(--glow-accent); }
+
+    /* ── ANIMATIONS ────────────────────────────────────────────── */
+    @keyframes shake   { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-5px)} 40%,80%{transform:translateX(5px)} }
+    @keyframes fadeUp  { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes popIn   { 0%{transform:scale(.3);opacity:0} 70%{transform:scale(1.12)} 100%{transform:scale(1);opacity:1} }
+    @keyframes blink   { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ══════════════════════════════════════════════════════════════
+       GAMEBOY — original command aesthetic
+       ══════════════════════════════════════════════════════════════ */
+    .logo::after { content:'_'; animation:blink 1s step-end infinite; margin-left:3px; font-size:0.85em; }
+    [data-theme="gameboy"] .q-card { outline:1px solid rgba(44,64,104,0.55); outline-offset:3px; }
+    [data-theme="gameboy"] .q-category::before { content:'> '; }
+    [data-theme="gameboy"] .slot-bar { background:repeating-linear-gradient(90deg,var(--surface3) 0,var(--surface3) 6px,var(--surface2) 6px,var(--surface2) 12px); border-radius:0; }
+    [data-theme="gameboy"] .guess-input { font-family:var(--font-pixel); font-size:10px; letter-spacing:0.5px; }
+    [data-theme="gameboy"] .logo        { font-size: clamp(20px, 5vw, 28px); }
+    [data-theme="gameboy"] .q-text      { font-size: clamp(10px, 2.8vw, 13px); line-height: 2.0; }
+    [data-theme="gameboy"] .slot-name   { font-size: 11px; }
+    [data-theme="gameboy"] .slot-primary{ font-size: 10px; }
+    [data-theme="gameboy"] .slot-rank   { font-size: 10px; }
+    [data-theme="gameboy"] .slot-rank-rev{ font-size: 10px; }
+    [data-theme="gameboy"] .feedback    { font-size: 10px; }
+    [data-theme="gameboy"] .lives-label { font-size: 9px; }
+    [data-theme="gameboy"] .slot-got-it { font-size: 8px; }
+
+    /* ══════════════════════════════════════════════════════════════
+       DEEP NAVY — Handheld LCD bezel (GBA / PSP era)
+       ══════════════════════════════════════════════════════════════ */
+    /* game area = LCD screen inside a handheld device */
+    [data-theme="deepnavy"] .game {
+      border-radius: 12px;
+      box-shadow: 0 0 0 2px #1A3060, 0 0 0 10px #080F1E, 0 0 0 12px #0D1830,
+                  0 28px 80px rgba(0,0,0,0.9);
+      padding: 4px; background: #050912;
+    }
+    /* LCD screen-edge vignette */
+    [data-theme="deepnavy"] #app::after {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:2;
+      background:radial-gradient(ellipse at 50% 50%, transparent 70%, rgba(0,5,18,0.65) 100%);
+    }
+    /* battery / signal indicator — top-left corner like a handheld */
+    [data-theme="deepnavy"] body::after {
+      content:'▮▮▮▯  ●●●○';
+      position:fixed; top:12px; left:18px; z-index:300; pointer-events:none;
+      font-family:'Press Start 2P',monospace; font-size:6px;
+      color:#2E88C0; opacity:0.55; letter-spacing:3px;
+    }
+    [data-theme="deepnavy"] .q-card { border:none; background:linear-gradient(160deg,#0E182C 0%,#0A1020 100%); box-shadow:0 6px 32px rgba(0,0,0,0.75),0 0 0 1px rgba(46,136,192,0.18),inset 0 1px 0 rgba(255,255,255,0.05); }
+    [data-theme="deepnavy"] .slot-hidden { border:none; box-shadow:0 3px 14px rgba(0,0,0,0.55),0 0 0 1px rgba(26,48,96,0.7); }
+    [data-theme="deepnavy"] .slot-missed { box-shadow:0 3px 14px rgba(0,0,0,0.5); }
+    [data-theme="deepnavy"] .slot-bar { background:linear-gradient(90deg,var(--surface3) 0%,rgba(46,136,192,0.2) 100%); border-radius:8px; }
+    [data-theme="deepnavy"] .guess-btn { background:linear-gradient(180deg,#3898D0 0%,#1E6898 100%); border:none; box-shadow:0 3px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.1); }
+    [data-theme="deepnavy"] .guess-btn:hover:not(:disabled) { background:linear-gradient(180deg,#48A8E0 0%,#2878B0 100%); }
+    /* GBA-style slide-up reveal */
+    [data-theme="deepnavy"] .slot-revealed { box-shadow:0 3px 14px rgba(0,0,0,0.5),0 0 12px rgba(72,170,216,0.15); animation:gbaReveal 0.35s cubic-bezier(0.22,1,0.36,1); }
+    @keyframes gbaReveal { from{opacity:0;transform:translateY(10px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+
+    /* ══════════════════════════════════════════════════════════════
+       STEAM — In-game overlay (Shift+Tab aesthetic)
+       ══════════════════════════════════════════════════════════════ */
+    /* deep blue game-world background */
+    [data-theme="steam"] body {
+      background: #1b2838;
+    }
+    [data-theme="steam"] body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background:
+        radial-gradient(ellipse at 20% 80%, rgba(30,80,120,0.35) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(20,60,100,0.3) 0%, transparent 50%),
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 3px);
+    }
+    /* "NOW PLAYING" strip at top — Steam overlay chrome */
+    [data-theme="steam"] body::after {
+      content:'▶ NOW PLAYING  ·  TOP 5: DAILY TRIVIA';
+      position:fixed; top:0; left:0; right:0; z-index:200;
+      font-family:'Rajdhani',sans-serif; font-size:12px; font-weight:600;
+      color:#66c0f4; background:rgba(14,22,32,0.96); border-bottom:1px solid rgba(102,192,244,0.3);
+      padding:8px 20px; letter-spacing:2px;
+      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    }
+    [data-theme="steam"] #app { padding-top: 72px; }
+    /* overlay card — translucent dark panel floating over the game world */
+    [data-theme="steam"] .game {
+      background: rgba(22,36,50,0.92);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(102,192,244,0.18);
+      border-top: 2px solid rgba(102,192,244,0.5);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+      padding: 16px;
+    }
+    [data-theme="steam"] .q-card {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(102,192,244,0.15);
+    }
+    [data-theme="steam"] .slot-hidden {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(102,192,244,0.1);
+    }
+    [data-theme="steam"] .slot-revealed {
+      background: rgba(102,192,244,0.08);
+      border: 1px solid rgba(102,192,244,0.4);
+      animation: steamReveal 0.4s cubic-bezier(0.22,1,0.36,1);
+    }
+    @keyframes steamReveal {
+      0%  { transform: translateX(10px); opacity: 0; }
+      60% { transform: translateX(-2px); }
+      100%{ transform: translateX(0); opacity: 1; }
+    }
+    [data-theme="steam"] .slot-bar {
+      background: linear-gradient(90deg, rgba(102,192,244,0.1) 0%, rgba(102,192,244,0.25) 100%);
+      border-radius: 2px;
+    }
+    [data-theme="steam"] .guess-btn {
+      background: linear-gradient(180deg, #5dade2 0%, #4a9dbf 100%);
+      box-shadow: 0 2px 8px rgba(102,192,244,0.3);
+    }
+    [data-theme="steam"] .logo { letter-spacing: 5px; font-weight: 700; font-size: clamp(26px,7vw,40px); }
+    [data-theme="steam"] .q-category   { font-size: 13px; font-weight: 600; letter-spacing: 3px; }
+    [data-theme="steam"] .q-text       { font-size: clamp(14px,3vw,18px); font-weight: 500; line-height: 1.7; }
+    [data-theme="steam"] .slot-rank    { font-size: 15px; font-weight: 600; }
+    [data-theme="steam"] .slot-rank-rev{ font-size: 15px; font-weight: 600; }
+    [data-theme="steam"] .slot-name    { font-size: 16px; font-weight: 700; }
+    [data-theme="steam"] .slot-primary { font-size: 14px; font-weight: 500; }
+    [data-theme="steam"] .slot-got-it  { font-size: 13px; font-weight: 600; }
+    [data-theme="steam"] .lives-label  { font-size: 14px; font-weight: 500; }
+    [data-theme="steam"] .feedback     { font-size: 15px; font-weight: 600; }
+    [data-theme="steam"] .wrong-label  { font-size: 12px; font-weight: 600; letter-spacing: 2px; }
+    [data-theme="steam"] .guess-btn    { font-size: 15px; font-weight: 700; letter-spacing: 1px; }
+    [data-theme="steam"] .date-label   { font-size: 14px; font-weight: 500; }
+    [data-theme="steam"] .nav-btn      { font-size: 14px; font-weight: 600; }
+    [data-theme="steam"] .header-clock { font-size: 14px; font-weight: 500; letter-spacing: 2px; }
+    [data-theme="steam"] .rm-title     { font-size: 22px; font-weight: 700; }
+    [data-theme="steam"] .rm-name      { font-size: 15px; font-weight: 600; }
+    [data-theme="steam"] .rm-rank      { font-size: 14px; font-weight: 500; }
+    [data-theme="steam"] .footer       { font-size: 12px; font-weight: 400; }
+
+    /* ══════════════════════════════════════════════════════════════
+       XBOX 360 — NXE Dashboard
+       ══════════════════════════════════════════════════════════════ */
+    [data-theme="xbox"] body::after {
+      content:''; position:fixed; top:0; left:0; right:0; height:4px; z-index:200;
+      background:linear-gradient(90deg,#107C10 0%,#52B043 50%,#107C10 100%);
+      box-shadow:0 0 18px rgba(16,124,16,0.8);
+    }
+    [data-theme="xbox"] body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background:
+        radial-gradient(ellipse 130% 80% at 115% 50%, rgba(16,124,16,0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 80% 130% at -15% 50%, rgba(16,124,16,0.06) 0%, transparent 55%);
+    }
+    [data-theme="xbox"] #app { padding-top: 72px; }
+    [data-theme="xbox"] .q-card { border:none; border-top:2px solid #107C10; background:#161616; box-shadow:0 4px 0 rgba(16,124,16,0.2),0 8px 24px rgba(0,0,0,0.5); }
+    [data-theme="xbox"] .slot-revealed { border:none; border-left:3px solid #107C10; padding-left:13px; animation:achievementPop 0.4s cubic-bezier(0.22,1,0.36,1); }
+    [data-theme="xbox"] .slot-missed   { border:none; border-left:3px solid #333; padding-left:13px; }
+    [data-theme="xbox"] .slot-hidden   { border:none; border-left:3px solid #1C1C1C; padding-left:13px; }
+    @keyframes achievementPop {
+      0%  { transform:translateX(-14px); opacity:0; }
+      65% { transform:translateX(2px); }
+      100%{ transform:translateX(0); opacity:1; }
+    }
+    [data-theme="xbox"] .logo         { letter-spacing:6px; font-weight:700; font-size:clamp(24px,6vw,36px); }
+    [data-theme="xbox"] .q-category   { font-size:13px; font-weight:600; letter-spacing:3px; }
+    [data-theme="xbox"] .q-text       { font-size:clamp(14px,3vw,17px); font-weight:500; line-height:1.6; }
+    [data-theme="xbox"] .slot-rank    { font-size:14px; font-weight:600; }
+    [data-theme="xbox"] .slot-rank-rev{ font-size:14px; font-weight:600; }
+    [data-theme="xbox"] .slot-name    { font-size:15px; font-weight:600; }
+    [data-theme="xbox"] .slot-primary { font-size:13px; font-weight:500; }
+    [data-theme="xbox"] .slot-got-it  { font-size:12px; font-weight:700; }
+    [data-theme="xbox"] .lives-label  { font-size:14px; font-weight:500; }
+    [data-theme="xbox"] .feedback     { font-size:14px; font-weight:600; }
+    [data-theme="xbox"] .wrong-label  { font-size:12px; font-weight:600; letter-spacing:2px; }
+    [data-theme="xbox"] .guess-btn    { font-size:14px; font-weight:700; letter-spacing:1px; }
+    [data-theme="xbox"] .date-label   { font-size:13px; font-weight:500; }
+    [data-theme="xbox"] .nav-btn      { font-size:13px; font-weight:600; }
+    [data-theme="xbox"] .header-clock { font-size:13px; font-weight:500; letter-spacing:2px; }
+    [data-theme="xbox"] .rm-title     { font-size:20px; font-weight:700; }
+    [data-theme="xbox"] .rm-name      { font-size:14px; font-weight:600; }
+    [data-theme="xbox"] .rm-rank      { font-size:13px; font-weight:500; }
+    [data-theme="xbox"] .footer       { font-size:12px; font-weight:400; }
+
+    /* ══════════════════════════════════════════════════════════════
+       SWITCH — Nintendo Switch home screen
+       ══════════════════════════════════════════════════════════════ */
+    [data-theme="switch"] body::before { display:none; }
+    [data-theme="switch"] body::after {
+      content:''; position:fixed; top:0; left:0; right:0; height:5px; z-index:200;
+      background:#E4000F;
+    }
+    [data-theme="switch"] #app::after {
+      content:''; position:fixed; bottom:0; left:0; right:0; height:52px; z-index:100; pointer-events:none;
+      background:rgba(255,255,255,0.92); border-top:1px solid #DCDCDC;
+      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    }
+    [data-theme="switch"] #app { padding-top:72px; padding-bottom:80px; }
+    [data-theme="switch"] .game {
+      background:#FFFFFF; border-radius:20px; padding:20px 16px;
+      box-shadow:0 12px 48px rgba(0,0,0,0.14),0 2px 8px rgba(0,0,0,0.07); border:none;
+    }
+    [data-theme="switch"] .q-card { box-shadow:0 2px 16px rgba(0,0,0,0.08),0 1px 3px rgba(0,0,0,0.05); border:1px solid #E8E8E8; }
+    [data-theme="switch"] .slot-hidden { box-shadow:0 1px 8px rgba(0,0,0,0.06); border:1px solid #E8E8E8; }
+    [data-theme="switch"] .slot-revealed { box-shadow:0 2px 12px rgba(228,0,15,0.1); animation:switchPop 0.45s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes switchPop { from{transform:scale(0.9);opacity:0} to{transform:scale(1);opacity:1} }
+    [data-theme="switch"] .slot-bar { background:linear-gradient(90deg,#E8E8E8,#DCDCDC); border-radius:4px; }
+    [data-theme="switch"] .logo::after  { display:none; }
+    [data-theme="switch"] .logo         { color:#E4000F; text-shadow:none; letter-spacing:4px; font-weight:800; font-size:clamp(26px,7vw,38px); }
+    [data-theme="switch"] .q-category   { font-size:13px; font-weight:700; letter-spacing:3px; }
+    [data-theme="switch"] .q-text       { font-size:clamp(14px,3vw,17px); font-weight:600; line-height:1.6; }
+    [data-theme="switch"] .slot-rank    { font-size:14px; font-weight:700; }
+    [data-theme="switch"] .slot-rank-rev{ font-size:14px; font-weight:700; }
+    [data-theme="switch"] .slot-name    { font-size:15px; font-weight:700; }
+    [data-theme="switch"] .slot-primary { font-size:13px; font-weight:600; }
+    [data-theme="switch"] .slot-got-it  { font-size:12px; font-weight:700; }
+    [data-theme="switch"] .lives-label  { font-size:14px; font-weight:600; }
+    [data-theme="switch"] .feedback     { font-size:14px; font-weight:700; }
+    [data-theme="switch"] .wrong-label  { font-size:12px; font-weight:700; letter-spacing:2px; }
+    [data-theme="switch"] .guess-btn    { font-size:14px; font-weight:700; }
+    [data-theme="switch"] .date-label   { font-size:13px; font-weight:600; }
+    [data-theme="switch"] .nav-btn      { font-size:13px; font-weight:600; }
+    [data-theme="switch"] .header-clock { font-size:13px; font-weight:600; }
+    [data-theme="switch"] .rm-title     { font-size:20px; font-weight:800; }
+    [data-theme="switch"] .rm-name      { font-size:14px; font-weight:700; }
+    [data-theme="switch"] .rm-rank      { font-size:13px; font-weight:600; }
+    [data-theme="switch"] .footer       { font-size:12px; font-weight:400; }
+    [data-theme="switch"] .theme-btn    { color:#888; }
+    [data-theme="switch"] .theme-option { color:#888; }
+    [data-theme="switch"] .theme-menu   { box-shadow:0 8px 28px rgba(0,0,0,0.12); }
+
+    /* ══════════════════════════════════════════════════════════════
+       NEXGEN — PS5 / Series X activity cards
+       ══════════════════════════════════════════════════════════════ */
+    @keyframes nexgenShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+    [data-theme="nexgen"] body {
+      background:linear-gradient(135deg,#080810,#0D0825,#060C18,#0A0812);
+      background-size:400% 400%; animation:nexgenShift 14s ease infinite;
+    }
+    [data-theme="nexgen"] body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background:radial-gradient(ellipse at 30% 20%, rgba(0,80,180,0.14) 0%, transparent 55%),
+                 radial-gradient(ellipse at 80% 80%, rgba(60,0,140,0.12) 0%, transparent 50%);
+    }
+    [data-theme="nexgen"] body::after {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:1;
+      background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),
+                       linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);
+      background-size:48px 48px;
+    }
+    [data-theme="nexgen"] .q-card {
+      background:rgba(255,255,255,0.055); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+      border:1px solid rgba(255,255,255,0.11);
+      box-shadow:0 8px 32px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+    [data-theme="nexgen"] .slot-hidden {
+      background:rgba(255,255,255,0.04); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+      border:1px solid rgba(255,255,255,0.07);
+    }
+    [data-theme="nexgen"] .slot-missed { backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+    [data-theme="nexgen"] .slot-revealed {
+      backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+      box-shadow:0 4px 20px rgba(0,0,0,0.35),0 0 0 1px rgba(0,136,255,0.35);
+      animation:nexgenReveal 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    @keyframes nexgenReveal {
+      from{ transform:translateY(-8px) scale(0.97); opacity:0; filter:blur(6px); }
+      to  { transform:translateY(0) scale(1); opacity:1; filter:blur(0); }
+    }
+    [data-theme="nexgen"] .slot-bar { background:linear-gradient(90deg,rgba(255,255,255,0.08),rgba(0,136,255,0.2)); border-radius:8px; }
+    [data-theme="nexgen"] .guess-btn { background:linear-gradient(135deg,#0099FF,#0066CC); box-shadow:0 4px 14px rgba(0,136,255,0.35); }
+    [data-theme="nexgen"] .logo         { letter-spacing:5px; font-weight:700; font-size:clamp(26px,7vw,38px); }
+    [data-theme="nexgen"] .q-category   { font-size:13px; font-weight:600; letter-spacing:3px; }
+    [data-theme="nexgen"] .q-text       { font-size:clamp(14px,3vw,17px); font-weight:500; line-height:1.7; }
+    [data-theme="nexgen"] .slot-rank    { font-size:14px; font-weight:600; }
+    [data-theme="nexgen"] .slot-rank-rev{ font-size:14px; font-weight:600; }
+    [data-theme="nexgen"] .slot-name    { font-size:15px; font-weight:600; }
+    [data-theme="nexgen"] .slot-primary { font-size:13px; font-weight:500; }
+    [data-theme="nexgen"] .slot-got-it  { font-size:12px; font-weight:600; }
+    [data-theme="nexgen"] .lives-label  { font-size:14px; font-weight:500; }
+    [data-theme="nexgen"] .feedback     { font-size:14px; font-weight:600; }
+    [data-theme="nexgen"] .wrong-label  { font-size:12px; font-weight:600; letter-spacing:2px; }
+    [data-theme="nexgen"] .guess-btn    { font-size:14px; font-weight:600; letter-spacing:0.5px; }
+    [data-theme="nexgen"] .date-label   { font-size:13px; font-weight:500; }
+    [data-theme="nexgen"] .nav-btn      { font-size:13px; font-weight:500; }
+    [data-theme="nexgen"] .header-clock { font-size:13px; font-weight:500; letter-spacing:2px; }
+    [data-theme="nexgen"] .rm-title     { font-size:20px; font-weight:700; }
+    [data-theme="nexgen"] .rm-name      { font-size:14px; font-weight:600; }
+    [data-theme="nexgen"] .rm-rank      { font-size:13px; font-weight:500; }
+    [data-theme="nexgen"] .footer       { font-size:12px; font-weight:400; }
+
+    /* ── DEEP NAVY — Inter font overrides ─────────────────────── */
+    [data-theme="deepnavy"] .logo         { font-size: clamp(26px, 7vw, 38px); font-weight: 700; letter-spacing: 3px; }
+    [data-theme="deepnavy"] .q-category   { font-size: 12px; font-weight: 600; letter-spacing: 3px; }
+    [data-theme="deepnavy"] .q-text       { font-size: clamp(13px, 3vw, 16px); font-weight: 500; line-height: 1.7; }
+    [data-theme="deepnavy"] .slot-rank    { font-size: 13px; font-weight: 600; }
+    [data-theme="deepnavy"] .slot-rank-rev { font-size: 13px; font-weight: 600; }
+    [data-theme="deepnavy"] .slot-name    { font-size: 13px; font-weight: 600; }
+    [data-theme="deepnavy"] .slot-primary { font-size: 12px; font-weight: 500; }
+    [data-theme="deepnavy"] .slot-got-it  { font-size: 11px; font-weight: 600; }
+    [data-theme="deepnavy"] .lives-label  { font-size: 13px; font-weight: 500; }
+    [data-theme="deepnavy"] .feedback     { font-size: 13px; font-weight: 600; }
+    [data-theme="deepnavy"] .wrong-label  { font-size: 11px; font-weight: 600; letter-spacing: 2px; }
+    [data-theme="deepnavy"] .guess-btn    { font-size: 13px; font-weight: 600; letter-spacing: 0.5px; }
+    [data-theme="deepnavy"] .date-label   { font-size: 13px; font-weight: 500; }
+    [data-theme="deepnavy"] .nav-btn      { font-size: 13px; font-weight: 500; }
+    [data-theme="deepnavy"] .header-clock { font-size: 13px; font-weight: 500; letter-spacing: 2px; }
+    [data-theme="deepnavy"] .rm-title     { font-size: 18px; font-weight: 700; }
+    [data-theme="deepnavy"] .rm-name      { font-size: 13px; font-weight: 600; }
+    [data-theme="deepnavy"] .rm-rank      { font-size: 12px; font-weight: 500; }
+    [data-theme="deepnavy"] .footer       { font-size: 11px; font-weight: 400; }
+
+    /* ══════════════════════════════════════════════════════════════
+       XBOX 360 — Dashboard / Achievement UI
+       ══════════════════════════════════════════════════════════════ */
+    [data-theme="xbox"] {
+      --font-pixel: 'Rajdhani', sans-serif;
+      --font-body:  'Rajdhani', sans-serif;
+      --bg:            #0D0D0D;
+      --surface:       #161616;
+      --surface2:      #1E1E1E;
+      --surface3:      #262626;
+      --border-color:  #2C2C2C;
+      --border:        1px solid #2C2C2C;
+      --text:          #F0F0F0;
+      --text-dim:      #484848;
+      --accent:        #107C10;
+      --gold:          #52B043;
+      --correct-bg:    rgba(16,124,16,0.1);
+      --correct-b:     #107C10;
+      --correct-t:     #52B043;
+      --wrong-bg:      rgba(180,0,0,0.08);
+      --wrong-b:       #B40000;
+      --wrong-t:       #E03030;
+      --wrong-chip-bg: rgba(180,0,0,0.12);
+      --wrong-chip-b:  #B40000;
+      --wrong-chip-t:  #E05050;
+      --btn:           #107C10;
+      --btn-t:         #FFFFFF;
+      --btn-h:         #13A113;
+      --input-bg:      #0A0A0A;
+      --input-b:       #2C2C2C;
+      --sugg-bg:       #161616;
+      --sugg-h:        #1E1E1E;
+      --radius:        3px;
+      --glow-accent:   0 0 12px rgba(16,124,16,0.4);
+      --glow-correct:  0 0 10px rgba(82,176,67,0.3);
+      --glow-btn:      0 0 14px rgba(16,124,16,0.5);
+    }
+    [data-theme="xbox"] body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(16,124,16,0.07) 0%, transparent 65%);
+    }
+    [data-theme="xbox"] .q-card {
+      border: none; border-top: 2px solid #107C10;
+      background: #161616; box-shadow: 0 2px 0 rgba(16,124,16,0.2);
+    }
+    [data-theme="xbox"] .slot-revealed { border: none; border-left: 3px solid #107C10; padding-left: 13px; }
+    [data-theme="xbox"] .slot-missed   { border: none; border-left: 3px solid #333;    padding-left: 13px; }
+    [data-theme="xbox"] .slot-hidden   { border: none; border-left: 3px solid #222;    padding-left: 13px; }
+    [data-theme="xbox"] .logo          { letter-spacing: 6px; font-weight: 700; font-size: clamp(24px, 6vw, 36px); }
+    [data-theme="xbox"] .q-category    { font-size: 13px; font-weight: 600; letter-spacing: 3px; }
+    [data-theme="xbox"] .q-text        { font-size: clamp(14px, 3vw, 17px); font-weight: 500; line-height: 1.6; }
+    [data-theme="xbox"] .slot-rank     { font-size: 14px; font-weight: 600; }
+    [data-theme="xbox"] .slot-rank-rev { font-size: 14px; font-weight: 600; }
+    [data-theme="xbox"] .slot-name     { font-size: 15px; font-weight: 600; }
+    [data-theme="xbox"] .slot-primary  { font-size: 13px; font-weight: 500; }
+    [data-theme="xbox"] .slot-got-it   { font-size: 12px; font-weight: 700; }
+    [data-theme="xbox"] .lives-label   { font-size: 14px; font-weight: 500; }
+    [data-theme="xbox"] .feedback      { font-size: 14px; font-weight: 600; }
+    [data-theme="xbox"] .wrong-label   { font-size: 12px; font-weight: 600; letter-spacing: 2px; }
+    [data-theme="xbox"] .guess-btn     { font-size: 14px; font-weight: 700; letter-spacing: 1px; }
+    [data-theme="xbox"] .date-label    { font-size: 13px; font-weight: 500; }
+    [data-theme="xbox"] .nav-btn       { font-size: 13px; font-weight: 600; }
+    [data-theme="xbox"] .header-clock  { font-size: 13px; font-weight: 500; letter-spacing: 2px; }
+    [data-theme="xbox"] .rm-title      { font-size: 20px; font-weight: 700; }
+    [data-theme="xbox"] .rm-name       { font-size: 14px; font-weight: 600; }
+    [data-theme="xbox"] .rm-rank       { font-size: 13px; font-weight: 500; }
+    [data-theme="xbox"] .footer        { font-size: 12px; font-weight: 400; }
+
+    /* ══════════════════════════════════════════════════════════════
+       STEAM — CSS vars
+       ══════════════════════════════════════════════════════════════ */
+    [data-theme="steam"] {
+      --font-pixel: 'Rajdhani', sans-serif;
+      --font-body:  'Rajdhani', sans-serif;
+      --bg:            #1b2838;
+      --surface:       rgba(30,45,60,0.92);
+      --surface2:      rgba(40,58,75,0.88);
+      --surface3:      rgba(50,70,90,0.85);
+      --border-color:  rgba(102,192,244,0.25);
+      --border:        1px solid rgba(102,192,244,0.2);
+      --text:          #c6d4df;
+      --text-dim:      rgba(150,170,185,0.5);
+      --accent:        #66c0f4;
+      --gold:          #4c9fc2;
+      --correct-bg:    rgba(102,192,244,0.1);
+      --correct-b:     #66c0f4;
+      --correct-t:     #8dd4ff;
+      --wrong-bg:      rgba(180,60,60,0.1);
+      --wrong-b:       #b43c3c;
+      --wrong-t:       #e06060;
+      --wrong-chip-bg: rgba(180,60,60,0.14);
+      --wrong-chip-b:  #b43c3c;
+      --wrong-chip-t:  #e08080;
+      --btn:           #4c9fc2;
+      --btn-t:         #ffffff;
+      --btn-h:         #66c0f4;
+      --input-bg:      rgba(20,30,40,0.8);
+      --input-b:       rgba(102,192,244,0.3);
+      --sugg-bg:       rgba(20,32,45,0.98);
+      --sugg-h:        rgba(40,58,75,0.98);
+      --radius:        4px;
+      --glow-accent:   0 0 16px rgba(102,192,244,0.3);
+      --glow-correct:  0 0 14px rgba(102,192,244,0.25);
+      --glow-btn:      0 0 14px rgba(102,192,244,0.4);
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       SWITCH — Nintendo Switch Home Screen (2017)
+       ══════════════════════════════════════════════════════════════ */
+    [data-theme="switch"] {
+      --font-pixel: 'Nunito', sans-serif;
+      --font-body:  'Nunito', sans-serif;
+      --bg:            #EFEFEF;
+      --surface:       #FFFFFF;
+      --surface2:      #F5F5F5;
+      --surface3:      #EBEBEB;
+      --border-color:  #DCDCDC;
+      --border:        1px solid #E0E0E0;
+      --text:          #1A1A1A;
+      --text-dim:      #ADADAD;
+      --accent:        #E4000F;
+      --gold:          #E4000F;
+      --correct-bg:    rgba(228,0,15,0.06);
+      --correct-b:     #E4000F;
+      --correct-t:     #C40010;
+      --wrong-bg:      rgba(160,160,160,0.12);
+      --wrong-b:       #C0C0C0;
+      --wrong-t:       #787878;
+      --wrong-chip-bg: rgba(160,160,160,0.15);
+      --wrong-chip-b:  #CCCCCC;
+      --wrong-chip-t:  #606060;
+      --btn:           #E4000F;
+      --btn-t:         #FFFFFF;
+      --btn-h:         #FF1A24;
+      --input-bg:      #FFFFFF;
+      --input-b:       #D8D8D8;
+      --sugg-bg:       #FFFFFF;
+      --sugg-h:        #F5F5F5;
+      --radius:        14px;
+      --glow-accent:   0 3px 16px rgba(228,0,15,0.18);
+      --glow-correct:  0 3px 14px rgba(228,0,15,0.14);
+      --glow-btn:      0 3px 16px rgba(228,0,15,0.22);
+    }
+    [data-theme="switch"] body::before { display: none; }
+    [data-theme="switch"] .q-card {
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #E8E8E8;
+    }
+    [data-theme="switch"] .slot-hidden  { box-shadow: 0 1px 8px rgba(0,0,0,0.06); border: 1px solid #E8E8E8; }
+    [data-theme="switch"] .slot-revealed { box-shadow: 0 2px 12px rgba(228,0,15,0.1); }
+    [data-theme="switch"] .slot-bar {
+      background: linear-gradient(90deg, #E8E8E8, #DCDCDC); border-radius: 4px;
+    }
+    [data-theme="switch"] .logo::after  { display: none; }
+    [data-theme="switch"] .logo         { color: #E4000F; text-shadow: none; letter-spacing: 4px; font-weight: 800; font-size: clamp(26px, 7vw, 38px); }
+    [data-theme="switch"] .q-category   { font-size: 13px; font-weight: 700; letter-spacing: 3px; }
+    [data-theme="switch"] .q-text       { font-size: clamp(14px, 3vw, 17px); font-weight: 600; line-height: 1.6; }
+    [data-theme="switch"] .slot-rank    { font-size: 14px; font-weight: 700; }
+    [data-theme="switch"] .slot-rank-rev{ font-size: 14px; font-weight: 700; }
+    [data-theme="switch"] .slot-name    { font-size: 15px; font-weight: 700; }
+    [data-theme="switch"] .slot-primary { font-size: 13px; font-weight: 600; }
+    [data-theme="switch"] .slot-got-it  { font-size: 12px; font-weight: 700; }
+    [data-theme="switch"] .lives-label  { font-size: 14px; font-weight: 600; }
+    [data-theme="switch"] .feedback     { font-size: 14px; font-weight: 700; }
+    [data-theme="switch"] .wrong-label  { font-size: 12px; font-weight: 700; letter-spacing: 2px; }
+    [data-theme="switch"] .guess-btn    { font-size: 14px; font-weight: 700; }
+    [data-theme="switch"] .date-label   { font-size: 13px; font-weight: 600; }
+    [data-theme="switch"] .nav-btn      { font-size: 13px; font-weight: 600; }
+    [data-theme="switch"] .header-clock { font-size: 13px; font-weight: 600; }
+    [data-theme="switch"] .rm-title     { font-size: 20px; font-weight: 800; }
+    [data-theme="switch"] .rm-name      { font-size: 14px; font-weight: 700; }
+    [data-theme="switch"] .rm-rank      { font-size: 13px; font-weight: 600; }
+    [data-theme="switch"] .footer       { font-size: 12px; font-weight: 400; }
+    [data-theme="switch"] .theme-btn    { color: #888; }
+    [data-theme="switch"] .theme-option { color: #888; }
+    [data-theme="switch"] .theme-menu   { box-shadow: 0 8px 28px rgba(0,0,0,0.12); }
+
+    /* ══════════════════════════════════════════════════════════════
+       NEXGEN — PS5 / Series X Activity Cards (2020+)
+       ══════════════════════════════════════════════════════════════ */
+    [data-theme="nexgen"] {
+      --font-pixel: 'Barlow', sans-serif;
+      --font-body:  'Barlow', sans-serif;
+      --bg:            #080810;
+      --surface:       rgba(255,255,255,0.05);
+      --surface2:      rgba(255,255,255,0.08);
+      --surface3:      rgba(255,255,255,0.12);
+      --border-color:  rgba(255,255,255,0.1);
+      --border:        1px solid rgba(255,255,255,0.08);
+      --text:          #E8E8F8;
+      --text-dim:      rgba(180,180,210,0.4);
+      --accent:        #0088FF;
+      --gold:          #00CCFF;
+      --correct-bg:    rgba(0,136,255,0.08);
+      --correct-b:     rgba(0,136,255,0.6);
+      --correct-t:     #44AAFF;
+      --wrong-bg:      rgba(220,60,60,0.08);
+      --wrong-b:       rgba(220,60,60,0.5);
+      --wrong-t:       #E07070;
+      --wrong-chip-bg: rgba(220,60,60,0.1);
+      --wrong-chip-b:  rgba(220,60,60,0.4);
+      --wrong-chip-t:  #E09090;
+      --btn:           #0088FF;
+      --btn-t:         #FFFFFF;
+      --btn-h:         #2299FF;
+      --input-bg:      rgba(255,255,255,0.04);
+      --input-b:       rgba(255,255,255,0.12);
+      --sugg-bg:       rgba(8,8,20,0.96);
+      --sugg-h:        rgba(255,255,255,0.07);
+      --radius:        16px;
+      --glow-accent:   0 0 24px rgba(0,136,255,0.3);
+      --glow-correct:  0 0 20px rgba(0,136,255,0.25);
+      --glow-btn:      0 0 20px rgba(0,136,255,0.4);
+    }
+    [data-theme="nexgen"] body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background: radial-gradient(ellipse at 30% 20%, rgba(0,80,180,0.12) 0%, transparent 55%),
+                  radial-gradient(ellipse at 80% 80%, rgba(60,0,120,0.1) 0%, transparent 50%);
+    }
+    [data-theme="nexgen"] .q-card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    [data-theme="nexgen"] .slot-hidden {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+    [data-theme="nexgen"] .slot-revealed {
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,136,255,0.3);
+    }
+    [data-theme="nexgen"] .slot-missed {
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    }
+    [data-theme="nexgen"] .slot-bar {
+      background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(0,136,255,0.2));
+      border-radius: 8px;
+    }
+    [data-theme="nexgen"] .guess-btn {
+      background: linear-gradient(135deg, #0099FF, #0066CC);
+      box-shadow: 0 4px 14px rgba(0,136,255,0.35);
+    }
+    [data-theme="nexgen"] .logo         { letter-spacing: 5px; font-weight: 700; font-size: clamp(26px, 7vw, 38px); }
+    [data-theme="nexgen"] .q-category   { font-size: 13px; font-weight: 600; letter-spacing: 3px; }
+    [data-theme="nexgen"] .q-text       { font-size: clamp(14px, 3vw, 17px); font-weight: 500; line-height: 1.7; }
+    [data-theme="nexgen"] .slot-rank    { font-size: 14px; font-weight: 600; }
+    [data-theme="nexgen"] .slot-rank-rev{ font-size: 14px; font-weight: 600; }
+    [data-theme="nexgen"] .slot-name    { font-size: 15px; font-weight: 600; }
+    [data-theme="nexgen"] .slot-primary { font-size: 13px; font-weight: 500; }
+    [data-theme="nexgen"] .slot-got-it  { font-size: 12px; font-weight: 600; }
+    [data-theme="nexgen"] .lives-label  { font-size: 14px; font-weight: 500; }
+    [data-theme="nexgen"] .feedback     { font-size: 14px; font-weight: 600; }
+    [data-theme="nexgen"] .wrong-label  { font-size: 12px; font-weight: 600; letter-spacing: 2px; }
+    [data-theme="nexgen"] .guess-btn    { font-size: 14px; font-weight: 600; letter-spacing: 0.5px; }
+    [data-theme="nexgen"] .date-label   { font-size: 13px; font-weight: 500; }
+    [data-theme="nexgen"] .nav-btn      { font-size: 13px; font-weight: 500; }
+    [data-theme="nexgen"] .header-clock { font-size: 13px; font-weight: 500; letter-spacing: 2px; }
+    [data-theme="nexgen"] .rm-title     { font-size: 20px; font-weight: 700; }
+    [data-theme="nexgen"] .rm-name      { font-size: 14px; font-weight: 600; }
+    [data-theme="nexgen"] .rm-rank      { font-size: 13px; font-weight: 500; }
+    [data-theme="nexgen"] .footer       { font-size: 12px; font-weight: 400; }
+  </style>
+</head>
+<body data-theme="gameboy">
+
+<!-- Theme selector (fixed, outside render loop) -->
+<div class="theme-select" id="themeSelect">
+  <button class="theme-btn" onclick="toggleThemeMenu(event)">
+    <span id="themeLabel">GAMEBOY</span>
+    <span class="theme-arrow">▾</span>
+  </button>
+  <div class="theme-menu" id="themeMenu">
+    <div class="theme-option active" data-t="gameboy"  onclick="setTheme('gameboy')">GAMEBOY</div>
+    <div class="theme-option"        data-t="deepnavy" onclick="setTheme('deepnavy')">DEEP NAVY</div>
+    <div class="theme-option"        data-t="steam"    onclick="setTheme('steam')">STEAM</div>
+    <div class="theme-option"        data-t="xbox"     onclick="setTheme('xbox')">XBOX 360</div>
+    <div class="theme-option"        data-t="switch"   onclick="setTheme('switch')">SWITCH</div>
+    <div class="theme-option"        data-t="nexgen"   onclick="setTheme('nexgen')">NEXGEN</div>
+  </div>
+</div>
+
+<!-- Map modal -->
+<div class="map-modal" id="mapModal" onclick="if(event.target===this)closeMap()">
+  <div class="map-container">
+    <div class="map-header">
+      <span class="map-label" id="mapLabel"></span>
+      <button class="map-close" onclick="closeMap()">✕</button>
+    </div>
+    <div id="mapLeaflet"></div>
+  </div>
+</div>
+
+<!-- Detail card modal -->
+<div class="detail-modal" id="detailModal" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-box">
+    <button class="map-close" onclick="closeDetail()">✕</button>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<!-- Result modal -->
+<div class="result-modal" id="resultModal" onclick="if(event.target===this)closeResult()">
+  <div class="rm-box">
+    <button class="rm-close" onclick="closeResult()">✕</button>
+    <span class="rm-icon" id="rmIcon"></span>
+    <div class="rm-title" id="rmTitle"></div>
+    <div class="rm-sub" id="rmSub"></div>
+    <div class="rm-board" id="rmBoard"></div>
+    <div class="rm-divider"></div>
+    <div class="rm-countdown-label">NEXT PUZZLE IN</div>
+    <div class="rm-countdown" id="rmCountdown">--:--:--</div>
+    <button class="share-btn" onclick="copyShare()">📋 SHARE RESULT</button>
+    <div class="rm-nav">
+      <button id="rmPrev" class="next-day-btn" onclick="navDate(-1);closeResult()">◀ PREV DAY</button>
+      <button id="rmNext" class="next-day-btn" onclick="navDate(1);closeResult()">NEXT DAY ▶</button>
+    </div>
+  </div>
+</div>
+
+<div id="app"></div>
+<script>
+
+
+// ═══════════════════════════════════════════════════════════════
+//  QUESTIONS  (15 questions, one per day)
+// ═══════════════════════════════════════════════════════════════
+
+const QUESTIONS = [
+  // ── WEEK OF MAY 28 ────────────────────────────────────────────
+  {
+    id:'countries-area', question:'Top 5: Largest Countries by Area', category:'Geography', emoji:'🗺️',
+    pool:['Russia','Canada','United States','China','Brazil','Australia','India','Argentina','Kazakhstan','Algeria','DR Congo','Saudi Arabia','Mexico','Indonesia','Sudan','Libya','Iran','Mongolia','Peru','Niger','Chad','Angola','Mali','South Africa','Colombia','Ethiopia','Bolivia','Egypt','Tanzania','Nigeria','Venezuela','Pakistan','Namibia','Mozambique','Zambia'],
+    answers:[
+      {name:'Russia',aliases:['russian federation'],primary:'17.1M km²',coords:[61.5240,105.3188],mapZoom:2,stats:[['Capital','Moscow'],['Continent','Europe & Asia'],['Time zones','11 — more than any country']],extra:[['Spans 11 time zones','From Kaliningrad (EU border) to Chukotka (Pacific)'],['Lake Baikal','Contains 20% of the world\'s unfrozen surface fresh water'],['Siberia','~75% of Russia\'s land is Siberia, home to ~28% of its people']]},
+      {name:'Canada',aliases:[],primary:'9.98M km²',coords:[56.1304,-106.3468],mapZoom:3,stats:[['Capital','Ottawa'],['Provinces & Territories','13'],['Coastline','Longest coastline in the world (202,000 km)']],extra:[['Border','Shares the world\'s longest land border with the US (8,891 km)'],['Fresh water','Home to ~20% of the world\'s fresh water in lakes & rivers'],['Empty north','~80% of Canadians live within 150 km of the US border']]},
+      {name:'United States',aliases:['usa','us','america','united states of america'],primary:'9.83M km²',coords:[39.5501,-98.3501],mapZoom:3,stats:[['Capital','Washington D.C.'],['States','50'],['Largest state','Alaska (bigger than Texas × 2)']],extra:[['National Parks','63 national parks covering 34M+ hectares'],['Alaska purchase','Bought from Russia in 1867 for $7.2M ($0.02/acre)'],['Time zones','6 time zones across the 50 states']]},
+      {name:'China',aliases:['prc',"people's republic of china",'peoples republic of china'],primary:'9.60M km²',coords:[35.8617,104.1954],mapZoom:3,stats:[['Capital','Beijing'],['Borders','14 countries — most of any nation'],['Longest river','Yangtze (6,300 km)']],extra:[['One time zone','Despite its size, all of China runs on Beijing Standard Time'],['Great Wall','21,000+ km of wall built across multiple dynasties'],['Population density','Eastern third holds ~90% of China\'s 1.4 billion people']]},
+      {name:'Brazil',aliases:['brasil'],primary:'8.51M km²',coords:[-14.2350,-51.9253],mapZoom:3,stats:[['Capital','Brasília'],['Language','Portuguese'],['River','Amazon — largest river basin on Earth']],extra:[['Amazon','60% of the Amazon rainforest lies within Brazil\'s borders'],['Brasília','Planned capital built from scratch and completed in just 3 years (1960)'],['Borders','Shares a border with every South American country except Chile & Ecuador']]},
+    ],
+  },
+  {
+    id:'buildings', question:'Top 5: Tallest Buildings in the World', category:'Architecture', emoji:'🏙️',
+    pool:['Burj Khalifa','Merdeka 118','Shanghai Tower','Abraj Al-Bait Clock Tower','Ping An Finance Centre','Lotte World Tower','One World Trade Center','Guangzhou CTF Finance Centre','Tianjin CTF Finance Centre','CITIC Tower','Empire State Building','Willis Tower','Taipei 101','Petronas Towers','CN Tower','Tokyo Skytree','Chrysler Building','Freedom Tower','Eiffel Tower','Shard','Transamerica Pyramid','One Canada Square','Burj Al Arab','Khalifa Tower'],
+    answers:[
+      {name:'Burj Khalifa',aliases:['burj','khalifa','burj dubai'],primary:'828 m (2,717 ft)',coords:[25.1972,55.2744],mapZoom:14,stats:[['City','Dubai, UAE'],['Floors','163 (+ 9 maintenance)'],['Completed','2010']],extra:[['Tallest by far','160m taller than its nearest rival at completion'],['Visibility','Can be seen from 95 km away on a clear day'],['Water usage','Pumps 946,000 L of water per day throughout the building']]},
+      {name:'Merdeka 118',aliases:['merdeka','pnb 118','menara merdeka'],primary:'679 m (2,227 ft)',coords:[3.1425,101.7046],mapZoom:14,stats:[['City','Kuala Lumpur, Malaysia'],['Floors','118'],['Completed','2023']],extra:[['Name meaning','"Merdeka" means "Independence" — opened on Malaysia\'s 60th anniversary'],['Observation deck','At 610m — the 2nd highest in the world'],['Crown','The 8-pointed star crown is a key part of the Islamic-inspired design']]},
+      {name:'Shanghai Tower',aliases:['shanghai tower'],primary:'632 m (2,073 ft)',coords:[31.2355,121.5013],mapZoom:14,stats:[['City','Shanghai, China'],['Floors','128'],['Completed','2015']],extra:[['Twisted design','The building twists 120° from base to top, reducing wind loads by 24%'],['Fastest lifts','Elevators travel at 20.5 m/s — among the fastest in the world'],['Sky gardens','12 "sky gardens" at different levels act as public spaces']]},
+      {name:'Abraj Al-Bait Clock Tower',aliases:['abraj al bait','mecca clock tower','abraj','abraj al-bait'],primary:'601 m (1,972 ft)',coords:[21.4187,39.8262],mapZoom:14,stats:[['City','Mecca, Saudi Arabia'],['Floors','120'],['Completed','2012']],extra:[['Biggest clock','Has the world\'s largest clock face (43m diameter, visible for 25 km)'],['Controversy','Built on the demolished site of an 18th-century Ottoman fortress'],['Hotel rooms','The complex has 1,600+ hotel rooms in the same complex']]},
+      {name:'Ping An Finance Centre',aliases:['ping an','ping an finance','ping an centre'],primary:'599 m (1,965 ft)',coords:[22.5376,114.0486],mapZoom:14,stats:[['City','Shenzhen, China'],['Floors','115'],['Completed','2017']],extra:[['No spire','Originally planned to reach 660m but the spire was removed due to flight paths'],['Shenzhen skyline','Shenzhen had 0 skyscrapers in 1979 — now has more than New York City'],['Structural steel','Used 100,000 tonnes of steel during construction']]},
+    ],
+  },
+  {
+    id:'ucl', question:'Top 5: Most UEFA Champions League Titles', category:'Sports', emoji:'🏆',
+    pool:['Real Madrid','AC Milan','Bayern Munich','Liverpool','Barcelona','Ajax','Juventus','Inter Milan','Benfica','Nottingham Forest','Chelsea','Manchester United','Arsenal','Paris Saint-Germain','Atletico Madrid','Borussia Dortmund','Porto','Marseille','Celtic','Feyenoord','Aston Villa','Hamburg','Manchester City','Bayer Leverkusen'],
+    answers:[
+      {name:'Real Madrid',aliases:['real','real madrid cf','los blancos','los merengues'],primary:'15 titles',stats:[['Country','Spain'],['Most recent','2024'],['Finals record','17 wins from 20 appearances']],extra:[['3 in a row','Won the competition 3 consecutive years (2016, 2017, 2018)'],['La Decimaquinta','15th title won in 2024 against Borussia Dortmund'],['Bernabéu','Santiago Bernabéu stadium holds 81,000 and opened in 1947']]},
+      {name:'AC Milan',aliases:['milan','ac milan','rossoneri','i rossoneri'],primary:'7 titles',stats:[['Country','Italy'],['Most recent','2003'],['Legends','Maldini, Baresi, Van Basten']],extra:[['Golden era','Won back-to-back with Gullit, Van Basten & Rijkaard (1989, 1990)'],['Maldini legacy','Paolo Maldini won 5 Champions League/European Cup titles as a player'],['Istanbul 2005','Lost a stunning final to Liverpool after being 3-0 up at half time']]},
+      {name:'Bayern Munich',aliases:['bayern','fcb','fc bayern','fcb munich','die roten'],primary:'6 titles',stats:[['Country','Germany'],['Most recent','2020'],['Domestic dominance','11 consecutive Bundesliga titles (2013–2023)']],extra:[['2020 Treble','Went unbeaten for 22 consecutive UCL games that season'],['Lewandowski','Scored 69 Bundesliga goals in 2020-21 — breaking a 49-year-old record'],['Allianz Arena','Home stadium opened in 2005, seats 75,000']]},
+      {name:'Liverpool',aliases:['lfc','liverpool fc','the reds','pool'],primary:'6 titles',stats:[['Country','England'],['Most recent','2019'],['Iconic win','Istanbul 2005 comeback']],extra:[['Istanbul','Came back from 3-0 down at half-time to beat AC Milan on penalties (2005)'],['You\'ll Never Walk Alone','Adopted from a 1945 Carousel musical; now sung at stadiums worldwide'],['Klopp era','Jürgen Klopp\'s 2019 title ended a 30-year wait for the league title too']]},
+      {name:'Barcelona',aliases:['barca','fcb','fc barcelona','blaugrana','barça'],primary:'5 titles',stats:[['Country','Spain'],['Most recent','2015'],['Philosophy','La Masia academy produced Messi, Xavi, Iniesta']],extra:[['2009 Treble','Won La Liga, Copa del Rey, and Champions League in the same season'],['Tiki-taka','Pep Guardiola\'s Barcelona epitomized possession-based football'],['Messi connection','Messi scored 129 goals across his 16 UCL seasons at Barça']]},
+    ],
+  },
+  {
+    id:'languages', question:'Top 5: Most Spoken Languages by Native Speakers', category:'Culture', emoji:'🗣️',
+    pool:['Mandarin Chinese','Spanish','English','Hindi','Bengali','Portuguese','Russian','Japanese','Punjabi','Marathi','Telugu','Arabic','Turkish','Korean','French','German','Vietnamese','Italian','Urdu','Swahili','Tamil','Javanese','Polish','Persian','Tagalog','Malay','Thai','Ukrainian','Romanian','Dutch'],
+    answers:[
+      {name:'Mandarin Chinese',aliases:['mandarin','chinese','mandarin chinese','putonghua','zhongwen'],primary:'~920M native speakers',stats:[['Official in','China, Taiwan, Singapore'],['Script','Simplified & Traditional Chinese'],['Tones','4 + neutral — tone changes the meaning']],extra:[['Characters','~50,000 total; ~3,500 used in everyday life'],['Hardest for English','US Foreign Service rates Mandarin the hardest language for English speakers'],['Most studied','The fastest-growing foreign language taught in US schools']]},
+      {name:'Spanish',aliases:['español','castellano'],primary:'~480M native speakers',stats:[['Countries','20+ countries have Spanish as official language'],['2nd most native','Behind only Mandarin'],['Growing fast','US has 40M+ native speakers — the 2nd largest Spanish-speaking population']],extra:[['Royal Academy','Real Academia Española has regulated Spanish since 1713'],['Latin roots','Evolved from Vulgar Latin after Rome\'s conquest of the Iberian Peninsula'],['UN language','One of 6 official languages of the United Nations']]},
+      {name:'English',aliases:[],primary:'~380M native speakers',stats:[['Total speakers','~1.5 billion including second-language speakers'],['Official in','67 countries and 27 non-sovereign entities'],['Origin','Anglo-Saxon, blended with Norman French after 1066']],extra:[['Most borrowed','English has absorbed words from 350+ languages'],['Shakespeare','Coined ~1,700 words still in common use today'],['Lingua franca','The dominant language of aviation, science, and the internet']]},
+      {name:'Hindi',aliases:['hindi-urdu'],primary:'~340M native speakers',stats:[['Country','India (primary)'],['Script','Devanagari'],['Bollywood','Largest film industry in the world by number of films']],extra:[['Mutually intelligible','Spoken Hindi and Urdu are largely interchangeable; separated mainly by script'],['Sanskrit lineage','Descended from Sanskrit via Sauraseni Prakrit over 1,500+ years'],['Constitution','India\'s constitution recognizes 22 official languages, Hindi being primary']]},
+      {name:'Bengali',aliases:['bangla','bangali'],primary:'~230M native speakers',stats:[['Countries','Bangladesh and West Bengal (India)'],['Script','Bengali alphabet (also used for Assamese)'],['Nobel Prize','Rabindranath Tagore — first non-European Nobel laureate in Literature (1913)']],extra:[['National anthems','Both India\'s Jana Gana Mana and Bangladesh\'s Amar Sonar Bangla were written by Tagore in Bengali'],['Language martyrs','Bangladesh\'s February 21 protests for Bengali (1952) inspired UNESCO\'s World Mother Language Day'],['Literature','Bengali has one of the oldest literary traditions in South Asia (1,000+ years)']]},
+    ],
+  },
+  {
+    id:'games', question:'Top 5: Best-Selling Video Game Franchises of All Time', category:'Gaming', emoji:'🎮',
+    pool:['Mario','Tetris','Pokémon','Call of Duty','Grand Theft Auto','FIFA / EA Sports FC','The Sims','Need for Speed','Minecraft','Dragon Quest','Final Fantasy','The Legend of Zelda','Halo','Sonic the Hedgehog','Resident Evil','Street Fighter','Tomb Raider','Battlefield','Assassin\'s Creed','God of War','Red Dead','Donkey Kong','Mega Man','Metal Gear','Fortnite','Diablo','Wii Sports'],
+    answers:[
+      {name:'Mario',aliases:['super mario','mario bros','nintendo mario'],primary:'800M+ units sold',stats:[['Publisher','Nintendo'],['First game','Donkey Kong (1981)'],['Entries','200+ games in the franchise']],extra:[['Name origin','Named after Mario Segale, Nintendo\'s Seattle warehouse landlord'],['Mario Kart 8','The best-selling individual Mario game — 60M+ copies'],['Film','The Super Mario Bros. Movie (2023) grossed $1.36B globally']]},
+      {name:'Tetris',aliases:[],primary:'520M+ units sold',stats:[['Creator','Alexey Pajitnov, Soviet Union'],['Year','1984'],['Platforms','Virtually every platform ever made']],extra:[['Rights','Pajitnov didn\'t receive profits for 10 years due to Soviet state ownership'],['Tetris Effect','A real cognitive phenomenon — the shapes invade your thoughts and dreams'],['Tetris 99','Nintendo released a battle-royale version in 2019 — 99 players compete simultaneously']]},
+      {name:'Pokémon',aliases:['pokemon'],primary:'480M+ units sold',stats:[['Publisher','Nintendo / Game Freak / Creatures'],['Debut','Pokémon Red & Green, 1996 (Japan)'],['Species','1,000+ Pokémon across 9 generations']],extra:[['Trading cards','43+ billion TCG cards sold since 1996'],['Anime','1,200+ episodes across 25+ seasons'],['Original mascot','Clefairy was originally planned as the mascot before Pikachu was chosen']]},
+      {name:'Call of Duty',aliases:['cod','call of duty'],primary:'425M+ units sold',stats:[['Publisher','Activision'],['First game','Call of Duty (2003)'],['Annual cadence','New mainline entry every year since 2005']],extra:[['Warzone','Free-to-play battle royale hit 100M players in its first year'],['Revenue','Franchise has generated $30B+ in lifetime revenue'],['MW2 2022','Modern Warfare II (2022) reached $1B in sales in its first 10 days']]},
+      {name:'Grand Theft Auto',aliases:['gta','gta v','grand theft auto'],primary:'410M+ units sold',stats:[['Publisher','Rockstar Games'],['Biggest title','GTA V — 195M+ copies sold'],['First game','GTA (1997, top-down view)']],extra:[['GTA V longevity','Still charting as a top seller 12+ years after its 2013 launch'],['GTA Online','Generated billions in microtransaction revenue over the decade'],['GTA VI','Announced for 2025 — the most-watched game trailer in history (24hrs)']]},
+    ],
+  },
+  {
+    id:'tourism', question:'Top 5: Most Visited Countries in the World', category:'Geography', emoji:'✈️',
+    pool:['France','Spain','United States','China','Italy','Turkey','Mexico','Thailand','Germany','United Kingdom','Russia','Malaysia','Japan','Austria','Greece','Portugal','Brazil','India','Egypt','Australia','Switzerland','UAE','Hungary','Czech Republic','Canada','Netherlands','Saudi Arabia','South Korea','Poland','Croatia'],
+    answers:[
+      {name:'France',aliases:['french republic'],primary:'~100M visitors/year',coords:[46.2276,2.2137],mapZoom:5,stats:[['Capital','Paris'],['#1 globally','Most visited country for decades running'],['UNESCO sites','52 — 4th most in the world']],extra:[['Paris draw','The city alone receives ~50M of France\'s total visitors annually'],['Louvre','The most visited museum in the world — 9M+ visitors/year'],['Most borders','Metropolitan France borders 8 countries']]},
+      {name:'Spain',aliases:['españa','espana'],primary:'~85M visitors/year',coords:[40.4637,-3.7492],mapZoom:5,stats:[['Capital','Madrid'],['Top regions','Catalonia, Andalusia, Canary Islands'],['UNESCO sites','50 — 3rd most in the world']],extra:[['Camino de Santiago','500km pilgrimage route draws 300K+ walkers annually'],['Cuisine','3rd most Michelin-starred restaurants in the world'],['Sagrada Família','Still under construction since 1882 — expected completion 2026']]},
+      {name:'United States',aliases:['usa','us','america','united states of america'],primary:'~79M visitors/year',coords:[39.5501,-98.3501],mapZoom:3,stats:[['Capital','Washington D.C.'],['Top destinations','NYC, Las Vegas, Orlando'],['Revenue','#1 in international tourism revenue globally']],extra:[['National Parks','63 national parks — Grand Canyon alone sees 6M visits/year'],['Orlando','The world\'s #1 theme park destination — 75M+ theme park visits/year'],['Times Square','50M+ visitors per year — one of the most visited urban spots on Earth']]},
+      {name:'China',aliases:['prc'],primary:'~65M visitors/year',coords:[35.8617,104.1954],mapZoom:4,stats:[['Capital','Beijing'],['UNESCO sites','57 — 2nd most in the world'],['Great Wall','Most iconic site; only ~30% of it is properly preserved']],extra:[['Golden Week','1.5 billion domestic trips occur during national holiday periods'],['Forbidden City','The world\'s largest palace complex — 180 acres, 980 buildings'],['Belt & Road','China is investing billions in tourism infrastructure across Asia']]},
+      {name:'Italy',aliases:['italia','italian republic'],primary:'~64M visitors/year',coords:[41.8719,12.5674],mapZoom:5,stats:[['Capital','Rome'],['UNESCO sites','58 — the most of any country in the world'],['Top sites','Colosseum, Venice, Florence, Amalfi Coast']],extra:[['Venice fee','Introduced a €5 tourist day-tripper entry fee in 2024'],['Colosseum','7.6M visitors/year — the most visited single site in Europe'],['Art treasures','Italy holds ~70% of the world\'s most important cultural heritage']]},
+    ],
+  },
+  {
+    id:'lakes', question:'Top 5: Deepest Lakes in the World', category:'Geography', emoji:'🏔️',
+    pool:['Lake Baikal','Lake Tanganyika','Caspian Sea','Lake Vostok','O\'Higgins-San Martín Lake','Lake Malawi','Issyk-Kul','Great Slave Lake','Crater Lake','Lake Tahoe','Lake Superior','Lake Titicaca','Dead Sea','Lake Como','Lake Geneva','Lake Ladoga','Loch Ness','Lake Toba','Lake Turkana','Lake Victoria','Lake Huron','Lake Ontario','Lake Balaton','Lake Atitlán','Lake Ohrid'],
+    answers:[
+      {name:'Lake Baikal',aliases:['baikal','lake baikal'],primary:'1,642 m (5,387 ft)',coords:[53.5587,108.1650],mapZoom:5,stats:[['Country','Russia, Siberia'],['Age','25–30 million years — the world\'s oldest lake'],['Volume','~20% of Earth\'s unfrozen surface fresh water']],extra:[['Baikal seal','The only exclusively freshwater seal species — found nowhere else on Earth'],['Ice road','Freezes solid enough in winter that trucks drive across it'],['Biodiversity','80% of the 3,600+ species living in it exist nowhere else on Earth']]},
+      {name:'Lake Tanganyika',aliases:['tanganyika'],primary:'1,470 m (4,823 ft)',coords:[-6.0000,29.5000],mapZoom:5,stats:[['Countries','Tanzania, DRC, Zambia, Burundi'],['Length','676 km — the world\'s longest lake'],['Age','9–12 million years']],extra:[['Cichlids','600+ species of cichlid fish found nowhere else on Earth'],['Below sea level','The lake floor sits significantly below sea level'],['Stanley & Livingstone','Their famous 1871 meeting ("Dr. Livingstone, I presume?") was on its shores']]},
+      {name:'Caspian Sea',aliases:['caspian'],primary:'1,025 m (3,363 ft)',coords:[42.0000,51.0000],mapZoom:4,stats:[['Countries','Russia, Kazakhstan, Azerbaijan, Turkmenistan, Iran'],['Classification','World\'s largest lake by surface area (371,000 km²)'],['Water type','Brackish — between fresh and saltwater']],extra:[['Caviar','90% of the world\'s wild beluga caviar comes from Caspian sturgeon'],['Shrinking fast','Sea level has dropped ~3m since 1970 — climate change + river diversion'],['Disputed status','Countries argued for years whether to call it a "sea" or a "lake" (affects resource rights)']]},
+      {name:"O'Higgins-San Martín Lake",aliases:["o'higgins","san martin lake","lago o'higgins","lago san martin","ohiggins","o higgins san martin"],primary:'836 m (2,743 ft)',coords:[-48.8000,-72.6000],mapZoom:7,stats:[['Countries','Chile & Argentina'],['Location','Patagonia — fed by the Southern Patagonian Ice Field'],['Color','Vivid turquoise from glacial rock flour']],extra:[['Two names','Called O\'Higgins in Chile and San Martín in Argentina after independence heroes'],['Deepest in Americas','The deepest lake in the entire Western Hemisphere'],['No road access','Can only be reached by boat or floatplane — completely roadless']]},
+      {name:'Lake Malawi',aliases:['lake nyasa','malawi','nyasa','lake niassa'],primary:'706 m (2,316 ft)',coords:[-12.0000,34.6000],mapZoom:5,stats:[['Countries','Malawi, Tanzania, Mozambique'],['Also known as','Lake Nyasa'],['Area','~29,600 km² — 9th largest lake in the world']],extra:[['Richest in fish','More fish species than any freshwater body on Earth (800–1,000 cichlid species)'],['Malawi\'s identity','The lake covers 20% of Malawi\'s total surface area'],['Safe swimming','Northern shores are bilharzia-free — rare for East African lakes']]},
+    ],
+  },
+  // ── EXISTING QUESTIONS ────────────────────────────────────────
+  {
+    id:'nba-pts', question:'Top 5: NBA Career Points Leaders', category:'Sports', emoji:'🏀',
+    pool:['LeBron James','Kareem Abdul-Jabbar','Karl Malone','Kobe Bryant','Kevin Durant','Michael Jordan','Dirk Nowitzki','Wilt Chamberlain','Shaquille O\'Neal','Moses Malone','Elvin Hayes','Hakeem Olajuwon','Oscar Robertson','Dominique Wilkins','Tim Duncan','Paul Pierce','Carmelo Anthony','Vince Carter','Reggie Miller','Patrick Ewing','Charles Barkley','John Havlicek','Clyde Drexler','Ray Allen','Kevin Garnett','Stephen Curry','James Harden','Chris Paul','Bob Cousy','Rick Barry','Julius Erving','Bob Pettit','Isiah Thomas','Magic Johnson','Larry Bird','Jerry West','Pete Maravich','Allen Iverson','Tracy McGrady','Russell Westbrook','Kawhi Leonard','Jimmy Butler'],
+    answers:[
+      {name:'LeBron James',aliases:['lbj','lebron','king james'],primary:'~42,000 pts (active)',stats:[['Seasons','23'],['Championships','4'],['Teams','CLE · MIA · LAL']],extra:[['Draft','#1 overall pick, 2003 (at 18)'],['Youngest to 30K','Broke record in 2018'],['Games played','1,450+ career games']]},
+      {name:'Kareem Abdul-Jabbar',aliases:['kareem','jabbar','cap','alcindor'],primary:'38,387 pts',stats:[['Seasons','20'],['Championships','6'],['MVPs','6']],extra:[['Sky hook','Virtually unblockable signature shot'],['High school','Power Memorial, NYC — 71-game win streak'],['Author','Wrote 6 books, history advocate']]},
+      {name:'Karl Malone',aliases:['malone','mailman','the mailman'],primary:'36,928 pts',stats:[['Seasons','19'],['MVPs','2'],['Team','Utah Jazz']],extra:[['Games missed','Only 5 in 18 NBA seasons'],['All-Star','14 appearances'],['Nickname origin','"Mailman" — always delivered']]},
+      {name:'Kobe Bryant',aliases:['kobe','mamba','black mamba'],primary:'33,643 pts',stats:[['Seasons','20'],['Championships','5'],['Team','LA Lakers']],extra:[['81-point game','2nd-highest single-game total ever (2006)'],['Two retired numbers','Both #8 and #24 retired by Lakers'],['Italian fluent','Grew up in Italy, spoke the language natively']]},
+      {name:'Kevin Durant',aliases:['kd','durant','slim reaper'],primary:'~33,000 pts (active)',stats:[['Seasons','18'],['Championships','2'],['Teams','OKC · GS · BKN · PHX']],extra:[['Wingspan','7\'5\" — one of the longest in NBA history'],['College','1 year at Texas, averaged 25.8 pts per game'],['Scoring titles','4 NBA scoring titles']]},
+    ],
+  },
+  {
+    id:'box-office', question:'Top 5: Highest-Grossing Films of All Time', category:'Movies', emoji:'🎬',
+    pool:['Avatar','Avengers: Endgame','Avatar: The Way of Water','Titanic','Star Wars: The Force Awakens','Avengers: Infinity War','Spider-Man: No Way Home','Jurassic World','The Lion King','The Avengers','Black Panther','Fast & Furious 7','Frozen II','The Dark Knight Rises','Top Gun: Maverick','Incredibles 2','The Super Mario Bros. Movie','Finding Dory','Zootopia','Transformers: Age of Extinction','Minions','Aquaman','Toy Story 4','Captain America: Civil War','Doctor Strange in the Multiverse of Madness','The Dark Knight','Spider-Man: Far From Home','Interstellar','Inception','Oppenheimer','Barbie','Moana','Encanto','Frozen','The Jungle Book'],
+    answers:[
+      {name:'Avatar',aliases:['avatar 2009','james cameron avatar'],primary:'$2.923 billion',stats:[['Year','2009'],['Director','James Cameron'],['Genre','Sci-Fi']],extra:[['Language','Na\'vi created by linguist Paul Frommer'],['Re-release','Re-released in 2022 to reclaim #1 from Endgame'],['3D cameras','Cameron co-developed custom 3D filming rig']]},
+      {name:'Avengers: Endgame',aliases:['endgame','avengers endgame'],primary:'$2.799 billion',stats:[['Year','2019'],['Studio','Marvel / Disney'],['Runtime','181 min']],extra:[['Opening weekend','$1.22 billion — highest in history'],['Spoiler ban','Russo Bros personally asked fans not to spoil'],['MCU finale','Closes the Infinity Saga (22-film arc)']]},
+      {name:'Avatar: The Way of Water',aliases:['avatar 2','way of water','avatar the way of water'],primary:'$2.320 billion',stats:[['Year','2022'],['Director','James Cameron'],['Sequel to','Avatar (2009)']],extra:[['Budget','~$460M — among the most expensive films ever'],['Underwater acting','Actors held breath for 6+ minutes on set'],['Gap','13 years between Avatar films']]},
+      {name:'Titanic',aliases:['titanic 1997'],primary:'$2.264 billion',stats:[['Year','1997'],['Director','James Cameron'],['Oscars','11']],extra:[['Ship replica','Built at 90% scale for production'],['Score','Celine Dion — My Heart Will Go On'],['Production crisis','Went $100M over budget, studio nearly collapsed']]},
+      {name:'Star Wars: The Force Awakens',aliases:['force awakens','the force awakens','star wars 7','episode 7','episode vii'],primary:'$2.069 billion',stats:[['Year','2015'],['Director','J.J. Abrams'],['Stars','Daisy Ridley · John Boyega']],extra:[['Opening weekend','$248M US — record at the time'],['Practical effects','Deliberately minimal CGI to echo original trilogy'],['New cast','Ridley & Boyega both unknowns before casting']]},
+    ],
+  },
+  {
+    id:'countries', question:'Top 5: Most Populous Countries in the World', category:'Geography', emoji:'🌍',
+    pool:['India','China','United States','Indonesia','Pakistan','Brazil','Nigeria','Bangladesh','Russia','Mexico','Ethiopia','Japan','Philippines','Egypt','DR Congo','Vietnam','Iran','Turkey','Germany','Thailand','United Kingdom','France','Tanzania','South Africa','Myanmar','Kenya','Colombia','South Korea','Spain','Uganda','Sudan','Algeria','Argentina','Iraq','Canada','Morocco','Saudi Arabia','Peru','Malaysia','Afghanistan','Ghana','Australia','North Korea'],
+    answers:[
+      {name:'India',aliases:[],primary:'1.44 billion',coords:[20.5937,78.9629],mapZoom:4,stats:[['Capital','New Delhi'],['Area','3.29M km²'],['Languages','Hindi + 21 official']]},
+      {name:'China',aliases:['prc',"people's republic of china",'peoples republic of china'],primary:'1.41 billion',coords:[35.8617,104.1954],mapZoom:4,stats:[['Capital','Beijing'],['Area','9.60M km²'],['Government','Socialist Republic']]},
+      {name:'United States',aliases:['usa','us','america','united states of america'],primary:'335 million',coords:[39.5501,-98.3501],mapZoom:4,stats:[['Capital','Washington, D.C.'],['Area','9.83M km²'],['States','50']]},
+      {name:'Indonesia',aliases:[],primary:'278 million',coords:[-0.7893,113.9213],mapZoom:4,stats:[['Capital','Jakarta'],['Islands','17,000+'],['Area','1.91M km²']]},
+      {name:'Pakistan',aliases:[],primary:'240 million',coords:[30.3753,69.3451],mapZoom:5,stats:[['Capital','Islamabad'],['Area','881K km²'],['Independence','1947']]},
+    ],
+  },
+  {
+    id:'mountains', question:'Top 5: Tallest Mountains in the World', category:'Geography', emoji:'⛰️',
+    pool:['Mount Everest','K2','Kangchenjunga','Lhotse','Makalu','Cho Oyu','Dhaulagiri','Manaslu','Nanga Parbat','Annapurna','Gasherbrum I','Broad Peak','Gasherbrum II','Shishapangma','Kilimanjaro','Mont Blanc','Denali','Aconcagua','Elbrus','Vinson Massif','Mount Logan','Puncak Jaya','Matterhorn','Rakaposhi','Namcha Barwa','Tirich Mir','Mount Kenya','Damavand','Pico de Orizaba','Mount Saint Elias'],
+    answers:[
+      {name:'Mount Everest',aliases:['everest','mt everest','chomolungma','sagarmatha'],primary:'8,849 m (29,032 ft)',coords:[27.9881,86.9250],mapZoom:9,mapStyle:'terrain',stats:[['Location','Nepal / China'],['First Summit','1953 (Hillary & Tenzing)'],['Range','Himalayas']]},
+      {name:'K2',aliases:['godwin austen','savage mountain'],primary:'8,611 m (28,251 ft)',coords:[35.8825,76.5133],mapZoom:9,mapStyle:'terrain',stats:[['Location','Pakistan / China'],['First Summit','1954'],['Known as','Most dangerous 8000er']]},
+      {name:'Kangchenjunga',aliases:['kanchenjunga','kanchanjanga'],primary:'8,586 m (28,169 ft)',coords:[27.7025,88.1475],mapZoom:9,mapStyle:'terrain',stats:[['Location','Nepal / India'],['First Summit','1955'],['Meaning','Five Treasures of Snow']]},
+      {name:'Lhotse',aliases:[],primary:'8,516 m (27,940 ft)',coords:[27.9617,86.9333],mapZoom:9,mapStyle:'terrain',stats:[['Location','Nepal / China'],['First Summit','1956'],['Connected to','Mount Everest']]},
+      {name:'Makalu',aliases:[],primary:'8,485 m (27,838 ft)',coords:[27.8897,87.0889],mapZoom:9,mapStyle:'terrain',stats:[['Location','Nepal / China'],['First Summit','1955'],['Shape','Near-perfect 4-sided pyramid']]},
+    ],
+  },
+  {
+    id:'animals', question:'Top 5: Fastest Land Animals', category:'Nature', emoji:'🐆',
+    pool:['Cheetah','Pronghorn','Springbok','Wildebeest','Lion','Ostrich','Thomson\'s Gazelle','African Wild Dog','Coyote','Grey Wolf','Horse','Elk','Blackbuck','Quarter Horse','Jackrabbit','Kangaroo','Zebra','Greyhound','Mule Deer','Brown Hare','Impala','Onager','Cape Buffalo','Hyena','Whippet','Mountain Goat','Reindeer','Grizzly Bear','Moose','White-tailed Deer','Emu','Roadrunner'],
+    answers:[
+      {name:'Cheetah',aliases:[],primary:'75 mph (120 km/h)',stats:[['Habitat','Sub-Saharan Africa'],['Sprint duration','20–30 seconds'],['Weight','21–72 kg']],extra:[['Acceleration','0–70 mph in under 3 seconds'],['Claws','Semi-retractable for grip (unlike most cats)'],['Population','~7,000 remaining in the wild']]},
+      {name:'Pronghorn',aliases:['pronghorn antelope','american antelope'],primary:'61 mph (98 km/h)',stats:[['Habitat','North America'],['Endurance','Can sustain 55 mph (88 km/h)'],['Weight','40–65 kg']],extra:[['Evolved to outrun','The now-extinct American cheetah'],['Eyes','360° field of vision without turning head'],['Horns','Shed and regrow annually (unlike deer antlers)']]},
+      {name:'Springbok',aliases:['springbok antelope'],primary:'55 mph (88 km/h)',stats:[['Habitat','Southern Africa'],['Known for','Pronking (leaping)'],['Symbol','South Africa']],extra:[['Pronking height','Up to 13 ft (4 m) in a single leap'],['Why pronk','Signals fitness to predators: "don\'t chase me"'],['Herds','Historically up to 10 million in a single herd']]},
+      {name:'Wildebeest',aliases:['gnu','blue wildebeest'],primary:'50 mph (80 km/h)',stats:[['Habitat','East Africa'],['Migration','1,500 km annually'],['Population','~1.5 million']],extra:[['Calving','500,000+ calves born within a 3-week window'],['River crossing','Thousands taken by Nile crocodiles annually'],['Scientific name','Connochaetes taurinus']]},
+      {name:'Lion',aliases:['african lion'],primary:'50 mph (80 km/h)',stats:[['Habitat','Sub-Saharan Africa'],['Weight','120–250 kg'],['Known as','King of the Jungle']],extra:[['Sprint stamina','Can only sustain top speed ~300–400 m'],['Hunting','Females do ~90% of the pride\'s hunting'],['Roar','Can be heard up to 8 km (5 miles) away']]},
+    ],
+  },
+  {
+    id:'world-cup', question:'Top 5: Countries with Most FIFA World Cup Wins', category:'Sports', emoji:'⚽',
+    pool:['Brazil','Germany','Italy','Argentina','France','Uruguay','England','Spain','Netherlands','Portugal','Belgium','Croatia','Sweden','Hungary','Mexico','Chile','Poland','Denmark','Japan','South Korea','Cameroon','Nigeria','Senegal','Morocco','Switzerland','Austria','Colombia','Australia','Peru','Costa Rica','Ecuador','Ghana'],
+    answers:[
+      {name:'Brazil',aliases:['brasil'],primary:'5 titles',stats:[['Years','1958, 1962, 1970, 1994, 2002'],['Legends','Pelé, Ronaldo, Ronaldinho'],['Appearances','22 (every World Cup)']],extra:[['Only team','Won the World Cup on 4 different continents'],['Pelé','Won 3 of Brazil\'s 5 titles (1958, 1962, 1970)'],['Unbeaten streak','Went 35+ consecutive group-stage games unbeaten']]},
+      {name:'Germany',aliases:['west germany','deutschland'],primary:'4 titles',stats:[['Years','1954, 1974, 1990, 2014'],['Finals','8 appearances'],['Legends','Beckenbauer, Müller']],extra:[['2014 highlight','Beat host Brazil 7-1 in the semifinal (Mineirazo)'],['Most finals','8 appearances — most of any European nation'],['West Germany','3 of 4 titles won before reunification']]},
+      {name:'Italy',aliases:['italia','azzurri'],primary:'4 titles',stats:[['Years','1934, 1938, 1982, 2006'],['Finals','6 appearances'],['Nickname','Gli Azzurri']],extra:[['1934','Won as host nation under Mussolini-era pressure'],['2006 final','Zidane headbutted Materazzi, Italy won on penalties'],['Catenaccio','Italy popularized this defensive tactical system']]},
+      {name:'Argentina',aliases:['albiceleste'],primary:'3 titles',stats:[['Years','1978, 1986, 2022'],['Legends','Maradona, Messi'],['2022 Win','Qatar (Messi\'s crowning)']],extra:[['1986 Maradona','Hand of God + Goal of the Century in the same match'],['2022 final','3-3 AET vs France — won on penalties'],['1978 controversy','Won at home during military dictatorship']]},
+      {name:'France',aliases:['les bleus'],primary:'2 titles',stats:[['Years','1998, 2018'],['Legends','Zidane, Mbappé'],['Runner-up','2022 (lost to Argentina)']],extra:[['1998 final','Zidane scored two headers in final vs Brazil'],['2022 Mbappé','Scored a hat-trick in the final but still lost'],['1998 host','Won as host nation, inspired a generation of fans']]},
+    ],
+  },
+  {
+    id:'grammys', question:'Top 5: Most Grammy Awards Won (All Time)', category:'Music', emoji:'🎵',
+    pool:['Beyoncé','Georg Solti','Quincy Jones','Alison Krauss','Chick Corea','Taylor Swift','Stevie Wonder','Paul Simon','Frank Sinatra','U2','Adele','Billie Eilish','Bruno Mars','Eminem','Kendrick Lamar','Michael Jackson','Barbra Streisand','Carlos Santana','Kanye West','John Legend','Sting','Aretha Franklin','Tony Bennett','Jay-Z','Bruce Springsteen','Bob Dylan','Herbie Hancock','Ella Fitzgerald','Johnny Cash','Dolly Parton','Metallica','Eric Clapton','Paul McCartney'],
+    answers:[
+      {name:'Beyoncé',aliases:['beyonce','queen bey','bey'],primary:'32 Grammys',stats:[['Nominations','88+'],['First win','2001'],['Genre','R&B, Pop']],extra:[['Single-night record','Won 4 Grammys in one night at the 2010 ceremony'],['Lemonade','First visual album to receive Album of the Year nomination'],['HBCU donations','Donated millions to HBCUs following Grammy wins']]},
+      {name:'Georg Solti',aliases:['solti','sir georg solti'],primary:'31 Grammys',stats:[['Profession','Classical Conductor'],['Orchestra','Chicago Symphony'],['Active','1937–1997']],extra:[['Born','Budapest, Hungary, 1912'],['Knighted','1972 by Queen Elizabeth II'],['Chicago tenure','Principal conductor for 22 years (1969–1991)']]},
+      {name:'Quincy Jones',aliases:['quincy','q jones'],primary:'28 Grammys',stats:[['Nominations','80'],['Known for','Producing Thriller (MJ)'],['Grammy Legend','Yes (1991)']],extra:[['Thriller','Produced the best-selling album in history'],['Film scores','Composed for In Cold Blood, The Italian Job'],['Jazz roots','Played trumpet with Count Basie\'s big band']]},
+      {name:'Alison Krauss',aliases:['krauss'],primary:'27 Grammys',stats:[['Genre','Bluegrass, Country'],['First win','1991'],['Instruments','Fiddle, Vocals']],extra:[['Age at debut','Won first Grammy at age 19'],['Robert Plant collab','Raising Sand (2007) won 5 Grammys incl. Album of Year'],['Youngest champion','Won national fiddle competition at 12 years old']]},
+      {name:'Chick Corea',aliases:['corea','armando corea'],primary:'27 Grammys',stats:[['Genre','Jazz, Fusion'],['Active','1960–2021'],['Known for','Spain, La Fiesta']],extra:[['Miles Davis','Played on Bitches Brew, helped birth jazz fusion'],['Signature works','Spain & La Fiesta became jazz standards'],['Passed away','February 2021, at age 79']]},
+    ],
+  },
+  {
+    id:'rivers', question:'Top 5: Longest Rivers in the World', category:'Geography', emoji:'🌊',
+    pool:['Nile','Amazon','Yangtze','Mississippi','Yenisei','Yellow River','Ob','Congo','Amur','Lena','Mekong','Mackenzie','Niger','Murray','Volga','Euphrates','Tigris','Rhine','Danube','Colorado','Ganges','Indus','Zambezi','Jordan','Hudson','Thames','Seine','Loire','Dnieper','Don','Irtysh','Parana','Missouri'],
+    answers:[
+      {name:'Nile',aliases:['nile river','river nile'],primary:'6,650 km (4,130 mi)',coords:[25.0000,32.9000],mapZoom:5,mapPath:'nile',stats:[['Countries','11 (Egypt, Sudan, Uganda…)'],['Flows into','Mediterranean Sea'],['Known for','Cradle of civilization']]},
+      {name:'Amazon',aliases:['amazon river','rio amazonas'],primary:'6,400 km (3,976 mi)',coords:[-3.4653,-62.2159],mapZoom:5,mapPath:'amazon',stats:[['Countries','Brazil, Peru, Colombia'],['Discharge','Largest in world'],['Basin','Amazon Rainforest']]},
+      {name:'Yangtze',aliases:['yangtze river','chang jiang','chang'],primary:'6,300 km (3,917 mi)',coords:[30.8198,111.3561],mapZoom:6,mapPath:'yangtze',stats:[['Country','China'],['Rank in Asia','Longest'],['Famous for','Three Gorges Dam']]},
+      {name:'Mississippi',aliases:['mississippi river'],primary:'6,275 km (3,902 mi)',coords:[38.2527,-90.0490],mapZoom:5,mapPath:'mississippi',stats:[['Country','United States'],['Bordering states','10'],['Flows into','Gulf of Mexico']]},
+      {name:'Yenisei',aliases:['yenisei river','yenisey'],primary:'5,539 km (3,445 mi)',coords:[61.6686,87.3342],mapZoom:4,mapPath:'yenisei',stats:[['Countries','Russia, Mongolia'],['Flows into','Kara Sea (Arctic)'],['Basin','2.58M km²']]},
+    ],
+  },
+  {
+    id:'nfl-tds', question:'Top 5: NFL Career Touchdown Leaders', category:'Sports', emoji:'🏈',
+    pool:['Jerry Rice','Emmitt Smith','LaDainian Tomlinson','Randy Moss','Terrell Owens','Tom Brady','Peyton Manning','Brett Favre','Walter Payton','Barry Sanders','Marshall Faulk','Calvin Johnson','Larry Fitzgerald','Jason Witten','Adrian Peterson','Frank Gore','Jim Brown','Marcus Allen','Drew Brees','Tony Gonzalez','Marvin Harrison','Cris Carter','Dan Marino','Eric Dickerson','Thurman Thomas','Curtis Martin','Edgerrin James','Shaun Alexander','Tiki Barber','Brian Westbrook','DeMarco Murray','Jamaal Charles'],
+    answers:[
+      {name:'Jerry Rice',aliases:['rice'],primary:'208 TDs',stats:[['Position','Wide Receiver'],['Teams','SF 49ers, Raiders, Seahawks'],['Seasons','20']],extra:[['Receiving yards','22,895 — the all-time NFL record'],['Playoff TDs','22 touchdowns in postseason play'],['Work ethic','Famous for running hills in the off-season']]},
+      {name:'Emmitt Smith',aliases:['emmitt','smith'],primary:'175 TDs',stats:[['Position','Running Back'],['Teams','Dallas Cowboys, Arizona'],['Super Bowls','3']],extra:[['Rushing yards','18,355 — the all-time NFL rushing record'],['Best season','1,773 yards in 1995'],['Dancing with the Stars','Won Season 3 of the show']]},
+      {name:'LaDainian Tomlinson',aliases:['ldt','tomlinson','ladainian'],primary:'162 TDs',stats:[['Position','Running Back'],['Team','San Diego Chargers'],['Season record','28 TDs in 2006']],extra:[['2006 MVP','Also had 1,815 rush yards and 508 receiving yards'],['Draft','5th overall pick in 2001 NFL Draft'],['Jersey retired','Number retired by the San Diego Chargers']]},
+      {name:'Randy Moss',aliases:['moss'],primary:'157 TDs',stats:[['Position','Wide Receiver'],['Teams','MIN, NE, OAK, SF, TEN'],['Season record','23 rec. TDs (2007)']],extra:[['Speed','Ran 4.25-second 40-yard dash at the combine'],['2007 Pats','Had 1,493 yards & 23 TDs alongside Tom Brady'],['Vertical','40-inch vertical leap — elite even among receivers']]},
+      {name:'Terrell Owens',aliases:['t.o.','to','owens'],primary:'156 TDs',stats:[['Position','Wide Receiver'],['Teams','SF, PHI, DAL, BUF, CIN'],['Seasons','15']],extra:[['2005 Super Bowl','Played on a broken leg, caught 9 passes for 122 yards'],['Hall of Fame','Inducted 2018 on first ballot'],['College','Tennessee-Chattanooga — overlooked recruit']]},
+    ],
+  },
+  {
+    id:'oscars', question:'Top 5: Films with Most Academy Award Wins', category:'Movies', emoji:'🏆',
+    pool:['Ben-Hur','Titanic','The Lord of the Rings: The Return of the King','West Side Story','Gigi','All About Eve','La La Land','American Beauty','Amadeus','Gone with the Wind','Lawrence of Arabia','Patton','The Godfather','Schindler\'s List','Braveheart','Gladiator','Chicago','Everything Everywhere All at Once','CODA','Nomadland','Parasite','1917','The Shape of Water','Spotlight','Oppenheimer','Barbie','Poor Things','Mank'],
+    answers:[
+      {name:'Ben-Hur',aliases:['benhur','ben hur 1959'],primary:'11 Oscars',stats:[['Year','1959'],['Director','William Wyler'],['Stars','Charlton Heston']],extra:[['Chariot race','Took 3 weeks to film using 15,000 extras'],['Budget','$15M — the most expensive film ever made in 1959'],['Versions','Also made in 1925 and remade in 2016']]},
+      {name:'Titanic',aliases:['titanic 1997'],primary:'11 Oscars',stats:[['Year','1997'],['Director','James Cameron'],['Box Office','$2.26B']],extra:[['Perfect record','Won all 11 of its 11 nominations (100% win rate)'],['Longest Best Picture','At 3h 14m, the longest film to win Best Picture'],['Budget crisis','Went $100M+ over budget — studio nearly pulled the plug']]},
+      {name:'The Lord of the Rings: The Return of the King',aliases:['return of the king','rotk','lotr return','lotr'],primary:'11 Oscars',stats:[['Year','2003'],['Director','Peter Jackson'],['Notable','Won all 11 nominations']],extra:[['Perfect sweep','11 nominations, 11 wins — a first in Oscar history'],['New Zealand','All three LOTR films shot entirely in New Zealand'],['Production','7 years total from pre-production to final film release']]},
+      {name:'West Side Story',aliases:['west side story 1961'],primary:'10 Oscars',stats:[['Year','1961'],['Directors','Wise & Robbins'],['Genre','Musical Drama']],extra:[['Stage original','Based on the 1957 Broadway musical by Bernstein & Sondheim'],['Rita Moreno','Won Supporting Actress, reprised her role in the 2021 remake'],['Remake','Spielberg\'s 2021 version received 7 Academy Award nominations']]},
+      {name:'Gigi',aliases:['gigi 1958'],primary:'9 Oscars',stats:[['Year','1958'],['Director','Vincente Minnelli'],['Stars','Leslie Caron']],extra:[['Source material','Based on Colette\'s 1944 novella'],['Shot in Paris','One of the first Hollywood films to shoot entirely on location in France'],['Won all nominations','Won all 9 categories it was nominated for']]},
+    ],
+  },
+  {
+    id:'olympics', question:'Top 5: Most Olympic Gold Medals — Individuals', category:'Sports', emoji:'🥇',
+    pool:['Michael Phelps','Larisa Latynina','Paavo Nurmi','Mark Spitz','Carl Lewis','Usain Bolt','Nadia Comaneci','Simone Biles','Katie Ledecky','Ryan Lochte','Ian Thorpe','Jesse Owens','Marit Bjørgen','Ole Einar Bjørndalen','Birgit Fischer','Eric Heiden','Florence Griffith-Joyner','Al Oerter','Matt Biondi','Caeleb Dressel','Greg Louganis','Edwin Moses','Allyson Felix','Gail Devers'],
+    answers:[
+      {name:'Michael Phelps',aliases:['phelps','the baltimore bullet'],primary:'23 gold medals',stats:[['Sport','Swimming'],['Total medals','28'],['Olympics','2000–2016']],extra:[['Butterfly technique','Revolutionized the underwater dolphin kick'],['Retirement & return','Retired in 2012, then came back to win 5 more golds in 2016'],['Most decorated','28 total medals — the most of any Olympian in history']]},
+      {name:'Larisa Latynina',aliases:['latynina'],primary:'9 gold medals',stats:[['Sport','Gymnastics'],['Country','Soviet Union'],['Olympics','1956–1964']],extra:[['Total medals','18 — held the all-time Olympic medal record for 48 years'],['Record broken by','Michael Phelps surpassed her in 2012 London'],['Events','Competed on floor, beam, vault, and uneven bars']]},
+      {name:'Paavo Nurmi',aliases:['nurmi','flying finn'],primary:'9 gold medals',stats:[['Sport','Long-distance Running'],['Country','Finland'],['Olympics','1920–1928']],extra:[['1924 Paris','Won 5 gold medals in just 6 days'],['Pacing method','Raced with a stopwatch in hand to control his pace'],['World records','Set 22 world records across multiple distances']]},
+      {name:'Mark Spitz',aliases:['spitz'],primary:'9 gold medals',stats:[['Sport','Swimming'],['Country','United States'],['Famous for','7 golds in 1972']],extra:[['1972 Munich','Won all 7 events and set a world record in each'],['Mustache','Joked to Soviet team it reduced drag and helped him swim faster'],['Record held','His 7-gold haul stood as the single-Games record for 36 years']]},
+      {name:'Carl Lewis',aliases:['lewis'],primary:'9 gold medals',stats:[['Sport','Track & Field'],['Country','United States'],['Olympics','1984–1996']],extra:[['1984 LA','Won 4 golds — matched Jesse Owens\' iconic 1936 performance'],['Long jump','Won 9 consecutive World Championship long jump golds'],['Longevity','Won gold medals across 4 consecutive Olympic Games']]},
+    ],
+  },
+  {
+    id:'animated', question:'Top 5: Highest-Grossing Animated Films', category:'Movies', emoji:'🎞️',
+    pool:['The Lion King','Frozen II','The Super Mario Bros. Movie','Frozen','Incredibles 2','Minions','Toy Story 4','Finding Dory','Zootopia','Despicable Me 3','Minions: The Rise of Gru','Shrek 2','Shrek','Finding Nemo','Inside Out','Coco','Moana','Encanto','Toy Story 3','How to Train Your Dragon','Kung Fu Panda','Brave','Tangled','Ratatouille','WALL-E','Up','Luca','Soul','Elemental','Wish'],
+    answers:[
+      {name:'The Lion King',aliases:['lion king','lion king 2019'],primary:'$1.663 billion',stats:[['Year','2019'],['Studio','Disney'],['Style','Photorealistic CGI']],extra:[['Original 1994','The animated original grossed $763M and is a top-10 animated film'],['Score','Hans Zimmer composed the score; Elton John wrote the songs'],['Circle of Life','Opening sequence became iconic — no dialogue for the first 3 minutes']]},
+      {name:'Frozen II',aliases:['frozen 2','frozen two'],primary:'$1.450 billion',stats:[['Year','2019'],['Studio','Disney'],['Sequel to','Frozen (2013)']],extra:[['Into the Unknown','Nominated for Best Original Song at the Oscars'],['6-year gap','Released 6 years after the original Frozen'],['Budget','~$150M production budget']]},
+      {name:'The Super Mario Bros. Movie',aliases:['mario movie','super mario movie','mario bros movie','super mario bros'],primary:'$1.362 billion',stats:[['Year','2023'],['Studio','Illumination / Nintendo'],['Voice','Chris Pratt']],extra:[['Bowser','Jack Black wrote and performed "Peaches" himself'],['Easter eggs','Dozens of game references hidden throughout the film'],['Sequel','Confirmed for 2026 release']]},
+      {name:'Frozen',aliases:['frozen 2013'],primary:'$1.290 billion',stats:[['Year','2013'],['Studio','Disney'],['Hit Song','Let It Go']],extra:[['Based on','The Snow Queen fairy tale by H.C. Andersen (1844)'],['Let It Go','Won the Academy Award for Best Original Song'],['Elsa origin','The character was originally written as a villain']]},
+      {name:'Incredibles 2',aliases:['the incredibles 2','incredibles two'],primary:'$1.243 billion',stats:[['Year','2018'],['Studio','Pixar / Disney'],['Director','Brad Bird']],extra:[['14-year gap','The longest gap between any two Pixar sequels'],['Opening weekend','$182.7M — a Pixar opening weekend record at the time'],['Perspective shift','Bob Parr (Mr. Incredible) becomes the stay-at-home dad']]},
+    ],
+  },
+  {
+    id:'spotify', question:'Top 5: Most Streamed Songs on Spotify', category:'Music', emoji:'🎧',
+    pool:['Blinding Lights','Shape of You','Someone You Loved','Sunflower','Dance Monkey','rockstar','One Dance','Closer','Thinking Out Loud','Perfect','Cheap Thrills','Photograph','Don\'t Start Now','Levitating','Stay','As It Was','Heat Waves','Bad Guy','Watermelon Sugar','Dynamite','Butter','Peaches','Industry Baby','Montero','Good 4 U','Drivers License','Happier','Señorita','Beautiful People','Circles','Mood','Save Your Tears','Rolling in the Deep','Hello','Someone Like You','Shallow','Old Town Road','God\'s Plan'],
+    answers:[
+      {name:'Blinding Lights',aliases:['blinding lights weeknd','the weeknd blinding'],primary:'5.1B streams',stats:[['Artist','The Weeknd'],['Year','2019'],['Album','After Hours']],extra:[['Billboard record','Spent 57 consecutive weeks in the top 10 — longest ever'],['80s influence','Full retro-synth sound, no modern trap elements'],['Chart milestone','Returned to #1 on Hot 100 multiple times across 2020-2021']]},
+      {name:'Shape of You',aliases:['shape of you ed sheeran','shape of you sheeran'],primary:'4.6B streams',stats:[['Artist','Ed Sheeran'],['Year','2017'],['Album','÷ (Divide)']],extra:[['Written in 45 min','Ed wrote it for another artist but kept it'],['Genre surprise','Tropical house and dancehall — unusual for Sheeran'],['UK record','Longest-charting single in UK chart history (2017)']]},
+      {name:'Someone You Loved',aliases:['someone you loved lewis capaldi','lewis capaldi'],primary:'3.8B streams',stats:[['Artist','Lewis Capaldi'],['Year','2018'],['Album','Divinely Uninspired...']],extra:[['Grammy','Won 2020 Grammy for Best Pop Solo Performance'],['Dedicated to','His late friend Sophie and his grandmother'],['UK #1','Spent 7 consecutive weeks at #1 in the UK']]},
+      {name:'Sunflower',aliases:['sunflower post malone','post malone sunflower'],primary:'3.7B streams',stats:[['Artists','Post Malone & Swae Lee'],['Year','2018'],['From','Spider-Man: Into the Spider-Verse']],extra:[['Re-charted','Re-entered charts when each Spider-Verse sequel released'],['Swae Lee\'s hook','The falsetto was added late in production and made the song'],['Film tie-in','Only song to be written specifically for the Spider-Verse universe']]},
+      {name:'Dance Monkey',aliases:['dance monkey tones and i','tones and i dance'],primary:'3.5B streams',stats:[['Artist','Tones and I'],['Year','2019'],['Origin','Australia']],extra:[['Pre-fame','Tones and I (Toni Watson) was busking in Byron Bay when discovered'],['Age at release','Was 22 years old, signed no major label deal'],['UK dominance','Spent 10 consecutive weeks at #1 in the UK']]},
+    ],
+  },
+  {
+    id:'instagram', question:'Top 5: Most Followed People on Instagram', category:'Social Media', emoji:'📸',
+    pool:['Cristiano Ronaldo','Lionel Messi','Selena Gomez','Kylie Jenner','Dwayne Johnson','Ariana Grande','Kim Kardashian','Beyoncé','Khloe Kardashian','Kendall Jenner','Justin Bieber','Taylor Swift','Neymar Jr','Katy Perry','Jennifer Lopez','Virat Kohli','Cardi B','LeBron James','Miley Cyrus','Rihanna','Billie Eilish','Shakira','Zendaya','Priyanka Chopra','Kevin Hart','Demi Lovato','Vin Diesel','Will Smith','Drake','Nicki Minaj','Chris Brown','Eminem'],
+    answers:[
+      {name:'Cristiano Ronaldo',aliases:['ronaldo','cr7','cristiano'],primary:'~660M followers',stats:[['Sport','Soccer'],['Handle','@cristiano'],['Country','Portugal']],extra:[['Post earnings','Estimated ~$3.5M per sponsored post'],['First to 600M','Crossed the milestone in 2023'],['Most followed man','More followers than any other individual on Earth']]},
+      {name:'Lionel Messi',aliases:['messi','leo messi','leo'],primary:'~520M followers',stats:[['Sport','Soccer'],['Handle','@leomessi'],['Country','Argentina']],extra:[['Most liked post','World Cup celebration photo — 75M+ likes (2nd most ever)'],['Late to IG','Joined in 2016 when Ronaldo already had 100M+ followers'],['2022 WC post','Briefly held the most-liked post record after Qatar win']]},
+      {name:'Selena Gomez',aliases:['selena','gomez'],primary:'~430M followers',stats:[['Profession','Singer / Actress'],['Handle','@selenagomez'],['Known for','Only Murders in the Building']],extra:[['First to 100M','She was the first person to reach 100M followers on Instagram (2016)'],['Took a break','Stepped away from social media in 2017 after kidney transplant'],['Rare Beauty','Launched her makeup brand in 2020, partially to redefine beauty standards']]},
+      {name:'Kylie Jenner',aliases:['kylie'],primary:'~400M followers',stats:[['Profession','Entrepreneur'],['Handle','@kyliejenner'],['Known for','Kylie Cosmetics']],extra:[['Stormi reveal','Baby announcement post got 18M likes in 24 hours'],['Forbes youngest','Named youngest self-made billionaire at 21 (disputed)'],['Lip kits','First Kylie Cosmetics drop sold out in under a minute']]},
+      {name:'Dwayne Johnson',aliases:['the rock','rock','dwayne'],primary:'~395M followers',stats:[['Profession','Actor / Former Wrestler'],['Handle','@therock'],['Known for','WWE, Fast & Furious']],extra:[['4AM workouts','Viral "Iron Paradise" gym posts at 4 AM built his brand'],['Cheat meals','Sunday cheat meals became a hugely followed tradition'],['Tequila brand','@TeremanaTV posts woven into personal feed as lifestyle branding']]},
+    ],
+  },
+  {
+    id:'slams', question:"Top 5: Men's Grand Slam Singles Titles", category:'Sports', emoji:'🎾',
+    pool:['Novak Djokovic','Rafael Nadal','Roger Federer','Pete Sampras','Bjorn Borg','Rod Laver','Roy Emerson','Jimmy Connors','Ivan Lendl','John McEnroe','Andre Agassi','Stefan Edberg','Boris Becker','Carlos Alcaraz','Daniil Medvedev','Jannik Sinner','Andy Murray','Stan Wawrinka','Mats Wilander','Patrick Rafter','Lleyton Hewitt','Juan Martin del Potro','Dominic Thiem','Arthur Ashe','Jim Courier','Thomas Muster','Michael Chang','Goran Ivanisevic'],
+    answers:[
+      {name:'Novak Djokovic',aliases:['djokovic','nole','djoko'],primary:'24 titles',stats:[['Country','Serbia'],['First Slam','2008 Australian Open'],['Weeks at #1','400+ (all-time record)']],extra:[['Australian Open','10 titles — the most by any player at a single Slam'],['Career Slam','Won all 4 Grand Slams at least once'],['2023 season','Won 3 of 4 Slams at age 36']]},
+      {name:'Rafael Nadal',aliases:['nadal','rafa','the king of clay'],primary:'22 titles',stats:[['Country','Spain'],['Roland Garros','14 titles'],['Retired','2024']],extra:[['Roland Garros record','112-4 career record on clay courts there'],['Topspin','Forehand generates 2,600–4,900 RPM — most in tennis history'],['Retirement','Announced 2024, ended career at Davis Cup Finals with Spain']]},
+      {name:'Roger Federer',aliases:['federer','fed','rf'],primary:'20 titles',stats:[['Country','Switzerland'],['Wimbledon','8 titles'],['Retired','2022']],extra:[['Career match wins','1,251 — the all-time tour record'],['Wimbledon finals','Reached 12 finals, lost only 4 (3 to Djokovic)'],['Style','Defined an era of all-court elegance and one-handed backhand']]},
+      {name:'Pete Sampras',aliases:['sampras','pistol pete'],primary:'14 titles',stats:[['Country','United States'],['Wimbledon','7 titles'],['Retired','2002']],extra:[['Year-end #1','Ranked world #1 for 6 consecutive year-ends (1993–1998)'],['US Open','Won 5 titles at Flushing Meadows'],['Serve','His toss-and-slam serve was the template for a generation']]},
+      {name:'Bjorn Borg',aliases:['borg','bjorn'],primary:'11 titles',stats:[['Country','Sweden'],['Roland Garros','6 titles'],['Retired','1983 (age 26)']],extra:[['Retired at 26','Left the game with 11 Slams — widely considered he could have reached 20+'],['RG + Wimbledon','Won both in the same year 3 times'],['Failed comeback','Returned in 1991 with a wooden racket, lost to a lower-ranked player']]},
+    ],
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  CALENDAR CONFIG
+// ═══════════════════════════════════════════════════════════════
+
+const EPOCH = '2026-05-28'; // question 1 = today, extends forward
+
+function dateStr(d)        { return d.toISOString().split('T')[0]; }
+function parseDate(s)      { return new Date(s+'T12:00:00'); }
+function offsetFromEpoch(s){ return Math.round((parseDate(s)-parseDate(EPOCH))/86400000); }
+function dateOfOffset(n)   { const d=parseDate(EPOCH); d.setDate(d.getDate()+n); return dateStr(d); }
+function questionIndex(s)  { return ((offsetFromEpoch(s) % QUESTIONS.length) + QUESTIONS.length) % QUESTIONS.length; }
+function fmtDate(s)        {
+  return parseDate(s).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+
+const todayStr = dateStr(new Date());
+let currentDate = todayStr;
+
+function getQuestion() { return QUESTIONS[questionIndex(currentDate)]; }
+
+// ═══════════════════════════════════════════════════════════════
+//  MATCHING
+// ═══════════════════════════════════════════════════════════════
+
+function norm(s) { return s.toLowerCase().replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ').trim(); }
+function matches(inp, ans) {
+  const i=norm(inp); if(i.length<2) return false;
+  const n=norm(ans.name), al=(ans.aliases||[]).map(norm);
+  if(n===i||al.includes(i)) return true;
+  if(i.length>=3&&(n.startsWith(i)||al.some(a=>a.startsWith(i)))) return true;
+  const iw=i.split(' ').filter(w=>w.length>0), nw=n.split(' ');
+  if(iw.length>=1&&iw.every(w=>nw.some(x=>x.startsWith(w)))) {
+    if(iw.length===1&&iw[0].length<4) return false; return true;
+  }
+  return false;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════
+
+const SK = d => 'top5test-'+d;
+function blank(q) { return {qid:q.id,revealed:[],wrong:[],lives:3,status:'playing'}; }
+function loadState(q) {
+  try{const r=localStorage.getItem(SK(currentDate));if(r){const s=JSON.parse(r);if(s.qid===q.id)return s;}}catch(e){}
+  return blank(q);
+}
+function save() { try{localStorage.setItem(SK(currentDate),JSON.stringify(state));}catch(e){} }
+let state = loadState(getQuestion());
+
+// ═══════════════════════════════════════════════════════════════
+//  MAP
+// ═══════════════════════════════════════════════════════════════
+
+const RIVER_PATHS = {
+  // Nile: Lake Victoria → Khartoum S-curve → Aswan → Cairo → Mediterranean
+  nile: [[0.0,33.1],[2.3,31.5],[3.6,32.1],[5.0,31.6],[9.5,31.7],[13.5,32.5],[15.6,32.5],[17.7,33.9],[19.8,30.4],[21.8,31.4],[23.0,32.4],[24.1,32.9],[25.7,32.6],[27.2,31.1],[30.1,31.2],[31.5,30.4]],
+  // Amazon: Andes headwaters (Ucayali) → Iquitos → Manaus → Belém
+  amazon: [[-15.5,-71.4],[-10.0,-74.0],[-5.5,-75.5],[-3.75,-73.25],[-3.3,-70.0],[-3.3,-65.0],[-3.1,-60.0],[-2.4,-54.7],[-1.5,-48.5]],
+  // Yangtze: Tibetan Plateau → Tiger Leaping Gorge → Chongqing → Three Gorges → Wuhan → Shanghai
+  yangtze: [[33.5,91.8],[32.0,96.5],[27.0,100.2],[28.8,104.6],[29.6,106.5],[30.7,111.3],[30.4,114.3],[31.6,117.2],[32.1,118.8],[31.3,121.5]],
+  // Mississippi: Lake Itasca → Minneapolis → St Louis → Memphis → New Orleans → Gulf
+  mississippi: [[47.2,-95.2],[44.9,-93.2],[43.5,-91.2],[40.6,-91.3],[38.6,-90.2],[37.0,-89.2],[35.1,-90.0],[32.3,-90.9],[30.0,-90.1],[29.0,-89.1]],
+  // Yenisei: Tuva source → Krasnoyarsk → Igarka → Dudinka → Kara Sea
+  yenisei: [[51.7,94.4],[54.0,91.5],[56.0,93.0],[58.5,92.2],[61.6,90.0],[65.8,87.9],[67.5,86.6],[69.4,86.2],[71.5,82.5],[73.0,80.0]],
+};
+
+let _map = null;
+
+window.openMap = function(lat, lng, label, zoom, style, pathKey) {
+  document.getElementById('mapLabel').textContent = label;
+  document.getElementById('mapModal').classList.add('open');
+  if (_map) { _map.remove(); _map = null; }
+  document.getElementById('mapLeaflet').innerHTML = '';
+  setTimeout(() => {
+    const hasPath = !!(pathKey && RIVER_PATHS[pathKey]);
+    _map = hasPath
+      ? L.map('mapLeaflet', { zoomControl: true, attributionControl: true })
+      : L.map('mapLeaflet', { zoomControl: true, attributionControl: true }).setView([lat, lng], zoom || 8);
+    const tileUrl = style === 'terrain'
+      ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+      : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+    L.tileLayer(tileUrl, {
+      maxZoom: 19, subdomains: 'abcd',
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com">CARTO</a>'
+    }).addTo(_map);
+    if (hasPath) {
+      const poly = L.polyline(RIVER_PATHS[pathKey], { color: '#4AADEE', weight: 3.5, opacity: 0.85 }).addTo(_map);
+      _map.fitBounds(poly.getBounds(), { padding: [40, 40] });
+    }
+    const icon = L.divIcon({ html: '<div class="map-pin"></div>', className: '', iconSize:[14,14], iconAnchor:[7,7], popupAnchor:[0,-12] });
+    L.marker([lat, lng], {icon}).addTo(_map).bindPopup(label.split('·')[0].trim()).openPopup();
+  }, 60);
+};
+
+window.closeMap = function() {
+  document.getElementById('mapModal').classList.remove('open');
+};
+
+// ── mountain elevation profile (single mountain, custom silhouette) ─
+function mountainProfileSVG(selectedName) {
+  // Smooth bezier silhouettes — each mountain has a distinct character
+  // W=520 H=310, baseline=278, summit ≈ y=42. Paths: left-base → up left slope → peak → down right → right-base
+  const PEAKS = {
+    'Mount Everest': { h:8849, px:161,
+      // Long gradual West Ridge left, steep SE Ridge right, shoulder kink ~7900m
+      body:'M 0,278 L 38,272 L 70,262 L 96,248 L 116,232 L 130,214 L 140,194 L 147,172 L 150,150 L 148,138 L 154,124 L 156,104 L 158,82 L 159,62 L 160,48 L 161,42 L 165,56 L 170,74 L 177,96 L 183,120 L 181,132 L 188,118 L 197,140 L 213,164 L 232,184 L 256,202 L 284,218 L 316,232 L 354,246 L 396,257 L 440,266 L 486,273 L 520,278 Z',
+      snow:'M 157,64 L 161,42 L 165,56 L 170,74 L 177,96 L 163,102 L 150,84 Z',
+    },
+    'K2': { h:8611, px:217,
+      // Near-symmetric steep pyramid, slight right lean, angular flanks
+      body:'M 0,278 L 44,272 L 86,260 L 122,244 L 150,224 L 170,202 L 184,178 L 194,154 L 200,130 L 204,108 L 207,88 L 209,70 L 211,56 L 213,46 L 215,42 L 219,52 L 223,66 L 227,84 L 232,106 L 238,130 L 247,156 L 260,180 L 276,202 L 298,222 L 326,240 L 360,254 L 400,265 L 446,272 L 492,277 L 520,278 Z',
+      snow:'M 209,60 L 215,42 L 219,52 L 223,66 L 227,84 L 217,90 L 206,74 Z',
+    },
+    'Kangchenjunga': { h:8586, px:134,
+      // Wide massif, multiple crags on ridge, secondary visible sub-peak right of main
+      body:'M 0,278 L 28,274 L 54,266 L 78,254 L 98,238 L 112,220 L 120,202 L 125,182 L 127,162 L 128,140 L 129,118 L 130,94 L 131,72 L 132,56 L 133,46 L 134,42 L 138,56 L 142,72 L 139,84 L 145,74 L 150,88 L 154,110 L 158,134 L 164,158 L 173,180 L 186,202 L 204,220 L 228,236 L 258,250 L 294,261 L 336,269 L 384,274 L 436,277 L 490,278 L 520,278 Z',
+      snow:'M 130,60 L 134,42 L 138,56 L 142,72 L 139,84 L 132,88 L 124,70 Z',
+    },
+    'Lhotse': { h:8516, px:108,
+      // Nearly vertical south face — steepest major face on earth, long gentle north side
+      body:'M 0,278 L 22,276 L 44,272 L 62,264 L 76,252 L 86,236 L 92,218 L 96,198 L 99,176 L 101,154 L 103,130 L 104,106 L 105,82 L 106,60 L 107,46 L 108,42 L 114,60 L 121,82 L 130,108 L 141,136 L 154,162 L 170,186 L 190,208 L 215,228 L 246,245 L 283,258 L 326,268 L 374,274 L 426,277 L 480,278 L 520,278 Z',
+      snow:'M 106,58 L 108,42 L 114,60 L 121,82 L 130,108 L 114,112 L 101,90 Z',
+    },
+    'Makalu': { h:8485, px:237,
+      // Isolated narrow obelisk — both flanks equally steep, sharpest peak of the five
+      body:'M 0,278 L 56,272 L 106,258 L 148,240 L 178,218 L 196,194 L 208,170 L 216,146 L 221,122 L 224,100 L 226,80 L 228,62 L 230,50 L 232,44 L 234,42 L 236,44 L 238,50 L 241,62 L 244,80 L 248,102 L 254,126 L 263,150 L 276,174 L 293,196 L 316,216 L 345,234 L 380,249 L 420,260 L 466,269 L 510,275 L 520,278 Z',
+      snow:'M 228,58 L 234,42 L 236,44 L 238,50 L 241,62 L 244,80 L 234,86 L 225,70 Z',
+    },
+  };
+
+  const peak = PEAKS[selectedName];
+  if (!peak) return '<svg></svg>';
+  const W=520, H=310, baseline=278, peakY=42, pxH=baseline-peakY;
+  const gid = 'mg' + selectedName.replace(/\W/g,'');
+  const els = [];
+
+  els.push(`<defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#5A7AAA"/><stop offset="45%" stop-color="#2E4E7A"/><stop offset="100%" stop-color="#0E1E30"/>
+  </linearGradient></defs>`);
+
+  for (const alt of [2000,4000,6000,8000]) {
+    const gy = (baseline - (alt/peak.h)*pxH).toFixed(1);
+    els.push(`<line x1="0" y1="${gy}" x2="${W}" y2="${gy}" stroke="#182840" stroke-width="1" stroke-dasharray="5,9"/>`);
+    els.push(`<text x="8" y="${(parseFloat(gy)-3).toFixed(1)}" font-family="monospace" font-size="8" fill="#243858">${alt.toLocaleString()}m</text>`);
+  }
+
+  els.push(`<path d="${peak.body}" fill="url(#${gid})" stroke="#3A6090" stroke-width="1.5" stroke-linejoin="round"/>`);
+  els.push(`<path d="${peak.snow}" fill="rgba(225,235,252,0.94)" stroke="rgba(255,255,255,0.45)" stroke-width="0.5"/>`);
+
+  const lx = Math.min(peak.px+10, W-88);
+  els.push(`<line x1="${peak.px}" y1="${peakY}" x2="${peak.px}" y2="${baseline}" stroke="#C4A44A" stroke-width="1" stroke-dasharray="4,3" opacity="0.65"/>`);
+  els.push(`<text x="${lx}" y="${peakY-6}" font-family="monospace" font-size="12" fill="#C4A44A" font-weight="bold">${peak.h.toLocaleString()}m</text>`);
+
+  els.push(`<line x1="0" y1="${baseline}" x2="${W}" y2="${baseline}" stroke="#2C4068" stroke-width="1.5"/>`);
+  els.push(`<text x="8" y="${baseline-4}" font-family="monospace" font-size="7" fill="#2C4068">SEA LEVEL</text>`);
+  els.push(`<text x="${W/2}" y="${H-8}" text-anchor="middle" font-family="monospace" font-size="13" fill="#4E8EC4" font-weight="bold" letter-spacing="2">${selectedName.toUpperCase()}</text>`);
+
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;background:#06090F;display:block;">${els.join('')}</svg>`;
+}
+
+window.openMountainViz = function(ans) {
+  document.getElementById('mapLabel').textContent = `${ans.name}  ·  ${ans.primary}`;
+  if (_map) { _map.remove(); _map = null; }
+  document.getElementById('mapLeaflet').innerHTML = mountainProfileSVG(ans.name);
+  document.getElementById('mapModal').classList.add('open');
+};
+
+// ── tile click handler ──────────────────────────────────────────
+window.tileClick = function(ansIdx) {
+  const q = getQuestion(), ans = q.answers[ansIdx];
+  if (ans.mapStyle === 'terrain') {
+    openMountainViz(ans);
+  } else if (ans.coords) {
+    const label = ans.mapPath ? `${ans.name}  ·  ${ans.primary}` : ans.name;
+    openMap(ans.coords[0], ans.coords[1], label, ans.mapZoom||8, ans.mapStyle||'dark', ans.mapPath||null);
+  } else {
+    openDetail(ansIdx);
+  }
+};
+
+// ── detail card modal ───────────────────────────────────────────
+window.openDetail = function(ansIdx) {
+  const q = getQuestion(), ans = q.answers[ansIdx];
+  const statsHTML = (ans.stats || []).map(([l,v]) =>
+    `<div class="detail-stat"><span class="detail-lbl">${l}</span><span class="detail-val">${v}</span></div>`
+  ).join('');
+  const extrasHTML = (ans.extra || []).length
+    ? `<div class="detail-extras">${(ans.extra).map(([t,b]) =>
+        `<div class="detail-extra"><div class="detail-extra-title">${t}</div><div class="detail-extra-body">${b}</div></div>`
+      ).join('')}</div>`
+    : '';
+  const mapBtnHTML = ans.coords
+    ? `<button class="map-btn" onclick="closeDetail();openMap(${ans.coords[0]},${ans.coords[1]},'${ans.name}',${ans.mapZoom||8},'${ans.mapStyle||'dark'}',${ans.mapPath?`'${ans.mapPath}'`:null})">🗺 VIEW MAP</button>`
+    : '';
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-category">${q.category}</div>
+    <div class="detail-rank">#${ansIdx+1} OF TOP 5</div>
+    <div class="detail-name">${ans.name}</div>
+    <div class="detail-primary">${ans.primary}</div>
+    <div class="detail-divider"></div>
+    <div class="detail-stats">${statsHTML}</div>
+    ${extrasHTML}
+    ${mapBtnHTML}
+  `;
+  document.getElementById('detailModal').classList.add('open');
+};
+window.closeDetail = function() {
+  document.getElementById('detailModal').classList.remove('open');
+};
+
+// ── result modal ────────────────────────────────────────────────
+let _countdownInterval = null;
+
+function buildShareText() {
+  const q = getQuestion(), won = state.status === 'won';
+  const slots = q.answers.map((_,i) => state.revealed.includes(i) ? '🟩' : '⬛').join('');
+  const livesStr = Array.from({length:3}, (_,i) => i < state.lives ? q.emoji : '💀').join('');
+  return `TOP 5 · ${fmtDate(currentDate)}\n${q.question}\n\n${slots}\n${livesStr}\n\n${won ? 'Got all 5! '+q.emoji : 'Got '+state.revealed.length+'/5 💀'}`;
+}
+
+function updateCountdown() {
+  const el = document.getElementById('rmCountdown'); if (!el) return;
+  const now = new Date();
+  const etStr = now.toLocaleString('en-US', {timeZone:'America/New_York', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false});
+  const [h, m, s] = etStr.split(':').map(Number);
+  const secs = (24 * 3600) - (h * 3600 + m * 60 + s);
+  el.textContent = `${String(Math.floor(secs/3600)).padStart(2,'0')}:${String(Math.floor((secs%3600)/60)).padStart(2,'0')}:${String(secs%60).padStart(2,'0')}`;
+}
+
+window.openResult = function() {
+  const q = getQuestion(), won = state.status === 'won';
+  window._shareText = buildShareText();
+  document.getElementById('rmIcon').textContent = won ? '🎉' : '💀';
+  const titleEl = document.getElementById('rmTitle');
+  titleEl.textContent = won ? 'YOU GOT ALL 5!' : 'BETTER LUCK NEXT TIME';
+  titleEl.className = 'rm-title ' + (won ? 'win' : 'lose');
+  document.getElementById('rmSub').textContent = won
+    ? (state.wrong.length === 0 ? 'Perfect — no wrong guesses!' : `${state.wrong.length} wrong guess${state.wrong.length !== 1 ? 'es' : ''}`)
+    : `Got ${state.revealed.length} out of 5`;
+  document.getElementById('rmBoard').innerHTML = q.answers.map((ans, i) => {
+    const got = state.revealed.includes(i);
+    return `<div class="rm-row ${got?'rm-got':'rm-miss'}">
+      <span class="rm-rank">#${i+1}</span>
+      <span class="rm-name">${got ? ans.name : '???'}</span>
+      <span class="rm-check">${got ? '✓' : '✗'}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('rmPrev').disabled = false;
+  document.getElementById('rmNext').disabled = false;
+  document.getElementById('resultModal').classList.add('open');
+  updateCountdown();
+  if (_countdownInterval) clearInterval(_countdownInterval);
+  _countdownInterval = setInterval(updateCountdown, 1000);
+};
+
+window.closeResult = function() {
+  document.getElementById('resultModal').classList.remove('open');
+  if (_countdownInterval) { clearInterval(_countdownInterval); _countdownInterval = null; }
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  THEME
+// ═══════════════════════════════════════════════════════════════
+
+const THEME_LABELS = { gameboy:'GAMEBOY', deepnavy:'DEEP NAVY', steam:'STEAM', xbox:'XBOX 360', switch:'SWITCH', nexgen:'NEXGEN' };
+let currentTheme = localStorage.getItem('top5-theme')||'gameboy';
+if(!THEME_LABELS[currentTheme]) currentTheme = 'gameboy';
+document.body.dataset.theme = currentTheme;
+document.getElementById('themeLabel').textContent = THEME_LABELS[currentTheme];
+document.querySelectorAll('.theme-option').forEach(el => el.classList.toggle('active', el.dataset.t===currentTheme));
+
+window.toggleThemeMenu = function(e) {
+  e.stopPropagation();
+  document.getElementById('themeMenu').classList.toggle('open');
+};
+window.setTheme = function(t) {
+  currentTheme = t;
+  document.body.dataset.theme = t;
+  localStorage.setItem('top5-theme',t);
+  document.getElementById('themeLabel').textContent = THEME_LABELS[t];
+  document.getElementById('themeMenu').classList.remove('open');
+  document.querySelectorAll('.theme-option').forEach(el=>el.classList.toggle('active',el.dataset.t===t));
+};
+document.addEventListener('click', ()=>document.getElementById('themeMenu').classList.remove('open'));
+
+// ═══════════════════════════════════════════════════════════════
+//  SUGGESTIONS
+// ═══════════════════════════════════════════════════════════════
+
+let activeIdx = -1;
+function getSugg(val, q) {
+  if(!val||val.length<2) return [];
+  const n=norm(val);
+  return (q.pool||[]).filter(x=>norm(x).includes(n)).sort((a,b)=>(norm(a).startsWith(n)?0:1)-(norm(b).startsWith(n)?0:1)||a.localeCompare(b)).slice(0,6);
+}
+function hl(name, q) {
+  const i=name.toLowerCase().indexOf(q.toLowerCase()); if(i<0) return name;
+  return name.slice(0,i)+'<span class="sugg-match">'+name.slice(i,i+q.length)+'</span>'+name.slice(i+q.length);
+}
+function showSugg(val, q) {
+  const box=document.getElementById('sugg'); if(!box) return;
+  const items=getSugg(val,q); activeIdx=-1;
+  if(!items.length){box.style.display='none';return;}
+  box.innerHTML=items.map((nm,i)=>`<div class="sugg-item" data-idx="${i}" data-name="${nm.replace(/"/g,'&quot;')}" onmousedown="pickSugg(event)">${hl(nm,val)}</div>`).join('');
+  box.style.display='block';
+}
+function hideSugg(){const b=document.getElementById('sugg');if(b)b.style.display='none';activeIdx=-1;}
+window.pickSugg = function(e){e.preventDefault();const nm=e.currentTarget.dataset.name;const inp=document.getElementById('gi');if(inp&&nm){inp.value=nm;hideSugg();doGuess(nm);}};
+
+// ═══════════════════════════════════════════════════════════════
+//  PARTIAL DOM UPDATES
+// ═══════════════════════════════════════════════════════════════
+
+function lifeHTML() {
+  const q=getQuestion();
+  return Array.from({length:3},(_,i)=>`<span class="life-icon${i<state.lives?'':' lost'}">${q.emoji}</span>`).join('');
+}
+function updateLives(){const el=document.getElementById('lives');if(el){el.innerHTML=lifeHTML();}}
+function updateWrong(){
+  const el=document.getElementById('wrong-wrap');if(!el)return;
+  el.innerHTML=state.wrong.length?`<div class="wrong-label">Wrong guesses</div><div class="wrong-chips">${state.wrong.map(g=>`<span class="wrong-chip">${g}</span>`).join('')}</div>`:'';
+}
+function updateBoard(){
+  const el=document.getElementById('board');if(!el)return;
+  const q=getQuestion();
+  el.innerHTML=q.answers.map((ans,i)=>{const got=state.revealed.includes(i),miss=state.status!=='playing'&&!got;return(got||miss)?slotRevHTML(i+1,ans,got,miss):slotHidHTML(i+1);}).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  HTML BUILDERS
+// ═══════════════════════════════════════════════════════════════
+
+function slotHidHTML(rank) {
+  return `<div class="slot-hidden"><span class="slot-rank">#${rank}</span><div style="flex:1;display:flex;gap:8px"><div class="slot-bar" style="width:${100+rank*20}px"></div><div class="slot-bar" style="width:68px;opacity:.45"></div></div></div>`;
+}
+function slotRevHTML(rank, ans, got, miss) {
+  const cls=got?'slot-revealed':'slot-missed';
+  const stats=ans.stats.map(([l,v])=>`<span class="slot-stat"><span class="slot-stat-lbl">${l}: </span><span class="slot-stat-val">${v}</span></span>`).join('');
+  return `<div class="${cls} slot-clickable" onclick="tileClick(${rank-1})"><div class="slot-inner"><span class="slot-rank-rev">#${rank}</span><div class="slot-content"><div class="slot-name-row"><span class="slot-name">${ans.name}</span><span class="slot-primary">${ans.primary}</span>${got?'<span class="slot-got-it">✓ GOT IT</span>':''}</div><div class="slot-stats">${stats}</div></div></div></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  FULL RENDER
+// ═══════════════════════════════════════════════════════════════
+
+function render() {
+  const q=getQuestion(), over=state.status!=='playing';
+  const boardHTML=q.answers.map((ans,i)=>{const got=state.revealed.includes(i),miss=over&&!got;return(got||miss)?slotRevHTML(i+1,ans,got,miss):slotHidHTML(i+1);}).join('');
+  const livesHtml=Array.from({length:3},(_,i)=>`<span class="life-icon${i<state.lives?'':' lost'}">${q.emoji}</span>`).join('');
+  const wrongHtml=state.wrong.length?`<div class="wrong-label">Wrong guesses</div><div class="wrong-chips">${state.wrong.map(g=>`<span class="wrong-chip">${g}</span>`).join('')}</div>`:'';
+
+  document.getElementById('app').innerHTML = `<div class="game">
+    <div class="header">
+      <h1 class="logo">TOP 5</h1>
+      <div class="header-clock" id="headerClock">--:--:--</div>
+      <div class="date-nav">
+        <button class="nav-btn" onclick="navDate(-1)">◀</button>
+        <span class="date-label">${fmtDate(currentDate)}</span>
+        <button class="nav-btn" onclick="navDate(1)">▶</button>
+      </div>
+    </div>
+    <div class="q-card">
+      <div class="q-category">${q.category}</div>
+      <div class="q-text">${q.question}</div>
+    </div>
+    ${!over?`<div class="lives-row"><span class="lives-label">LIVES:</span><div class="lives-icons" id="lives">${livesHtml}</div></div>`:''}
+    <div class="answer-board" id="board">${boardHTML}</div>
+    ${!over?`<div class="input-wrap"><form class="guess-form" id="gf" onsubmit="return false"><input id="gi" class="guess-input" type="text" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Type a name…"/><button class="guess-btn" type="submit">GUESS</button></form><div class="suggestions" id="sugg"></div></div><div class="feedback" id="fb"></div>`:''}
+    <div id="wrong-wrap">${wrongHtml}</div>
+    ${over?`<button class="show-result-btn" onclick="openResult()">📊 VIEW RESULTS</button>`:''}
+    <div class="replay-wrap"><button class="replay-btn" onclick="replayConfirm()">↺ RESET DAY</button></div>
+    <div class="footer">TOP 5 · Daily Trivia</div>
+  </div>`;
+
+  if(!over) wireInput(q);
+}
+
+function wireInput(q) {
+  const form=document.getElementById('gf'), inp=document.getElementById('gi');
+  if(!form||!inp) return;
+  inp.focus();
+  inp.addEventListener('input',()=>showSugg(inp.value.trim(),q));
+  inp.addEventListener('blur',()=>setTimeout(hideSugg,150));
+  inp.addEventListener('keydown',e=>{
+    const box=document.getElementById('sugg'), items=box?box.querySelectorAll('.sugg-item'):[];
+    if(e.key==='ArrowDown'){e.preventDefault();activeIdx=Math.min(activeIdx+1,items.length-1);items.forEach((el,i)=>el.classList.toggle('active',i===activeIdx));}
+    else if(e.key==='ArrowUp'){e.preventDefault();activeIdx=Math.max(activeIdx-1,-1);items.forEach((el,i)=>el.classList.toggle('active',i===activeIdx));}
+    else if(e.key==='Enter'){e.preventDefault();if(activeIdx>=0&&items[activeIdx]){const n=items[activeIdx].dataset.name;inp.value=n;hideSugg();doGuess(n);}else if(inp.value.trim())doGuess(inp.value.trim());}
+    else if(e.key==='Escape')hideSugg();
+  });
+  form.addEventListener('submit',()=>{if(inp.value.trim())doGuess(inp.value.trim());});
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  GUESS
+// ═══════════════════════════════════════════════════════════════
+
+function fb(msg, type) {
+  const el=document.getElementById('fb'); if(!el) return;
+  el.textContent=msg; el.className='feedback '+type+' show';
+  setTimeout(()=>{if(el){el.textContent='';el.className='feedback';}},1800);
+}
+function shake(){const inp=document.getElementById('gi');if(!inp)return;inp.classList.add('shake');setTimeout(()=>inp.classList.remove('shake'),500);}
+
+function doGuess(raw) {
+  const q=getQuestion(); if(state.status!=='playing') return;
+  hideSugg();
+  if(state.wrong.some(g=>g.toLowerCase()===raw.toLowerCase())){fb('ALREADY GUESSED THAT','dupe');shake();return;}
+  if(state.revealed.some(idx=>matches(raw,q.answers[idx]))){fb('ALREADY FOUND THAT ONE','dupe');shake();return;}
+  const mi=q.answers.findIndex((ans,idx)=>!state.revealed.includes(idx)&&matches(raw,ans));
+  if(mi!==-1){
+    state.revealed=[...state.revealed,mi];
+    if(state.revealed.length===q.answers.length) state.status='won';
+    save();
+    if(state.status==='won'){render();setTimeout(openResult,350);return;}
+    updateBoard();
+    const inp=document.getElementById('gi'); if(inp){inp.value='';inp.focus();}
+  } else {
+    shake(); state.wrong=[...state.wrong,raw]; state.lives-=1; save(); updateLives();
+    if(state.lives===0){state.status='lost';save();render();setTimeout(openResult,350);return;}
+    updateWrong(); fb('NOT IN THE TOP 5!','wrong');
+    const inp=document.getElementById('gi'); if(inp){inp.value='';inp.focus();}
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  NAV / REPLAY / SHARE
+// ═══════════════════════════════════════════════════════════════
+
+window.navDate = function(dir) {
+  const next = offsetFromEpoch(currentDate) + dir;
+  currentDate = dateOfOffset(next); state = loadState(getQuestion()); render();
+};
+window.replayConfirm = function() {
+  if(!confirm('Reset this day and start over?')) return;
+  state=blank(getQuestion()); save(); render();
+};
+window.copyShare = async function() {
+  const txt = buildShareText();
+  try{await navigator.clipboard.writeText(txt);}
+  catch(e){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}
+  const btn=document.querySelector('.share-btn');
+  if(btn){const orig=btn.textContent;btn.textContent='✓ COPIED!';setTimeout(()=>{btn.textContent=orig;},2500);}
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+render();
+
+// live clock — ticks every second, survives re-renders
+function tickClock() {
+  const el = document.getElementById('headerClock'); if (!el) return;
+  const n = new Date();
+  el.textContent = `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
+}
+setInterval(tickClock, 1000);
+tickClock();
+</script>
+</body>
+</html>
