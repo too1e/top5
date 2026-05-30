@@ -251,7 +251,7 @@
     .guess-form { display: flex; gap: 8px; }
     .guess-input {
       flex: 1; padding: 12px 14px;
-      font-family: var(--font-body); font-size: 13px;
+      font-family: var(--font-body); font-size: 16px; /* 16px prevents iOS zoom */
       background: var(--input-bg); color: var(--text);
       border: var(--border); border-radius: var(--radius);
       outline: none; transition: border-color .15s, box-shadow .15s;
@@ -449,6 +449,22 @@
       transition: all .15s; font-family: var(--font-body);
     }
     .rm-close:hover { color: var(--text); border-color: var(--text-dim); }
+
+    /* ── CAREER STATS ──────────────────────────────────────────── */
+    .rm-stats { margin-bottom: 16px; }
+    .rm-stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 8px; }
+    .rm-stats-grid.two-col { grid-template-columns: repeat(2,1fr); }
+    .rm-stat-box { background: var(--surface2); border: var(--border); border-radius: var(--radius); padding: 10px 6px; text-align: center; }
+    .rm-stat-num { font-family: var(--font-pixel); font-size: 18px; color: var(--accent); display: block; margin-bottom: 4px; text-shadow: var(--glow-accent); line-height: 1; }
+    .rm-stat-lbl { font-family: var(--font-pixel); font-size: 6px; color: var(--text-dim); letter-spacing: 1px; display: block; line-height: 1.4; }
+    .rm-dist-label { font-family: var(--font-pixel); font-size: 7px; color: var(--text-dim); letter-spacing: 2px; margin: 12px 0 8px; text-align: left; }
+    .rm-dist-bars { display: flex; flex-direction: column; gap: 5px; }
+    .rm-dist-row { display: flex; align-items: center; gap: 8px; }
+    .rm-dist-n { font-family: var(--font-pixel); font-size: 7px; color: var(--text-dim); min-width: 14px; text-align: right; }
+    .rm-dist-bar-wrap { flex: 1; height: 14px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+    .rm-dist-bar { height: 100%; background: var(--accent); opacity: 0.6; border-radius: 2px; transition: width 0.6s ease; }
+    .rm-dist-bar.rm-dist-current { background: var(--correct-t); opacity: 1; }
+    .rm-dist-count { font-family: var(--font-pixel); font-size: 7px; color: var(--text-dim); min-width: 16px; text-align: left; }
     .rm-icon { font-size: 44px; margin-bottom: 12px; display: block; animation: popIn .4s ease-out; }
     .rm-title { font-family: var(--font-pixel); font-size: 11px; margin-bottom: 6px; letter-spacing: 1px; }
     .rm-title.win { color: var(--correct-t); text-shadow: var(--glow-correct); }
@@ -1095,6 +1111,7 @@
     <div class="rm-title" id="rmTitle"></div>
     <div class="rm-sub" id="rmSub"></div>
     <div class="rm-board" id="rmBoard"></div>
+    <div id="rmStats"></div>
     <div class="rm-divider"></div>
     <div class="rm-countdown-label">NEXT PUZZLE IN</div>
     <div class="rm-countdown" id="rmCountdown">--:--:--</div>
@@ -1412,6 +1429,99 @@ function save() { try{localStorage.setItem(SK(currentDate),JSON.stringify(state)
 let state = loadState(getQuestion());
 
 // ═══════════════════════════════════════════════════════════════
+//  PLAYER / CAREER STATS
+// ═══════════════════════════════════════════════════════════════
+
+function genId() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random()*16|0;
+    return (c==='x' ? r : (r&0x3|0x8)).toString(16);
+  });
+}
+
+const PLAYER_KEY = 'top5-player';
+
+function loadPlayer() {
+  try {
+    const p = JSON.parse(localStorage.getItem(PLAYER_KEY)||'null');
+    if (p && p.id) {
+      // ensure all fields exist (for old saves)
+      p.guessDistribution = p.guessDistribution||[0,0,0,0,0,0];
+      p.totalCorrect = p.totalCorrect||0;
+      return p;
+    }
+  } catch(e) {}
+  return {
+    id: genId(), created: todayStr,
+    playStreak:0, playStreakBest:0, playStreakLastDate:null,
+    winStreak:0,  winStreakBest:0,  winStreakLastDate:null,
+    gamesPlayed:0, gamesWon:0, totalCorrect:0,
+    guessDistribution:[0,0,0,0,0,0],
+    lastRecordedDate:null,
+  };
+}
+function savePlayer(p) { try{localStorage.setItem(PLAYER_KEY,JSON.stringify(p));}catch(e){} }
+
+let player = loadPlayer();
+
+function updateCareerStats(st, forDate) {
+  if (player.lastRecordedDate === forDate) return; // already recorded today
+  const p = {...player};
+  p.guessDistribution = [...(p.guessDistribution||[0,0,0,0,0,0])];
+  const won = st.status === 'won';
+  const correct = st.revealed.length;
+
+  p.gamesPlayed++;
+  if (won) p.gamesWon++;
+  p.totalCorrect += correct;
+  p.guessDistribution[correct] = (p.guessDistribution[correct]||0) + 1;
+
+  // compute yesterday string relative to forDate
+  const fd = new Date(forDate+'T12:00:00');
+  fd.setDate(fd.getDate()-1);
+  const yest = fd.toISOString().split('T')[0];
+
+  // play streak
+  if (p.playStreakLastDate === yest) { p.playStreak++; }
+  else if (p.playStreakLastDate === forDate) { /* same day, no change */ }
+  else { p.playStreak = 1; }
+  if (p.playStreakLastDate !== forDate) p.playStreakLastDate = forDate;
+  p.playStreakBest = Math.max(p.playStreakBest, p.playStreak);
+
+  // win streak
+  if (won) {
+    if (p.winStreakLastDate === yest) { p.winStreak++; }
+    else if (p.winStreakLastDate === forDate) { /* same day */ }
+    else { p.winStreak = 1; }
+    if (p.winStreakLastDate !== forDate) p.winStreakLastDate = forDate;
+    p.winStreakBest = Math.max(p.winStreakBest, p.winStreak);
+  } else {
+    p.winStreak = 0;
+  }
+
+  p.lastRecordedDate = forDate;
+  player = p;
+  savePlayer(p);
+}
+
+function buildStatsHTML(st) {
+  const p = player;
+  const winRate = p.gamesPlayed ? Math.round((p.gamesWon/p.gamesPlayed)*100) : 0;
+  return `<div class="rm-stats">
+    <div class="rm-stats-grid">
+      <div class="rm-stat-box"><span class="rm-stat-num">${p.gamesPlayed}</span><span class="rm-stat-lbl">PLAYED</span></div>
+      <div class="rm-stat-box"><span class="rm-stat-num">${winRate}%</span><span class="rm-stat-lbl">WIN RATE</span></div>
+      <div class="rm-stat-box"><span class="rm-stat-num">${p.playStreak}</span><span class="rm-stat-lbl">PLAY STREAK</span></div>
+      <div class="rm-stat-box"><span class="rm-stat-num">${p.winStreak}</span><span class="rm-stat-lbl">WIN STREAK</span></div>
+    </div>
+    <div class="rm-stats-grid two-col">
+      <div class="rm-stat-box"><span class="rm-stat-num">${p.playStreakBest}</span><span class="rm-stat-lbl">BEST PLAY STREAK</span></div>
+      <div class="rm-stat-box"><span class="rm-stat-num">${p.winStreakBest}</span><span class="rm-stat-lbl">BEST WIN STREAK</span></div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
 //  MAP
 // ═══════════════════════════════════════════════════════════════
 
@@ -1578,8 +1688,9 @@ let _countdownInterval = null;
 function buildShareText() {
   const q = getQuestion(), won = state.status === 'won';
   const slots = q.answers.map((_,i) => state.revealed.includes(i) ? '🟩' : '⬛').join('');
-  const livesStr = Array.from({length:3}, (_,i) => i < state.lives ? q.emoji : '💀').join('');
-  return `TOP 5 · ${fmtDate(currentDate)}\n${q.question}\n\n${slots}\n${livesStr}\n\n${won ? 'Got all 5! '+q.emoji : 'Got '+state.revealed.length+'/5 💀'}`;
+  const skulls = state.wrong.length ? '\n' + '💀'.repeat(state.wrong.length) : '';
+  const result = won ? 'Got all 5! 🏆' : `Got ${state.revealed.length}/5`;
+  return `TOP 5 · ${fmtDate(currentDate)}\n${q.question}\n\n${slots}${skulls}\n\n${result}\ntop5trivia.com`;
 }
 
 function updateCountdown() {
@@ -1593,6 +1704,8 @@ function updateCountdown() {
 
 window.openResult = function() {
   const q = getQuestion(), won = state.status === 'won';
+  // record stats before reading them for display
+  if (state.status !== 'playing') updateCareerStats(state, currentDate);
   window._shareText = buildShareText();
   document.getElementById('rmIcon').textContent = won ? '🎉' : '💀';
   const titleEl = document.getElementById('rmTitle');
@@ -1609,6 +1722,7 @@ window.openResult = function() {
       <span class="rm-check">${got ? '✓' : '✗'}</span>
     </div>`;
   }).join('');
+  document.getElementById('rmStats').innerHTML = buildStatsHTML(state);
   document.getElementById('rmPrev').disabled = false;
   document.getElementById('rmNext').disabled = false;
   document.getElementById('resultModal').classList.add('open');
@@ -1729,7 +1843,7 @@ function render() {
     </div>
     ${!over?`<div class="lives-row"><span class="lives-label">LIVES:</span><div class="lives-icons" id="lives">${livesHtml}</div></div>`:''}
     <div class="answer-board" id="board">${boardHTML}</div>
-    ${!over?`<div class="input-wrap"><form class="guess-form" id="gf" onsubmit="return false"><input id="gi" class="guess-input" type="text" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Type a name…"/><button class="guess-btn" type="submit">GUESS</button></form><div class="suggestions" id="sugg"></div></div><div class="feedback" id="fb"></div>`:''}
+    ${!over?`<div class="input-wrap"><form class="guess-form" id="gf" onsubmit="return false"><input id="gi" class="guess-input" type="text" autocomplete="new-password" autocorrect="off" autocapitalize="none" spellcheck="false" inputmode="search" name="top5guess" placeholder="Type a name…"/><button class="guess-btn" type="submit">GUESS</button></form><div class="suggestions" id="sugg"></div></div><div class="feedback" id="fb"></div>`:''}
     <div id="wrong-wrap">${wrongHtml}</div>
     ${over?`<button class="show-result-btn" onclick="openResult()">📊 VIEW RESULTS</button>`:''}
     <div class="replay-wrap"><button class="replay-btn" onclick="replayConfirm()">↺ RESET DAY</button></div>
