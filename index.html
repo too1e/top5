@@ -116,8 +116,9 @@
     @media (max-width: 479px) {
       .game { gap: 12px; }
       .logo        { font-size: clamp(32px, 11vw, 48px) !important; }
-      .theme-btn   { font-size: 9px; padding: 6px 10px; }
-      .theme-arrow { font-size: 11px; }
+      /* hide fixed theme selector; show inline one at bottom */
+      #themeSelect { display: none; }
+      .theme-inline { display: flex !important; }
       .q-card      { order: 1; }
       .input-wrap  { order: 2; }
       .lives-row   { order: 3; }
@@ -125,7 +126,11 @@
       #wrong-wrap  { order: 5; }
       .show-result-btn { order: 6; }
       .replay-wrap { order: 7; }
-      .footer      { order: 8; }
+      .theme-inline{ order: 8; }
+      .footer      { order: 9; }
+    }
+    .theme-inline {
+      display: none; justify-content: center; position: relative;
     }
     /* hide search input clear button (×) on WebKit */
     .guess-input[type="search"]::-webkit-search-cancel-button { display: none; }
@@ -567,13 +572,13 @@
     [data-theme="deepnavy"] .slot-bar { background:linear-gradient(90deg,var(--surface3) 0%,rgba(46,136,192,0.2) 100%); border-radius:8px; }
     [data-theme="deepnavy"] .guess-btn { background:linear-gradient(180deg,#3898D0 0%,#1E6898 100%); border:none; box-shadow:0 3px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.1); }
     [data-theme="deepnavy"] .guess-btn:hover:not(:disabled) { background:linear-gradient(180deg,#48A8E0 0%,#2878B0 100%); }
-    [data-theme="deepnavy"] .logo { font-size: clamp(22px, 5.5vw, 30px); letter-spacing: 6px; font-weight: 700; }
-    [data-theme="deepnavy"] .q-text { font-size: clamp(13px, 2.8vw, 16px); font-weight: 600; line-height: 1.6; letter-spacing: 0.2px; }
-    [data-theme="deepnavy"] .q-category { font-size: 9px; font-weight: 700; letter-spacing: 3px; }
-    [data-theme="deepnavy"] .guess-input { font-size: 16px; font-weight: 500; letter-spacing: 0.3px; }
-    [data-theme="deepnavy"] .slot-name { font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
-    [data-theme="deepnavy"] .slot-primary { font-size: 12px; font-weight: 500; }
-    [data-theme="deepnavy"] .slot-rank, [data-theme="deepnavy"] .slot-rank-rev { font-size: 12px; font-weight: 700; }
+    [data-theme="deepnavy"] .logo { font-size: clamp(24px, 6vw, 34px); letter-spacing: 6px; font-weight: 700; }
+    [data-theme="deepnavy"] .q-text { font-size: clamp(16px, 4vw, 20px); font-weight: 700; line-height: 1.5; letter-spacing: 0.2px; }
+    [data-theme="deepnavy"] .q-category { font-size: 11px; font-weight: 700; letter-spacing: 3px; }
+    [data-theme="deepnavy"] .guess-input { font-size: 16px; font-weight: 600; letter-spacing: 0.3px; }
+    [data-theme="deepnavy"] .slot-name { font-size: 16px; font-weight: 700; letter-spacing: 0.2px; }
+    [data-theme="deepnavy"] .slot-primary { font-size: 13px; font-weight: 500; }
+    [data-theme="deepnavy"] .slot-rank, [data-theme="deepnavy"] .slot-rank-rev { font-size: 14px; font-weight: 700; }
     /* GBA-style slide-up reveal */
     [data-theme="deepnavy"] .slot-revealed { box-shadow:0 3px 14px rgba(0,0,0,0.5),0 0 12px rgba(72,170,216,0.15); animation:gbaReveal 0.35s cubic-bezier(0.22,1,0.36,1); }
     @keyframes gbaReveal { from{opacity:0;transform:translateY(10px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
@@ -582,8 +587,8 @@
        MONO — CSS vars
        ══════════════════════════════════════════════════════════════ */
     [data-theme="chrome"] {
-      --font-pixel: 'Inter', system-ui, sans-serif;
-      --font-body:  'Inter', system-ui, sans-serif;
+      --font-pixel: 'Space Mono', monospace;
+      --font-body:  'Space Mono', monospace;
       --bg:            #0D0D0D;
       --surface:       #161616;
       --surface2:      #1E1E1E;
@@ -615,7 +620,12 @@
       --glow-correct:  none;
       --glow-btn:      none;
     }
-    [data-theme="chrome"] .slot-name { font-size: 15px; font-weight: 600; }
+    [data-theme="chrome"] .q-text { font-size: clamp(14px, 3.5vw, 18px); font-weight: 700; line-height: 1.6; }
+    [data-theme="chrome"] .q-category { font-size: 10px; font-weight: 700; letter-spacing: 3px; }
+    [data-theme="chrome"] .slot-name { font-size: 15px; font-weight: 700; }
+    [data-theme="chrome"] .slot-primary { font-size: 12px; }
+    [data-theme="chrome"] .slot-rank, [data-theme="chrome"] .slot-rank-rev { font-size: 13px; font-weight: 700; }
+    [data-theme="chrome"] .logo { font-size: clamp(24px, 6vw, 34px); letter-spacing: 4px; font-weight: 700; }
     [data-theme="chrome"] .q-card { background: #111111; border: 1px solid #222222; box-shadow: none; }
     [data-theme="chrome"] .slot-bar { background: #1E1E1E; border-radius: 4px; }
     [data-theme="chrome"] .slot-hidden { border: 1px solid #222222; box-shadow: none; }
@@ -1396,10 +1406,17 @@ window.setTheme = function(t) {
   document.body.dataset.theme = t;
   localStorage.setItem('top5-theme',t);
   document.getElementById('themeLabel').textContent = THEME_LABELS[t];
+  const inlineLabel = document.getElementById('themeLabelInline');
+  if(inlineLabel) inlineLabel.textContent = THEME_LABELS[t];
   document.getElementById('themeMenu').classList.remove('open');
+  const inlineMenu = document.getElementById('themeMenuInline');
+  if(inlineMenu) inlineMenu.classList.remove('open');
   document.querySelectorAll('.theme-option').forEach(el=>el.classList.toggle('active',el.dataset.t===t));
 };
-document.addEventListener('click', ()=>document.getElementById('themeMenu').classList.remove('open'));
+document.addEventListener('click', ()=>{
+  document.getElementById('themeMenu').classList.remove('open');
+  const m=document.getElementById('themeMenuInline'); if(m) m.classList.remove('open');
+});
 
 // ═══════════════════════════════════════════════════════════════
 //  SUGGESTIONS
@@ -1493,6 +1510,14 @@ function render() {
     <div id="wrong-wrap">${wrongHtml}</div>
     ${over?`<button class="show-result-btn" onclick="openResult()">📊 VIEW RESULTS</button>`:''}
     <div class="replay-wrap"><button class="replay-btn" onclick="replayConfirm()">↺ RESET DAY</button></div>
+    <div class="theme-inline">
+      <button class="theme-btn" onclick="toggleThemeMenu(event)"><span id="themeLabelInline">${THEME_LABELS[currentTheme]||'RETRO'}</span><span class="theme-arrow">▾</span></button>
+      <div class="theme-menu" id="themeMenuInline" style="bottom:calc(100% + 4px);top:auto;right:auto;left:50%;transform:translateX(-50%)">
+        <div class="theme-option${currentTheme==='gameboy'?' active':''}"  data-t="gameboy"  onclick="setTheme('gameboy')">RETRO</div>
+        <div class="theme-option${currentTheme==='deepnavy'?' active':''}" data-t="deepnavy" onclick="setTheme('deepnavy')">MIDNIGHT</div>
+        <div class="theme-option${currentTheme==='chrome'?' active':''}"   data-t="chrome"   onclick="setTheme('chrome')">MONO</div>
+      </div>
+    </div>
     <div class="footer">TOP 5 · Daily Trivia</div>
   </div>`;
 
