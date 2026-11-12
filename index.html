@@ -114,8 +114,8 @@
     }
 
     /* ── LAYOUT ────────────────────────────────────────────────── */
-    #app { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 44px 16px 56px; position: relative; z-index: 1; }
-    .game { width: 100%; max-width: min(720px, 96vw); display: flex; flex-direction: column; gap: 16px; }
+    #app { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 36px 12px 48px; position: relative; z-index: 1; }
+    .game { width: 100%; max-width: min(860px, 97vw); display: flex; flex-direction: column; gap: 16px; }
 
     /* ── THEME SELECTOR (fixed) ────────────────────────────────── */
     .theme-select {
@@ -127,11 +127,11 @@
       background: var(--surface2); color: var(--text-dim);
       border: var(--border); border-radius: var(--radius);
       padding: 6px 10px; cursor: pointer;
-      font-family: var(--font-pixel); font-size: 7px; letter-spacing: 0.5px;
+      font-family: var(--font-pixel); font-size: 10px; letter-spacing: 0.5px;
       transition: all 0.15s; white-space: nowrap;
     }
     .theme-btn:hover { color: var(--accent); box-shadow: var(--glow-accent); }
-    .theme-arrow { font-size: 10px; }
+    .theme-arrow { font-size: 13px; }
     .theme-menu {
       display: none; position: absolute; top: calc(100% + 4px); right: 0;
       background: var(--surface); border: var(--border); border-radius: var(--radius);
