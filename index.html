@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TOP 5</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23111'/><text x='50%25' y='22' text-anchor='middle' font-family='monospace' font-size='14' font-weight='bold' fill='%23EEE'>T5</text></svg>"/>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2318181B'/><text x='50%25' y='24' text-anchor='middle' font-family='Arial Black,Arial,sans-serif' font-size='22' font-weight='900' fill='%2322C55E'>5</text></svg>"/>
   <!-- command: Press Start 2P + Courier Prime -->
   <!-- deepnavy: Orbitron + Share Tech Mono -->
   <!-- chrome: Bebas Neue + Space Mono -->
@@ -730,37 +730,37 @@
        CHROME — Monochrome Terminal / Data Dashboard
        ══════════════════════════════════════════════════════════════ */
     [data-theme="chrome"] {
-      --font-pixel: 'Space Mono', monospace;
-      --font-body:  'Barlow', sans-serif;
+      --font-pixel: 'Inter', sans-serif;
+      --font-body:  'Inter', sans-serif;
       --bg:            #0D0D0D;
       --surface:       #191919;
-      --surface2:      #242424;
-      --surface3:      #2E2E2E;
-      --border-color:  #363636;
-      --border:        1px solid #363636;
-      --text:          #EBEBEB;
-      --text-dim:      #606060;
-      --accent:        #B8B8B8;
-      --gold:          #ABABAB;
-      --correct-bg:    rgba(235,235,235,0.05);
-      --correct-b:     #888888;
-      --correct-t:     #E0E0E0;
-      --wrong-bg:      rgba(200,60,60,0.06);
-      --wrong-b:       #7A3030;
-      --wrong-t:       #C06060;
-      --wrong-chip-bg: rgba(200,60,60,0.08);
-      --wrong-chip-b:  #7A3030;
-      --wrong-chip-t:  #BB5555;
-      --btn:           #2E2E2E;
-      --btn-t:         #EBEBEB;
-      --btn-h:         #3E3E3E;
-      --input-bg:      #121212;
-      --input-b:       #363636;
+      --surface2:      #232323;
+      --surface3:      #2D2D2D;
+      --border-color:  #333333;
+      --border:        1px solid #333333;
+      --text:          #F0F0F0;
+      --text-dim:      #666666;
+      --accent:        #A0A0A0;
+      --gold:          #A0A0A0;
+      --correct-bg:    rgba(34,197,94,0.08);
+      --correct-b:     #16A34A;
+      --correct-t:     #4ADE80;
+      --wrong-bg:      rgba(239,68,68,0.08);
+      --wrong-b:       #DC2626;
+      --wrong-t:       #F87171;
+      --wrong-chip-bg: rgba(239,68,68,0.10);
+      --wrong-chip-b:  #DC2626;
+      --wrong-chip-t:  #F87171;
+      --btn:           #2A2A2A;
+      --btn-t:         #F0F0F0;
+      --btn-h:         #383838;
+      --input-bg:      #111111;
+      --input-b:       #333333;
       --sugg-bg:       #191919;
-      --sugg-h:        #242424;
-      --radius:        2px;
+      --sugg-h:        #232323;
+      --radius:        6px;
       --glow-accent:   none;
-      --glow-correct:  none;
+      --glow-correct:  0 0 12px rgba(34,197,94,0.15);
       --glow-btn:      none;
     }
     [data-theme="chrome"] body { background: #0D0D0D; }
@@ -770,16 +770,17 @@
       background: #191919; border: 1px solid #2A2A2A; box-shadow: none;
     }
     [data-theme="chrome"] .slot-hidden {
-      border: none; border-left: 2px solid #2E2E2E; border-radius: 0; padding-left: 16px;
+      border: 1px solid #272727; border-radius: 6px; padding-left: 16px;
       box-shadow: none; background: #141414;
     }
     [data-theme="chrome"] .slot-revealed {
-      border: none; border-left: 2px solid #888; border-radius: 0; padding-left: 16px;
-      box-shadow: none; animation: chromeReveal 0.2s ease-out;
+      border: 1px solid #16A34A; border-radius: 6px; padding-left: 16px;
+      background: rgba(34,197,94,0.06); box-shadow: none; animation: chromeReveal 0.2s ease-out;
     }
     @keyframes chromeReveal { from{opacity:0;transform:translateX(-6px)} to{opacity:1;transform:translateX(0)} }
     [data-theme="chrome"] .slot-missed {
-      border: none; border-left: 2px solid #3A2020; border-radius: 0; padding-left: 16px; box-shadow: none;
+      border: 1px solid #DC2626; border-radius: 6px; padding-left: 16px;
+      background: rgba(239,68,68,0.06); box-shadow: none;
     }
     [data-theme="chrome"] .slot-bar { background: #252525; border-radius: 0; }
     [data-theme="chrome"] .guess-btn {
@@ -790,28 +791,28 @@
     [data-theme="chrome"] .logo { letter-spacing: 10px; color: #E8E8E8; text-shadow: none; }
     [data-theme="chrome"] .q-category { color: #666; }
     [data-theme="chrome"] .q-text { color: #C8C8C8; }
-    [data-theme="chrome"] .slot-revealed .slot-primary { color: #ABABAB; }
-    [data-theme="chrome"] .slot-revealed .slot-rank-rev { color: #ABABAB; }
-    [data-theme="chrome"] .slot-got-it { color: #888; }
-    [data-theme="chrome"] .logo         { font-size: clamp(22px,5vw,30px); letter-spacing: 10px; }
-    [data-theme="chrome"] .q-category   { font-size: 11px; font-weight: 400; letter-spacing: 4px; }
-    [data-theme="chrome"] .q-text       { font-size: clamp(12px,2.6vw,15px); font-weight: 400; line-height: 1.6; }
-    [data-theme="chrome"] .slot-rank    { font-size: 11px; font-weight: 400; }
-    [data-theme="chrome"] .slot-rank-rev{ font-size: 11px; font-weight: 400; }
-    [data-theme="chrome"] .slot-name    { font-size: 12px; font-weight: 400; letter-spacing: 0.5px; }
-    [data-theme="chrome"] .slot-primary { font-size: 10px; font-weight: 400; }
-    [data-theme="chrome"] .slot-got-it  { font-size: 8px; font-weight: 400; }
-    [data-theme="chrome"] .lives-label  { font-size: 11px; font-weight: 400; }
-    [data-theme="chrome"] .feedback     { font-size: 10px; font-weight: 400; }
-    [data-theme="chrome"] .wrong-label  { font-size: 9px; font-weight: 400; letter-spacing: 2px; }
-    [data-theme="chrome"] .guess-btn    { font-size: 10px; font-weight: 400; letter-spacing: 1.5px; }
-    [data-theme="chrome"] .date-label   { font-size: 11px; font-weight: 400; }
-    [data-theme="chrome"] .nav-btn      { font-size: 11px; font-weight: 400; }
-    [data-theme="chrome"] .header-clock { font-size: 11px; font-weight: 400; letter-spacing: 2px; }
-    [data-theme="chrome"] .rm-title     { font-size: 18px; font-weight: 400; letter-spacing: 3px; }
-    [data-theme="chrome"] .rm-name      { font-size: 12px; font-weight: 400; }
-    [data-theme="chrome"] .rm-rank      { font-size: 11px; font-weight: 400; }
-    [data-theme="chrome"] .footer       { font-size: 10px; font-weight: 400; }
+    [data-theme="chrome"] .slot-revealed .slot-primary { color: var(--correct-t); }
+    [data-theme="chrome"] .slot-revealed .slot-rank-rev { color: var(--correct-t); }
+    [data-theme="chrome"] .slot-got-it { color: var(--correct-t); opacity: 0.8; }
+    [data-theme="chrome"] .logo         { font-size: clamp(24px,5.5vw,36px); font-weight: 700; letter-spacing: 10px; }
+    [data-theme="chrome"] .q-category   { font-size: 11px; font-weight: 600; letter-spacing: 3px; }
+    [data-theme="chrome"] .q-text       { font-size: clamp(14px,2.8vw,17px); font-weight: 500; line-height: 1.6; }
+    [data-theme="chrome"] .slot-rank    { font-size: 13px; font-weight: 500; }
+    [data-theme="chrome"] .slot-rank-rev{ font-size: 13px; font-weight: 600; }
+    [data-theme="chrome"] .slot-name    { font-size: 15px; font-weight: 600; letter-spacing: 0; }
+    [data-theme="chrome"] .slot-primary { font-size: 13px; font-weight: 400; }
+    [data-theme="chrome"] .slot-got-it  { font-size: 11px; font-weight: 600; }
+    [data-theme="chrome"] .lives-label  { font-size: 13px; font-weight: 500; }
+    [data-theme="chrome"] .feedback     { font-size: 13px; font-weight: 500; }
+    [data-theme="chrome"] .wrong-label  { font-size: 11px; font-weight: 600; letter-spacing: 1px; }
+    [data-theme="chrome"] .guess-btn    { font-size: 13px; font-weight: 600; letter-spacing: 0.5px; }
+    [data-theme="chrome"] .date-label   { font-size: 13px; font-weight: 500; }
+    [data-theme="chrome"] .nav-btn      { font-size: 13px; font-weight: 500; }
+    [data-theme="chrome"] .header-clock { font-size: 13px; font-weight: 500; letter-spacing: 1px; }
+    [data-theme="chrome"] .rm-title     { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+    [data-theme="chrome"] .rm-name      { font-size: 13px; font-weight: 500; }
+    [data-theme="chrome"] .rm-rank      { font-size: 12px; font-weight: 500; }
+    [data-theme="chrome"] .footer       { font-size: 11px; font-weight: 400; }
 
     /* ── DEEP NAVY — Inter font overrides ─────────────────────── */
     [data-theme="deepnavy"] .logo         { font-size: clamp(26px, 7vw, 38px); font-weight: 700; letter-spacing: 3px; }
@@ -1560,16 +1561,11 @@ function buildStatsHTML(st) {
 // ═══════════════════════════════════════════════════════════════
 
 const RIVER_PATHS = {
-  // Nile: Lake Victoria → Khartoum S-curve → Aswan → Cairo → Mediterranean
-  nile: [[0.0,33.1],[2.3,31.5],[3.6,32.1],[5.0,31.6],[9.5,31.7],[13.5,32.5],[15.6,32.5],[17.7,33.9],[19.8,30.4],[21.8,31.4],[23.0,32.4],[24.1,32.9],[25.7,32.6],[27.2,31.1],[30.1,31.2],[31.5,30.4]],
-  // Amazon: Andes headwaters (Ucayali) → Iquitos → Manaus → Belém
-  amazon: [[-15.5,-71.4],[-10.0,-74.0],[-5.5,-75.5],[-3.75,-73.25],[-3.3,-70.0],[-3.3,-65.0],[-3.1,-60.0],[-2.4,-54.7],[-1.5,-48.5]],
-  // Yangtze: Tibetan Plateau → Tiger Leaping Gorge → Chongqing → Three Gorges → Wuhan → Shanghai
-  yangtze: [[33.5,91.8],[32.0,96.5],[27.0,100.2],[28.8,104.6],[29.6,106.5],[30.7,111.3],[30.4,114.3],[31.6,117.2],[32.1,118.8],[31.3,121.5]],
-  // Mississippi: Lake Itasca → Minneapolis → St Louis → Memphis → New Orleans → Gulf
-  mississippi: [[47.2,-95.2],[44.9,-93.2],[43.5,-91.2],[40.6,-91.3],[38.6,-90.2],[37.0,-89.2],[35.1,-90.0],[32.3,-90.9],[30.0,-90.1],[29.0,-89.1]],
-  // Yenisei: Tuva source → Krasnoyarsk → Igarka → Dudinka → Kara Sea
-  yenisei: [[51.7,94.4],[54.0,91.5],[56.0,93.0],[58.5,92.2],[61.6,90.0],[65.8,87.9],[67.5,86.6],[69.4,86.2],[71.5,82.5],[73.0,80.0]],
+  nile: [[-0.5,34.2],[0.4,33.9],[1.4,33.4],[2.3,31.5],[3.5,32.1],[4.2,32.0],[5.1,31.6],[6.0,31.6],[7.0,30.8],[8.4,30.4],[9.5,31.7],[10.8,32.0],[12.2,32.9],[13.5,32.5],[14.8,32.5],[15.6,32.5],[16.4,33.0],[17.7,33.9],[18.5,31.8],[19.5,30.6],[20.2,30.5],[21.2,31.0],[22.3,31.6],[23.0,32.4],[24.1,32.9],[25.0,32.5],[25.7,32.6],[26.3,31.6],[27.0,31.0],[27.9,30.9],[29.4,31.1],[30.1,31.3],[30.8,30.9],[31.5,30.4]],
+  amazon: [[-15.5,-71.4],[-14.0,-72.5],[-11.0,-74.5],[-8.5,-74.9],[-6.0,-75.4],[-4.9,-73.8],[-3.8,-73.2],[-3.4,-70.0],[-3.3,-67.8],[-3.2,-65.0],[-3.0,-62.5],[-2.8,-60.5],[-2.2,-57.5],[-1.8,-54.5],[-1.4,-51.5],[-0.8,-49.8],[0.1,-50.3],[0.5,-50.0]],
+  yangtze: [[32.7,91.1],[32.5,92.8],[32.0,96.5],[30.5,97.5],[28.5,99.0],[27.0,100.2],[27.4,101.8],[28.5,103.0],[29.1,104.6],[29.4,105.6],[29.5,106.6],[29.9,108.0],[30.4,110.3],[30.8,111.4],[30.6,112.7],[30.4,114.4],[30.3,115.8],[30.6,116.8],[31.6,117.2],[31.9,118.0],[32.1,118.8],[31.9,120.0],[31.4,121.0],[31.3,121.6]],
+  mississippi: [[47.3,-95.2],[46.3,-94.4],[45.5,-93.8],[44.9,-93.3],[44.0,-92.5],[43.5,-91.2],[42.5,-91.1],[41.5,-91.2],[40.6,-91.4],[39.5,-90.9],[38.6,-90.3],[37.8,-89.4],[37.0,-89.1],[35.9,-89.7],[35.1,-90.1],[33.5,-91.0],[32.3,-90.9],[31.3,-91.3],[30.4,-90.5],[30.0,-90.1],[29.5,-89.5],[29.1,-89.2]],
+  yenisei: [[51.7,94.4],[52.5,92.7],[53.4,91.4],[54.5,91.5],[55.5,93.0],[56.0,93.0],[57.0,92.4],[58.5,92.0],[59.5,91.3],[60.9,89.6],[62.1,88.5],[63.5,87.5],[64.9,87.0],[66.0,86.5],[67.5,86.5],[68.5,86.3],[69.4,86.2],[70.3,84.5],[71.3,82.9],[72.5,80.5],[73.0,80.0]],
 };
 
 const POP_DATA = {
@@ -1795,7 +1791,10 @@ window.openResult = function() {
   // record stats before reading them for display
   if (state.status !== 'playing') updateCareerStats(state, currentDate);
   window._shareText = buildShareText();
-  document.getElementById('rmIcon').textContent = won ? '🎉' : '💀';
+  const perfect = won && state.wrong.length === 0;
+  document.getElementById('rmIcon').innerHTML = perfect
+    ? `<svg viewBox="0 0 48 48" width="52" height="52" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="10" fill="#18181B"/><text x="50%" y="36" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="34" font-weight="900" fill="#22C55E">5</text></svg>`
+    : (won ? '🎉' : '💀');
   const titleEl = document.getElementById('rmTitle');
   titleEl.textContent = won ? 'YOU GOT ALL 5!' : 'BETTER LUCK NEXT TIME';
   titleEl.className = 'rm-title ' + (won ? 'win' : 'lose');
