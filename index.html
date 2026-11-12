@@ -1400,10 +1400,12 @@ document.querySelectorAll('.theme-option').forEach(el => el.classList.toggle('ac
 
 window.toggleThemeMenu = function(e) {
   e.stopPropagation();
-  const inline = document.getElementById('themeMenuInline');
-  const fixed  = document.getElementById('themeMenu');
-  const target = (inline && inline.closest('.theme-inline') && getComputedStyle(inline.closest('.theme-inline')).display !== 'none') ? inline : fixed;
-  target.classList.toggle('open');
+  document.getElementById('themeMenu').classList.toggle('open');
+};
+window.toggleInlineThemeMenu = function(e) {
+  e.stopPropagation();
+  const m = document.getElementById('themeMenuInline');
+  if(m) m.classList.toggle('open');
 };
 window.setTheme = function(t) {
   currentTheme = t;
@@ -1515,7 +1517,7 @@ function render() {
     ${over?`<button class="show-result-btn" onclick="openResult()">📊 VIEW RESULTS</button>`:''}
     <div class="replay-wrap"><button class="replay-btn" onclick="replayConfirm()">↺ RESET DAY</button></div>
     <div class="theme-inline">
-      <button class="theme-btn" onclick="toggleThemeMenu(event)"><span id="themeLabelInline">${THEME_LABELS[currentTheme]||'RETRO'}</span><span class="theme-arrow">▾</span></button>
+      <button class="theme-btn" onclick="toggleInlineThemeMenu(event)"><span id="themeLabelInline">${THEME_LABELS[currentTheme]||'RETRO'}</span><span class="theme-arrow">▾</span></button>
       <div class="theme-menu" id="themeMenuInline" style="bottom:calc(100% + 4px);top:auto;right:auto;left:50%;transform:translateX(-50%)">
         <div class="theme-option${currentTheme==='gameboy'?' active':''}"  data-t="gameboy"  onclick="setTheme('gameboy')">RETRO</div>
         <div class="theme-option${currentTheme==='deepnavy'?' active':''}" data-t="deepnavy" onclick="setTheme('deepnavy')">MIDNIGHT</div>
