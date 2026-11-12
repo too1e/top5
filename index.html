@@ -546,7 +546,7 @@
       font-family:'Press Start 2P',monospace; font-size:6px;
       color:#2E88C0; opacity:0.55; letter-spacing:3px;
     }
-    [data-theme="deepnavy"] .q-card { border:none; background:linear-gradient(160deg,#0E182C 0%,#0A1020 100%); box-shadow:0 6px 32px rgba(0,0,0,0.75),0 0 0 1px rgba(46,136,192,0.18),inset 0 1px 0 rgba(255,255,255,0.05); }
+    [data-theme="deepnavy"] .q-card { background: transparent; border: none; box-shadow: none; }
     [data-theme="deepnavy"] .slot-hidden { border:none; box-shadow:0 3px 14px rgba(0,0,0,0.55),0 0 0 1px rgba(26,48,96,0.7); }
     [data-theme="deepnavy"] .slot-missed { box-shadow:0 3px 14px rgba(0,0,0,0.5); }
     [data-theme="deepnavy"] .slot-bar { background:linear-gradient(90deg,var(--surface3) 0%,rgba(46,136,192,0.2) 100%); border-radius:8px; }
@@ -557,80 +557,50 @@
     @keyframes gbaReveal { from{opacity:0;transform:translateY(10px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
 
     /* ══════════════════════════════════════════════════════════════
-       STEAM — CSS vars
+       MONO — CSS vars
        ══════════════════════════════════════════════════════════════ */
-      --font-pixel: 'Rajdhani', sans-serif;
-      --font-body:  'Rajdhani', sans-serif;
-      --bg:            #1b2838;
-      --surface:       rgba(30,45,60,0.92);
-      --surface2:      rgba(40,58,75,0.88);
-      --surface3:      rgba(50,70,90,0.85);
-      --border-color:  rgba(102,192,244,0.25);
-      --border:        1px solid rgba(102,192,244,0.2);
-      --text:          #c6d4df;
-      --text-dim:      rgba(150,170,185,0.5);
-      --accent:        #66c0f4;
-      --gold:          #4c9fc2;
-      --correct-bg:    rgba(102,192,244,0.1);
-      --correct-b:     #66c0f4;
-      --correct-t:     #8dd4ff;
-      --wrong-bg:      rgba(180,60,60,0.1);
-      --wrong-b:       #b43c3c;
-      --wrong-t:       #e06060;
-      --wrong-chip-bg: rgba(180,60,60,0.14);
-      --wrong-chip-b:  #b43c3c;
-      --wrong-chip-t:  #e08080;
-      --btn:           #4c9fc2;
-      --btn-t:         #ffffff;
-      --btn-h:         #66c0f4;
-      --input-bg:      rgba(20,30,40,0.8);
-      --input-b:       rgba(102,192,244,0.3);
-      --sugg-bg:       rgba(20,32,45,0.98);
-      --sugg-h:        rgba(40,58,75,0.98);
-      --radius:        4px;
-      --glow-accent:   0 0 16px rgba(102,192,244,0.3);
-      --glow-correct:  0 0 14px rgba(102,192,244,0.25);
-      --glow-btn:      0 0 14px rgba(102,192,244,0.4);
+    [data-theme="chrome"] {
+      --font-pixel: 'Inter', system-ui, sans-serif;
+      --font-body:  'Inter', system-ui, sans-serif;
+      --bg:            #0D0D0D;
+      --surface:       #161616;
+      --surface2:      #1E1E1E;
+      --surface3:      #252525;
+      --border-color:  #2A2A2A;
+      --border:        1px solid #2A2A2A;
+      --text:          #E8E8E8;
+      --text-dim:      #555555;
+      --accent:        #4ADE80;
+      --gold:          #4ADE80;
+      --correct-bg:    rgba(74,222,128,0.08);
+      --correct-b:     #16A34A;
+      --correct-t:     #4ADE80;
+      --wrong-bg:      rgba(248,113,113,0.08);
+      --wrong-b:       #DC2626;
+      --wrong-t:       #F87171;
+      --wrong-chip-bg: rgba(248,113,113,0.1);
+      --wrong-chip-b:  #DC2626;
+      --wrong-chip-t:  #F87171;
+      --btn:           #22C55E;
+      --btn-t:         #0D0D0D;
+      --btn-h:         #4ADE80;
+      --input-bg:      #111111;
+      --input-b:       #2A2A2A;
+      --sugg-bg:       #161616;
+      --sugg-h:        #1E1E1E;
+      --radius:        6px;
+      --glow-accent:   none;
+      --glow-correct:  none;
+      --glow-btn:      none;
     }
-
-      --font-pixel: 'Nunito', sans-serif;
-      --font-body:  'Nunito', sans-serif;
-      --bg:            #EFEFEF;
-      --surface:       #FFFFFF;
-      --surface2:      #F5F5F5;
-      --surface3:      #EBEBEB;
-      --border-color:  #DCDCDC;
-      --border:        1px solid #E0E0E0;
-      --text:          #1A1A1A;
-      --text-dim:      #ADADAD;
-      --accent:        #E4000F;
-      --gold:          #E4000F;
-      --correct-bg:    rgba(228,0,15,0.06);
-      --correct-b:     #E4000F;
-      --correct-t:     #C40010;
-      --wrong-bg:      rgba(160,160,160,0.12);
-      --wrong-b:       #C0C0C0;
-      --wrong-t:       #787878;
-      --wrong-chip-bg: rgba(160,160,160,0.15);
-      --wrong-chip-b:  #CCCCCC;
-      --wrong-chip-t:  #606060;
-      --btn:           #E4000F;
-      --btn-t:         #FFFFFF;
-      --btn-h:         #FF1A24;
-      --input-bg:      #FFFFFF;
-      --input-b:       #D8D8D8;
-      --sugg-bg:       #FFFFFF;
-      --sugg-h:        #F5F5F5;
-      --radius:        14px;
-      --glow-accent:   0 3px 16px rgba(228,0,15,0.18);
-      --glow-correct:  0 3px 14px rgba(228,0,15,0.14);
-      --glow-btn:      0 3px 16px rgba(228,0,15,0.22);
-    }
-      box-shadow: 0 2px 16px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
-      border: 1px solid #E8E8E8;
-    }
-      background: linear-gradient(90deg, #E8E8E8, #DCDCDC); border-radius: 4px;
-    }
+    [data-theme="chrome"] .slot-name { font-size: 15px; font-weight: 600; }
+    [data-theme="chrome"] .q-card { background: #111111; border: 1px solid #222222; box-shadow: none; }
+    [data-theme="chrome"] .slot-bar { background: #1E1E1E; border-radius: 4px; }
+    [data-theme="chrome"] .slot-hidden { border: 1px solid #222222; box-shadow: none; }
+    [data-theme="chrome"] .guess-btn { background: #22C55E; color: #0D0D0D; border: none; box-shadow: none; font-weight: 700; }
+    [data-theme="chrome"] .guess-btn:hover:not(:disabled) { background: #4ADE80; }
+    [data-theme="chrome"] .detail-box { background: #161616; border: 1px solid #2A2A2A; }
+    [data-theme="chrome"] body::before, [data-theme="chrome"] body::after { display: none; }
 
   </style>
 </head>
@@ -706,7 +676,7 @@ const QUESTIONS = [
   // ── WEEK OF MAY 28 ────────────────────────────────────────────
   {
     id:'countries-area', question:'Top 5: Largest Countries by Area', category:'Geography', emoji:'🗺️',
-    pool:['Russia','Canada','United States','China','Brazil','Australia','India','Argentina','Kazakhstan','Algeria','DR Congo','Saudi Arabia','Mexico','Indonesia','Sudan','Libya','Iran','Mongolia','Peru','Niger','Chad','Angola','Mali','South Africa','Colombia','Ethiopia','Bolivia','Egypt','Tanzania','Nigeria','Venezuela','Pakistan','Namibia','Mozambique','Zambia'],
+    pool:['Russia','Canada','United States','China','Brazil','Australia','India','Argentina','Kazakhstan','Algeria','DR Congo','Saudi Arabia','Mexico','Indonesia','Sudan','Libya','Iran','Mongolia','Peru','Chad','Angola','Mali','South Africa','Colombia','Ethiopia','Bolivia','Egypt','Tanzania','Nigeria','Venezuela','Pakistan','Namibia','Mozambique','Zambia','Yemen','Cameroon','Ivory Coast','Nepal'],
     answers:[
       {name:'Russia',aliases:['russian federation'],primary:'17.1M km²',coords:[61.5240,105.3188],mapZoom:2,stats:[['Capital','Moscow'],['Continent','Europe & Asia'],['Time zones','11 — more than any country']],extra:[['Spans 11 time zones','From Kaliningrad (EU border) to Chukotka (Pacific)'],['Lake Baikal','Contains 20% of the world\'s unfrozen surface fresh water'],['Siberia','~75% of Russia\'s land is Siberia, home to ~28% of its people']]},
       {name:'Canada',aliases:[],primary:'9.98M km²',coords:[56.1304,-106.3468],mapZoom:3,stats:[['Capital','Ottawa'],['Provinces & Territories','13'],['Coastline','Longest coastline in the world (202,000 km)']],extra:[['Border','Shares the world\'s longest land border with the US (8,891 km)'],['Fresh water','Home to ~20% of the world\'s fresh water in lakes & rivers'],['Empty north','~80% of Canadians live within 150 km of the US border']]},
