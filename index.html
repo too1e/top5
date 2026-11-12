@@ -937,6 +937,17 @@ function fmtDate(s)        {
 const todayStr = dateStr(new Date());
 let currentDate = todayStr;
 
+// ── User / session identity ──────────────────────────────────────
+function getOrCreate(storage, key) {
+  try {
+    let v = storage.getItem(key);
+    if (!v) { v = crypto.randomUUID(); storage.setItem(key, v); }
+    return v;
+  } catch { return 'unknown'; }
+}
+const USER_ID    = getOrCreate(localStorage,  'top5_uid');
+const SESSION_ID = getOrCreate(sessionStorage, 'top5_sid');
+
 function getQuestion() { return QUESTIONS[questionIndex(currentDate)]; }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1482,7 +1493,7 @@ function shake(){const inp=document.getElementById('gi');if(!inp)return;inp.clas
 function trackEvent(payload) {
   try {
     navigator.sendBeacon('https://api.top5trivia.com/event',
-      new Blob([JSON.stringify(payload)], { type: 'application/json' }));
+      new Blob([JSON.stringify({ ...payload, user_id: USER_ID, session_id: SESSION_ID })], { type: 'application/json' }));
   } catch {}
 }
 
