@@ -1317,11 +1317,11 @@ window.openResult = function() {
     : '💀';
   document.getElementById('rmIcon').innerHTML = iconNum;
   const titleEl = document.getElementById('rmTitle');
-  titleEl.textContent = won ? 'YOU GOT ALL 5!' : 'BETTER LUCK NEXT TIME';
+  const titles = { 5: perfect ? 'FLAWLESS.' : 'YOU GOT ALL 5!', 4: 'SO CLOSE.', 3: 'HALFWAY THERE.', 2: 'ROUGH ONE.', 1: 'JUST ONE.', 0: 'SHUT OUT.' };
+  const subs   = { 5: perfect ? 'No wrong guesses — perfect game!' : `All 5 correct with ${state.wrong.length} wrong guess${state.wrong.length!==1?'es':''}`, 4: 'One slipped away.', 3: 'Three out of five.', 2: `Only ${score} correct — come back tomorrow.`, 1: 'One and done — better luck next time.', 0: 'No correct answers. Tomorrow is a new day.' };
+  titleEl.textContent = titles[score] ?? 'BETTER LUCK NEXT TIME';
   titleEl.className = 'rm-title ' + (won ? 'win' : 'lose');
-  document.getElementById('rmSub').textContent = won
-    ? (state.wrong.length === 0 ? 'Perfect — no wrong guesses!' : `${state.wrong.length} wrong guess${state.wrong.length !== 1 ? 'es' : ''}`)
-    : `Got ${state.revealed.length} out of 5`;
+  document.getElementById('rmSub').textContent = subs[score] ?? `Got ${score} out of 5`;
   document.getElementById('rmBoard').innerHTML = q.answers.map((ans, i) => {
     const got = state.revealed.includes(i);
     return `<div class="rm-row ${got?'rm-got':'rm-miss'}">
