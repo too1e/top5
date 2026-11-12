@@ -205,39 +205,39 @@
     .slot-hidden {
       display: flex; align-items: center; gap: 14px;
       background: var(--surface); border: var(--border);
-      border-radius: var(--radius); padding: 16px 18px;
+      border-radius: var(--radius); padding: 18px 20px;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
     }
-    .slot-rank { font-family: var(--font-pixel); font-size: 10px; color: var(--text-dim); min-width: 32px; text-align: right; }
+    .slot-rank { font-family: var(--font-pixel); font-size: 11px; color: var(--text-dim); min-width: 32px; text-align: right; }
     .slot-bar { height: 9px; background: var(--surface2); border-radius: 2px; animation: pulse 2s ease-in-out infinite; }
     @keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:.7} }
 
     .slot-revealed {
       background: var(--correct-bg); border: 1px solid var(--correct-b);
-      border-radius: var(--radius); padding: 16px 18px;
+      border-radius: var(--radius); padding: 18px 20px;
       animation: revealIn 0.3s ease-out; transform-origin: top;
       box-shadow: var(--glow-correct);
     }
     .slot-missed {
       background: var(--wrong-bg); border: 1px solid var(--wrong-b);
-      border-radius: var(--radius); padding: 16px 18px;
+      border-radius: var(--radius); padding: 18px 20px;
       animation: revealIn 0.3s ease-out;
     }
     @keyframes revealIn { from{opacity:0;transform:scaleY(.5)} to{opacity:1;transform:scaleY(1)} }
 
     .slot-inner { display: flex; align-items: flex-start; gap: 12px; }
-    .slot-rank-rev { font-family: var(--font-pixel); font-size: 10px; min-width: 32px; text-align: right; margin-top: 2px; }
+    .slot-rank-rev { font-family: var(--font-pixel); font-size: 11px; min-width: 32px; text-align: right; margin-top: 2px; }
     .slot-revealed .slot-rank-rev { color: var(--correct-t); }
     .slot-missed  .slot-rank-rev { color: var(--wrong-t); }
     .slot-content { flex: 1; min-width: 0; }
     .slot-name-row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
     .slot-name { font-family: var(--font-pixel); font-size: 13px; color: var(--text); }
-    .slot-primary { font-family: var(--font-pixel); font-size: 9px; }
+    .slot-primary { font-family: var(--font-pixel); font-size: 11px; }
     .slot-revealed .slot-primary { color: var(--correct-t); }
     .slot-missed  .slot-primary { color: var(--text-dim); }
-    .slot-got-it { font-family: var(--font-pixel); font-size: 7px; color: var(--correct-t); margin-left: auto; text-shadow: var(--glow-correct); }
-    .slot-stats { display: flex; flex-wrap: wrap; gap: 3px 16px; margin-top: 6px; }
-    .slot-stat { font-size: 10px; }
+    .slot-got-it { font-family: var(--font-pixel); font-size: 9px; color: var(--correct-t); margin-left: auto; text-shadow: var(--glow-correct); }
+    .slot-stats { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 8px; }
+    .slot-stat { font-size: 11px; }
     .slot-stat-lbl { color: var(--text-dim); }
     .slot-revealed .slot-stat-val { color: var(--text); }
     .slot-missed  .slot-stat-val { color: var(--text-dim); }
