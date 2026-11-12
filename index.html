@@ -113,8 +113,8 @@
     }
 
     /* ── LAYOUT ────────────────────────────────────────────────── */
-    #app { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 72px 16px 72px; position: relative; z-index: 1; }
-    .game { width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 18px; }
+    #app { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 44px 16px 56px; position: relative; z-index: 1; }
+    .game { width: 100%; max-width: min(720px, 96vw); display: flex; flex-direction: column; gap: 16px; }
 
     /* ── THEME SELECTOR (fixed) ────────────────────────────────── */
     .theme-select {
@@ -381,6 +381,12 @@
     .map-btn:hover { background: var(--accent); color: var(--bg); }
     /* leaflet overrides */
     .leaflet-container { background: #080d14 !important; font-family: var(--font-body) !important; }
+    /* dark-theme tile inversion — makes OSM tiles read as dark maps */
+    [data-theme="gameboy"] .leaflet-tile-pane,
+    [data-theme="deepnavy"] .leaflet-tile-pane,
+    [data-theme="steam"] .leaflet-tile-pane,
+    [data-theme="xbox"] .leaflet-tile-pane,
+    [data-theme="chrome"] .leaflet-tile-pane { filter: invert(100%) hue-rotate(180deg) brightness(0.88) contrast(0.9); }
     .leaflet-popup-content-wrapper {
       background: var(--surface2) !important; border: 1px solid var(--border-color) !important;
       border-radius: var(--radius) !important; color: var(--text) !important;
@@ -720,64 +726,91 @@
     [data-theme="switch"] .theme-menu   { box-shadow:0 8px 28px rgba(0,0,0,0.12); }
 
     /* ══════════════════════════════════════════════════════════════
-       NEXGEN — PS5 / Series X activity cards
+       CHROME — Monochrome Terminal / Data Dashboard
        ══════════════════════════════════════════════════════════════ */
-    @keyframes nexgenShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-    [data-theme="nexgen"] body {
-      background:linear-gradient(135deg,#080810,#0D0825,#060C18,#0A0812);
-      background-size:400% 400%; animation:nexgenShift 14s ease infinite;
+    [data-theme="chrome"] {
+      --font-pixel: 'Space Mono', monospace;
+      --font-body:  'Barlow', sans-serif;
+      --bg:            #0D0D0D;
+      --surface:       #191919;
+      --surface2:      #242424;
+      --surface3:      #2E2E2E;
+      --border-color:  #363636;
+      --border:        1px solid #363636;
+      --text:          #EBEBEB;
+      --text-dim:      #606060;
+      --accent:        #B8B8B8;
+      --gold:          #ABABAB;
+      --correct-bg:    rgba(235,235,235,0.05);
+      --correct-b:     #888888;
+      --correct-t:     #E0E0E0;
+      --wrong-bg:      rgba(200,60,60,0.06);
+      --wrong-b:       #7A3030;
+      --wrong-t:       #C06060;
+      --wrong-chip-bg: rgba(200,60,60,0.08);
+      --wrong-chip-b:  #7A3030;
+      --wrong-chip-t:  #BB5555;
+      --btn:           #2E2E2E;
+      --btn-t:         #EBEBEB;
+      --btn-h:         #3E3E3E;
+      --input-bg:      #121212;
+      --input-b:       #363636;
+      --sugg-bg:       #191919;
+      --sugg-h:        #242424;
+      --radius:        2px;
+      --glow-accent:   none;
+      --glow-correct:  none;
+      --glow-btn:      none;
     }
-    [data-theme="nexgen"] body::before {
-      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-      background:radial-gradient(ellipse at 30% 20%, rgba(0,80,180,0.14) 0%, transparent 55%),
-                 radial-gradient(ellipse at 80% 80%, rgba(60,0,140,0.12) 0%, transparent 50%);
+    [data-theme="chrome"] body { background: #0D0D0D; }
+    [data-theme="chrome"] body::before { display: none; }
+    [data-theme="chrome"] body::after { display: none; }
+    [data-theme="chrome"] .q-card {
+      background: #191919; border: 1px solid #2A2A2A; box-shadow: none;
     }
-    [data-theme="nexgen"] body::after {
-      content:''; position:fixed; inset:0; pointer-events:none; z-index:1;
-      background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),
-                       linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);
-      background-size:48px 48px;
+    [data-theme="chrome"] .slot-hidden {
+      border: none; border-left: 2px solid #2E2E2E; border-radius: 0; padding-left: 16px;
+      box-shadow: none; background: #141414;
     }
-    [data-theme="nexgen"] .q-card {
-      background:rgba(255,255,255,0.055); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
-      border:1px solid rgba(255,255,255,0.11);
-      box-shadow:0 8px 32px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.12);
+    [data-theme="chrome"] .slot-revealed {
+      border: none; border-left: 2px solid #888; border-radius: 0; padding-left: 16px;
+      box-shadow: none; animation: chromeReveal 0.2s ease-out;
     }
-    [data-theme="nexgen"] .slot-hidden {
-      background:rgba(255,255,255,0.04); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-      border:1px solid rgba(255,255,255,0.07);
+    @keyframes chromeReveal { from{opacity:0;transform:translateX(-6px)} to{opacity:1;transform:translateX(0)} }
+    [data-theme="chrome"] .slot-missed {
+      border: none; border-left: 2px solid #3A2020; border-radius: 0; padding-left: 16px; box-shadow: none;
     }
-    [data-theme="nexgen"] .slot-missed { backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
-    [data-theme="nexgen"] .slot-revealed {
-      backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-      box-shadow:0 4px 20px rgba(0,0,0,0.35),0 0 0 1px rgba(0,136,255,0.35);
-      animation:nexgenReveal 0.5s cubic-bezier(0.16,1,0.3,1);
+    [data-theme="chrome"] .slot-bar { background: #252525; border-radius: 0; }
+    [data-theme="chrome"] .guess-btn {
+      background: #232323; border: 1px solid #3A3A3A; box-shadow: none;
     }
-    @keyframes nexgenReveal {
-      from{ transform:translateY(-8px) scale(0.97); opacity:0; filter:blur(6px); }
-      to  { transform:translateY(0) scale(1); opacity:1; filter:blur(0); }
-    }
-    [data-theme="nexgen"] .slot-bar { background:linear-gradient(90deg,rgba(255,255,255,0.08),rgba(0,136,255,0.2)); border-radius:8px; }
-    [data-theme="nexgen"] .guess-btn { background:linear-gradient(135deg,#0099FF,#0066CC); box-shadow:0 4px 14px rgba(0,136,255,0.35); }
-    [data-theme="nexgen"] .logo         { letter-spacing:5px; font-weight:700; font-size:clamp(26px,7vw,38px); }
-    [data-theme="nexgen"] .q-category   { font-size:13px; font-weight:600; letter-spacing:3px; }
-    [data-theme="nexgen"] .q-text       { font-size:clamp(14px,3vw,17px); font-weight:500; line-height:1.7; }
-    [data-theme="nexgen"] .slot-rank    { font-size:14px; font-weight:600; }
-    [data-theme="nexgen"] .slot-rank-rev{ font-size:14px; font-weight:600; }
-    [data-theme="nexgen"] .slot-name    { font-size:15px; font-weight:600; }
-    [data-theme="nexgen"] .slot-primary { font-size:13px; font-weight:500; }
-    [data-theme="nexgen"] .slot-got-it  { font-size:12px; font-weight:600; }
-    [data-theme="nexgen"] .lives-label  { font-size:14px; font-weight:500; }
-    [data-theme="nexgen"] .feedback     { font-size:14px; font-weight:600; }
-    [data-theme="nexgen"] .wrong-label  { font-size:12px; font-weight:600; letter-spacing:2px; }
-    [data-theme="nexgen"] .guess-btn    { font-size:14px; font-weight:600; letter-spacing:0.5px; }
-    [data-theme="nexgen"] .date-label   { font-size:13px; font-weight:500; }
-    [data-theme="nexgen"] .nav-btn      { font-size:13px; font-weight:500; }
-    [data-theme="nexgen"] .header-clock { font-size:13px; font-weight:500; letter-spacing:2px; }
-    [data-theme="nexgen"] .rm-title     { font-size:20px; font-weight:700; }
-    [data-theme="nexgen"] .rm-name      { font-size:14px; font-weight:600; }
-    [data-theme="nexgen"] .rm-rank      { font-size:13px; font-weight:500; }
-    [data-theme="nexgen"] .footer       { font-size:12px; font-weight:400; }
+    [data-theme="chrome"] .guess-btn:hover:not(:disabled) { background: #2E2E2E; box-shadow: none; }
+    [data-theme="chrome"] .guess-input { border-radius: 2px; }
+    [data-theme="chrome"] .logo { letter-spacing: 10px; color: #E8E8E8; text-shadow: none; }
+    [data-theme="chrome"] .q-category { color: #666; }
+    [data-theme="chrome"] .q-text { color: #C8C8C8; }
+    [data-theme="chrome"] .slot-revealed .slot-primary { color: #ABABAB; }
+    [data-theme="chrome"] .slot-revealed .slot-rank-rev { color: #ABABAB; }
+    [data-theme="chrome"] .slot-got-it { color: #888; }
+    [data-theme="chrome"] .logo         { font-size: clamp(22px,5vw,30px); letter-spacing: 10px; }
+    [data-theme="chrome"] .q-category   { font-size: 11px; font-weight: 400; letter-spacing: 4px; }
+    [data-theme="chrome"] .q-text       { font-size: clamp(12px,2.6vw,15px); font-weight: 400; line-height: 1.6; }
+    [data-theme="chrome"] .slot-rank    { font-size: 11px; font-weight: 400; }
+    [data-theme="chrome"] .slot-rank-rev{ font-size: 11px; font-weight: 400; }
+    [data-theme="chrome"] .slot-name    { font-size: 12px; font-weight: 400; letter-spacing: 0.5px; }
+    [data-theme="chrome"] .slot-primary { font-size: 10px; font-weight: 400; }
+    [data-theme="chrome"] .slot-got-it  { font-size: 8px; font-weight: 400; }
+    [data-theme="chrome"] .lives-label  { font-size: 11px; font-weight: 400; }
+    [data-theme="chrome"] .feedback     { font-size: 10px; font-weight: 400; }
+    [data-theme="chrome"] .wrong-label  { font-size: 9px; font-weight: 400; letter-spacing: 2px; }
+    [data-theme="chrome"] .guess-btn    { font-size: 10px; font-weight: 400; letter-spacing: 1.5px; }
+    [data-theme="chrome"] .date-label   { font-size: 11px; font-weight: 400; }
+    [data-theme="chrome"] .nav-btn      { font-size: 11px; font-weight: 400; }
+    [data-theme="chrome"] .header-clock { font-size: 11px; font-weight: 400; letter-spacing: 2px; }
+    [data-theme="chrome"] .rm-title     { font-size: 18px; font-weight: 400; letter-spacing: 3px; }
+    [data-theme="chrome"] .rm-name      { font-size: 12px; font-weight: 400; }
+    [data-theme="chrome"] .rm-rank      { font-size: 11px; font-weight: 400; }
+    [data-theme="chrome"] .footer       { font-size: 10px; font-weight: 400; }
 
     /* ── DEEP NAVY — Inter font overrides ─────────────────────── */
     [data-theme="deepnavy"] .logo         { font-size: clamp(26px, 7vw, 38px); font-weight: 700; letter-spacing: 3px; }
@@ -1080,7 +1113,7 @@
     <div class="theme-option"        data-t="steam"    onclick="setTheme('steam')">STEAM</div>
     <div class="theme-option"        data-t="xbox"     onclick="setTheme('xbox')">XBOX 360</div>
     <div class="theme-option"        data-t="switch"   onclick="setTheme('switch')">SWITCH</div>
-    <div class="theme-option"        data-t="nexgen"   onclick="setTheme('nexgen')">NEXGEN</div>
+    <div class="theme-option"        data-t="chrome"   onclick="setTheme('chrome')">CHROME</div>
   </div>
 </div>
 
@@ -1234,7 +1267,7 @@ const QUESTIONS = [
     ],
   },
   {
-    id:'countries', question:'Top 5: Most Populous Countries in the World', category:'Geography', emoji:'🌍',
+    id:'countries', question:'Top 5: Most Populous Countries in the World', category:'Geography', emoji:'🌍', vizType:'population',
     pool:['India','China','United States','Indonesia','Pakistan','Brazil','Nigeria','Bangladesh','Russia','Mexico','Ethiopia','Japan','Philippines','Egypt','DR Congo','Vietnam','Iran','Turkey','Germany','Thailand','United Kingdom','France','Tanzania','South Africa','Myanmar','Kenya','Colombia','South Korea','Spain','Uganda','Sudan','Algeria','Argentina','Iraq','Canada','Morocco','Saudi Arabia','Peru','Malaysia','Afghanistan','Ghana','Australia','North Korea'],
     answers:[
       {name:'India',aliases:[],primary:'1.44 billion',coords:[20.5937,78.9629],mapZoom:4,stats:[['Capital','New Delhi'],['Area','3.29M km²'],['Languages','Hindi + 21 official']]},
@@ -1538,6 +1571,58 @@ const RIVER_PATHS = {
   yenisei: [[51.7,94.4],[54.0,91.5],[56.0,93.0],[58.5,92.2],[61.6,90.0],[65.8,87.9],[67.5,86.6],[69.4,86.2],[71.5,82.5],[73.0,80.0]],
 };
 
+const POP_DATA = {
+  'India':         [[1950,376],[1960,452],[1970,555],[1980,684],[1990,870],[2000,1059],[2010,1230],[2020,1390],[2023,1440]],
+  'China':         [[1950,544],[1960,644],[1970,818],[1980,981],[1990,1135],[2000,1264],[2010,1340],[2020,1411],[2023,1410]],
+  'United States': [[1950,158],[1960,180],[1970,205],[1980,227],[1990,250],[2000,282],[2010,309],[2020,331],[2023,335]],
+  'Indonesia':     [[1950,73], [1960,95], [1970,115],[1980,148],[1990,182],[2000,211],[2010,242],[2020,272],[2023,278]],
+  'Pakistan':      [[1950,38], [1960,50], [1970,65], [1980,83], [1990,108],[2000,138],[2010,184],[2020,221],[2023,240]],
+};
+
+function populationVizSVG(countryName, rank) {
+  const history = POP_DATA[countryName];
+  if (!history) return '<svg></svg>';
+  const W = 520, H = 290, mL = 48, mR = 18, mT = 44, mB = 46;
+  const cW = W - mL - mR, cH = H - mT - mB;
+  const maxVal = Math.max(...history.map(d => d[1])) * 1.08;
+  const xS = i => mL + (i / (history.length - 1)) * cW;
+  const yS = v => mT + cH - (v / maxVal) * cH;
+  const els = [];
+  for (const g of [250, 500, 750, 1000, 1250]) {
+    if (g > maxVal) continue;
+    const gy = yS(g);
+    els.push(`<line x1="${mL}" y1="${gy.toFixed(1)}" x2="${W-mR}" y2="${gy.toFixed(1)}" stroke="#222" stroke-width="1" stroke-dasharray="4,8"/>`);
+    els.push(`<text x="${mL-5}" y="${(gy+4).toFixed(1)}" text-anchor="end" font-family="monospace" font-size="8" fill="#444">${g}M</text>`);
+  }
+  const pts = history.map((d,i) => `${xS(i).toFixed(1)},${yS(d[1]).toFixed(1)}`).join(' ');
+  const area = [`${xS(0).toFixed(1)},${(mT+cH).toFixed(1)}`, ...history.map((d,i) => `${xS(i).toFixed(1)},${yS(d[1]).toFixed(1)}`), `${xS(history.length-1).toFixed(1)},${(mT+cH).toFixed(1)}`].join(' ');
+  els.push(`<polygon points="${area}" fill="rgba(200,200,200,0.05)"/>`);
+  els.push(`<polyline points="${pts}" fill="none" stroke="#777" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`);
+  history.forEach((d, i) => {
+    const cx = xS(i).toFixed(1), cy = yS(d[1]).toFixed(1);
+    const last = i === history.length - 1, first = i === 0;
+    els.push(`<circle cx="${cx}" cy="${cy}" r="${last ? 5 : 3}" fill="${last ? '#DDD' : '#555'}" stroke="${last ? '#FFF' : '#777'}" stroke-width="${last ? 1.5 : 1}"/>`);
+    if (i % 2 === 0 || last) {
+      els.push(`<text x="${cx}" y="${(mT+cH+15).toFixed(1)}" text-anchor="middle" font-family="monospace" font-size="8" fill="${last ? '#AAA' : '#4A4A4A'}">${d[0]}</text>`);
+    }
+    if (last || first) {
+      const anchor = last ? 'end' : 'start', ox = last ? -8 : 8;
+      els.push(`<text x="${(parseFloat(cx)+ox).toFixed(1)}" y="${(parseFloat(cy)-9).toFixed(1)}" text-anchor="${anchor}" font-family="monospace" font-size="10" fill="${last ? '#DDD' : '#666'}" font-weight="bold">${d[1]}M</text>`);
+    }
+  });
+  els.push(`<line x1="${mL}" y1="${(mT+cH).toFixed(1)}" x2="${W-mR}" y2="${(mT+cH).toFixed(1)}" stroke="#333" stroke-width="1.5"/>`);
+  els.push(`<text x="${W/2}" y="22" text-anchor="middle" font-family="monospace" font-size="12" fill="#AAA" font-weight="bold" letter-spacing="2">${countryName.toUpperCase()} · POPULATION GROWTH</text>`);
+  if (rank) els.push(`<text x="${W/2}" y="${H-6}" text-anchor="middle" font-family="monospace" font-size="9" fill="#444" letter-spacing="1">RANK #${rank} MOST POPULOUS · SOURCES: UN WORLD POPULATION PROSPECTS</text>`);
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;background:#07090F;display:block;">${els.join('')}</svg>`;
+}
+
+window.openPopViz = function(ans, rank) {
+  document.getElementById('mapLabel').textContent = `${ans.name}  ·  ${ans.primary}`;
+  if (_map) { _map.remove(); _map = null; }
+  document.getElementById('mapLeaflet').innerHTML = populationVizSVG(ans.name, rank);
+  document.getElementById('mapModal').classList.add('open');
+};
+
 let _map = null;
 
 window.openMap = function(lat, lng, label, zoom, style, pathKey) {
@@ -1551,11 +1636,11 @@ window.openMap = function(lat, lng, label, zoom, style, pathKey) {
       ? L.map('mapLeaflet', { zoomControl: true, attributionControl: true })
       : L.map('mapLeaflet', { zoomControl: true, attributionControl: true }).setView([lat, lng], zoom || 8);
     const tileUrl = style === 'terrain'
-      ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-      : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+      ? 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
+      : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
     L.tileLayer(tileUrl, {
-      maxZoom: 19, subdomains: 'abcd',
-      attribution: '© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com">CARTO</a>'
+      maxZoom: 17,
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(_map);
     if (hasPath) {
       const poly = L.polyline(RIVER_PATHS[pathKey], { color: '#4AADEE', weight: 3.5, opacity: 0.85 }).addTo(_map);
@@ -1642,7 +1727,9 @@ window.openMountainViz = function(ans) {
 // ── tile click handler ──────────────────────────────────────────
 window.tileClick = function(ansIdx) {
   const q = getQuestion(), ans = q.answers[ansIdx];
-  if (ans.mapStyle === 'terrain') {
+  if (q.vizType === 'population') {
+    openPopViz(ans, ansIdx + 1);
+  } else if (ans.mapStyle === 'terrain') {
     openMountainViz(ans);
   } else if (ans.coords) {
     const label = ans.mapPath ? `${ans.name}  ·  ${ans.primary}` : ans.name;
@@ -1740,7 +1827,7 @@ window.closeResult = function() {
 //  THEME
 // ═══════════════════════════════════════════════════════════════
 
-const THEME_LABELS = { gameboy:'GAMEBOY', deepnavy:'DEEP NAVY', steam:'STEAM', xbox:'XBOX 360', switch:'SWITCH', nexgen:'NEXGEN' };
+const THEME_LABELS = { gameboy:'GAMEBOY', deepnavy:'DEEP NAVY', steam:'STEAM', xbox:'XBOX 360', switch:'SWITCH', chrome:'CHROME' };
 let currentTheme = localStorage.getItem('top5-theme')||'gameboy';
 if(!THEME_LABELS[currentTheme]) currentTheme = 'gameboy';
 document.body.dataset.theme = currentTheme;
