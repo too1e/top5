@@ -438,7 +438,7 @@
       display: none; position: fixed; inset: 0; z-index: 800;
       background: rgba(0,0,0,0.88); align-items: center; justify-content: center;
     }
-    .result-modal.open { display: flex; animation: fadeUp .2s ease-out; }
+    .result-modal.open { display: flex; animation: fadeUp .3s ease-out; }
     .rm-box {
       width: min(400px, 92vw); max-height: 92vh; overflow-y: auto;
       background: var(--surface); border: var(--border); border-radius: var(--radius);
@@ -1538,7 +1538,7 @@ function doGuess(raw) {
     trackEvent({ event:'guess', q_id:q.id, guess:q.answers[mi].name, correct:true, rank:mi+1 });
     if(state.status==='won'){
       trackEvent({ event:'game_complete', q_id:q.id, score:state.revealed.length, wrongs:state.wrong.length });
-      render();setTimeout(openResult,350);return;
+      render();setTimeout(openResult,600);return;
     }
     updateBoard();
     const inp=document.getElementById('gi'); if(inp){inp.value='';inp.focus();}
@@ -1548,7 +1548,7 @@ function doGuess(raw) {
     if(state.lives===0){
       state.status='lost';save();
       trackEvent({ event:'game_complete', q_id:q.id, score:state.revealed.length, wrongs:state.wrong.length });
-      render();setTimeout(openResult,350);return;
+      render();setTimeout(openResult,600);return;
     }
     updateWrong(); fb('NOT IN THE TOP 5!','wrong');
     const inp=document.getElementById('gi'); if(inp){inp.value='';inp.focus();}
