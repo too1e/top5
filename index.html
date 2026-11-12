@@ -114,8 +114,8 @@
     }
 
     /* ── LAYOUT ────────────────────────────────────────────────── */
-    #app { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 36px 12px 48px; position: relative; z-index: 1; }
-    .game { width: 100%; max-width: min(860px, 97vw); display: flex; flex-direction: column; gap: 16px; }
+    #app { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 28px 10px 40px; position: relative; z-index: 1; }
+    .game { width: 100%; max-width: min(980px, 98vw); display: flex; flex-direction: column; gap: 16px; }
 
     /* ── THEME SELECTOR (fixed) ────────────────────────────────── */
     .theme-select {
@@ -126,12 +126,12 @@
       display: flex; align-items: center; gap: 6px;
       background: var(--surface2); color: var(--text-dim);
       border: var(--border); border-radius: var(--radius);
-      padding: 6px 10px; cursor: pointer;
-      font-family: var(--font-pixel); font-size: 10px; letter-spacing: 0.5px;
+      padding: 8px 14px; cursor: pointer;
+      font-family: var(--font-pixel); font-size: 12px; letter-spacing: 0.5px;
       transition: all 0.15s; white-space: nowrap;
     }
     .theme-btn:hover { color: var(--accent); box-shadow: var(--glow-accent); }
-    .theme-arrow { font-size: 13px; }
+    .theme-arrow { font-size: 15px; }
     .theme-menu {
       display: none; position: absolute; top: calc(100% + 4px); right: 0;
       background: var(--surface); border: var(--border); border-radius: var(--radius);
@@ -280,6 +280,9 @@
     .sugg-item { padding: 10px 14px; font-size: 12px; font-family: var(--font-body); color: var(--text); cursor: pointer; transition: background .1s; }
     .sugg-item:hover, .sugg-item.active { background: var(--sugg-h); }
     .sugg-match { color: var(--accent); font-weight: bold; }
+    .wb-word { display:inline-block; padding:4px 10px; border-radius:4px; font-size:12px; font-family:var(--font-body); background:var(--surface2); border:var(--border); color:var(--text-dim); }
+    .wb-word.wb-ans { border-color:var(--accent); color:var(--text); }
+    .wb-word.wb-got { background:var(--correct-bg); border-color:var(--correct-b); color:var(--correct-t); }
 
     /* ── FEEDBACK ──────────────────────────────────────────────── */
     .feedback { font-family: var(--font-pixel); font-size: 8px; text-align: center; min-height: 20px; letter-spacing: 1px; }
@@ -385,7 +388,6 @@
     /* dark-theme tile inversion — makes OSM tiles read as dark maps */
     [data-theme="gameboy"] .leaflet-tile-pane,
     [data-theme="deepnavy"] .leaflet-tile-pane,
-    [data-theme="steam"] .leaflet-tile-pane,
     [data-theme="chrome"] .leaflet-tile-pane { filter: invert(100%) hue-rotate(180deg) brightness(0.88) contrast(0.9); }
     .leaflet-popup-content-wrapper {
       background: var(--surface2) !important; border: 1px solid var(--border-color) !important;
@@ -555,240 +557,8 @@
     @keyframes gbaReveal { from{opacity:0;transform:translateY(10px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
 
     /* ══════════════════════════════════════════════════════════════
-       STEAM — In-game overlay (Shift+Tab aesthetic)
-       ══════════════════════════════════════════════════════════════ */
-    /* deep blue game-world background */
-    [data-theme="steam"] body {
-      background: #1b2838;
-    }
-    [data-theme="steam"] body::before {
-      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-      background:
-        radial-gradient(ellipse at 20% 80%, rgba(30,80,120,0.35) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(20,60,100,0.3) 0%, transparent 50%),
-        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 3px);
-    }
-    /* "NOW PLAYING" strip at top — Steam overlay chrome */
-    [data-theme="steam"] body::after {
-      content:'▶ NOW PLAYING  ·  TOP 5: DAILY TRIVIA';
-      position:fixed; top:0; left:0; right:0; z-index:200;
-      font-family:'Rajdhani',sans-serif; font-size:12px; font-weight:600;
-      color:#66c0f4; background:rgba(14,22,32,0.96); border-bottom:1px solid rgba(102,192,244,0.3);
-      padding:8px 20px; letter-spacing:2px;
-      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-    }
-    [data-theme="steam"] #app { padding-top: 72px; }
-    /* overlay card — translucent dark panel floating over the game world */
-    [data-theme="steam"] .game {
-      background: rgba(22,36,50,0.92);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(102,192,244,0.18);
-      border-top: 2px solid rgba(102,192,244,0.5);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
-      padding: 16px;
-    }
-    [data-theme="steam"] .q-card {
-      background: rgba(255,255,255,0.04);
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(102,192,244,0.15);
-    }
-    [data-theme="steam"] .slot-hidden {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(102,192,244,0.1);
-    }
-    [data-theme="steam"] .slot-revealed {
-      background: rgba(102,192,244,0.08);
-      border: 1px solid rgba(102,192,244,0.4);
-      animation: steamReveal 0.4s cubic-bezier(0.22,1,0.36,1);
-    }
-    @keyframes steamReveal {
-      0%  { transform: translateX(10px); opacity: 0; }
-      60% { transform: translateX(-2px); }
-      100%{ transform: translateX(0); opacity: 1; }
-    }
-    [data-theme="steam"] .slot-bar {
-      background: linear-gradient(90deg, rgba(102,192,244,0.1) 0%, rgba(102,192,244,0.25) 100%);
-      border-radius: 2px;
-    }
-    [data-theme="steam"] .guess-btn {
-      background: linear-gradient(180deg, #5dade2 0%, #4a9dbf 100%);
-      box-shadow: 0 2px 8px rgba(102,192,244,0.3);
-    }
-    [data-theme="steam"] .logo { letter-spacing: 5px; font-weight: 700; font-size: clamp(26px,7vw,40px); }
-    [data-theme="steam"] .q-category   { font-size: 13px; font-weight: 600; letter-spacing: 3px; }
-    [data-theme="steam"] .q-text       { font-size: clamp(14px,3vw,18px); font-weight: 500; line-height: 1.7; }
-    [data-theme="steam"] .slot-rank    { font-size: 15px; font-weight: 600; }
-    [data-theme="steam"] .slot-rank-rev{ font-size: 15px; font-weight: 600; }
-    [data-theme="steam"] .slot-name    { font-size: 16px; font-weight: 700; }
-    [data-theme="steam"] .slot-primary { font-size: 14px; font-weight: 500; }
-    [data-theme="steam"] .slot-got-it  { font-size: 13px; font-weight: 600; }
-    [data-theme="steam"] .lives-label  { font-size: 14px; font-weight: 500; }
-    [data-theme="steam"] .feedback     { font-size: 15px; font-weight: 600; }
-    [data-theme="steam"] .wrong-label  { font-size: 12px; font-weight: 600; letter-spacing: 2px; }
-    [data-theme="steam"] .guess-btn    { font-size: 15px; font-weight: 700; letter-spacing: 1px; }
-    [data-theme="steam"] .date-label   { font-size: 14px; font-weight: 500; }
-    [data-theme="steam"] .nav-btn      { font-size: 14px; font-weight: 600; }
-    [data-theme="steam"] .header-clock { font-size: 14px; font-weight: 500; letter-spacing: 2px; }
-    [data-theme="steam"] .rm-title     { font-size: 22px; font-weight: 700; }
-    [data-theme="steam"] .rm-name      { font-size: 15px; font-weight: 600; }
-    [data-theme="steam"] .rm-rank      { font-size: 14px; font-weight: 500; }
-    [data-theme="steam"] .footer       { font-size: 12px; font-weight: 400; }
-
-
-    /* ══════════════════════════════════════════════════════════════
-       CHROME — Monochrome Terminal / Data Dashboard
-       ══════════════════════════════════════════════════════════════ */
-    [data-theme="chrome"] {
-      --font-pixel: 'Inter', sans-serif;
-      --font-body:  'Inter', sans-serif;
-      --bg:            #0D0D0D;
-      --surface:       #191919;
-      --surface2:      #232323;
-      --surface3:      #2D2D2D;
-      --border-color:  #333333;
-      --border:        1px solid #333333;
-      --text:          #F0F0F0;
-      --text-dim:      #666666;
-      --accent:        #A0A0A0;
-      --gold:          #A0A0A0;
-      --correct-bg:    rgba(34,197,94,0.08);
-      --correct-b:     #16A34A;
-      --correct-t:     #4ADE80;
-      --wrong-bg:      rgba(239,68,68,0.08);
-      --wrong-b:       #DC2626;
-      --wrong-t:       #F87171;
-      --wrong-chip-bg: rgba(239,68,68,0.10);
-      --wrong-chip-b:  #DC2626;
-      --wrong-chip-t:  #F87171;
-      --btn:           #2A2A2A;
-      --btn-t:         #F0F0F0;
-      --btn-h:         #383838;
-      --input-bg:      #111111;
-      --input-b:       #333333;
-      --sugg-bg:       #191919;
-      --sugg-h:        #232323;
-      --radius:        6px;
-      --glow-accent:   none;
-      --glow-correct:  0 0 12px rgba(34,197,94,0.15);
-      --glow-btn:      none;
-    }
-    [data-theme="chrome"] body { background: #0D0D0D; }
-    [data-theme="chrome"] body::before { display: none; }
-    [data-theme="chrome"] body::after { display: none; }
-    [data-theme="chrome"] .q-card {
-      background: #191919; border: 1px solid #2A2A2A; box-shadow: none;
-    }
-    [data-theme="chrome"] .slot-hidden {
-      border: 1px solid #272727; border-radius: 6px; padding-left: 16px;
-      box-shadow: none; background: #141414;
-    }
-    [data-theme="chrome"] .slot-revealed {
-      border: 1px solid #16A34A; border-radius: 6px; padding-left: 16px;
-      background: rgba(34,197,94,0.06); box-shadow: none; animation: chromeReveal 0.2s ease-out;
-    }
-    @keyframes chromeReveal { from{opacity:0;transform:translateX(-6px)} to{opacity:1;transform:translateX(0)} }
-    [data-theme="chrome"] .slot-missed {
-      border: 1px solid #DC2626; border-radius: 6px; padding-left: 16px;
-      background: rgba(239,68,68,0.06); box-shadow: none;
-    }
-    [data-theme="chrome"] .slot-bar { background: #252525; border-radius: 0; }
-    [data-theme="chrome"] .guess-btn {
-      background: #232323; border: 1px solid #3A3A3A; box-shadow: none;
-    }
-    [data-theme="chrome"] .guess-btn:hover:not(:disabled) { background: #2E2E2E; box-shadow: none; }
-    [data-theme="chrome"] .guess-input { border-radius: 2px; }
-    [data-theme="chrome"] .logo { letter-spacing: 10px; color: #E8E8E8; text-shadow: none; }
-    [data-theme="chrome"] .q-category { color: #666; }
-    [data-theme="chrome"] .q-text { color: #C8C8C8; }
-    [data-theme="chrome"] .slot-revealed .slot-primary { color: var(--correct-t); }
-    [data-theme="chrome"] .slot-revealed .slot-rank-rev { color: var(--correct-t); }
-    [data-theme="chrome"] .slot-got-it { color: var(--correct-t); opacity: 0.8; }
-    [data-theme="chrome"] .logo         { font-size: clamp(24px,5.5vw,36px); font-weight: 700; letter-spacing: 10px; }
-    [data-theme="chrome"] .q-category   { font-size: 11px; font-weight: 600; letter-spacing: 3px; }
-    [data-theme="chrome"] .q-text       { font-size: clamp(14px,2.8vw,17px); font-weight: 500; line-height: 1.6; }
-    [data-theme="chrome"] .slot-rank    { font-size: 13px; font-weight: 500; }
-    [data-theme="chrome"] .slot-rank-rev{ font-size: 13px; font-weight: 600; }
-    [data-theme="chrome"] .slot-name    { font-size: 15px; font-weight: 600; letter-spacing: 0; }
-    [data-theme="chrome"] .slot-primary { font-size: 13px; font-weight: 400; }
-    [data-theme="chrome"] .slot-got-it  { font-size: 11px; font-weight: 600; }
-    [data-theme="chrome"] .lives-label  { font-size: 13px; font-weight: 500; }
-    [data-theme="chrome"] .feedback     { font-size: 13px; font-weight: 500; }
-    [data-theme="chrome"] .wrong-label  { font-size: 11px; font-weight: 600; letter-spacing: 1px; }
-    [data-theme="chrome"] .guess-btn    { font-size: 13px; font-weight: 600; letter-spacing: 0.5px; }
-    [data-theme="chrome"] .date-label   { font-size: 13px; font-weight: 500; }
-    [data-theme="chrome"] .nav-btn      { font-size: 13px; font-weight: 500; }
-    [data-theme="chrome"] .header-clock { font-size: 13px; font-weight: 500; letter-spacing: 1px; }
-    [data-theme="chrome"] .rm-title     { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
-    [data-theme="chrome"] .rm-name      { font-size: 13px; font-weight: 500; }
-    [data-theme="chrome"] .rm-rank      { font-size: 12px; font-weight: 500; }
-    [data-theme="chrome"] .footer       { font-size: 11px; font-weight: 400; }
-
-    /* ── DEEP NAVY — Inter font overrides ─────────────────────── */
-    [data-theme="deepnavy"] .logo         { font-size: clamp(26px, 7vw, 38px); font-weight: 700; letter-spacing: 3px; }
-    [data-theme="deepnavy"] .q-category   { font-size: 12px; font-weight: 600; letter-spacing: 3px; }
-    [data-theme="deepnavy"] .q-text       { font-size: clamp(13px, 3vw, 16px); font-weight: 500; line-height: 1.7; }
-    [data-theme="deepnavy"] .slot-rank    { font-size: 13px; font-weight: 600; }
-    [data-theme="deepnavy"] .slot-rank-rev { font-size: 13px; font-weight: 600; }
-    [data-theme="deepnavy"] .slot-name    { font-size: 13px; font-weight: 600; }
-    [data-theme="deepnavy"] .slot-primary { font-size: 12px; font-weight: 500; }
-    [data-theme="deepnavy"] .slot-got-it  { font-size: 11px; font-weight: 600; }
-    [data-theme="deepnavy"] .lives-label  { font-size: 13px; font-weight: 500; }
-    [data-theme="deepnavy"] .feedback     { font-size: 13px; font-weight: 600; }
-    [data-theme="deepnavy"] .wrong-label  { font-size: 11px; font-weight: 600; letter-spacing: 2px; }
-    [data-theme="deepnavy"] .guess-btn    { font-size: 13px; font-weight: 600; letter-spacing: 0.5px; }
-    [data-theme="deepnavy"] .date-label   { font-size: 13px; font-weight: 500; }
-    [data-theme="deepnavy"] .nav-btn      { font-size: 13px; font-weight: 500; }
-    [data-theme="deepnavy"] .header-clock { font-size: 13px; font-weight: 500; letter-spacing: 2px; }
-    [data-theme="deepnavy"] .rm-title     { font-size: 18px; font-weight: 700; }
-    [data-theme="deepnavy"] .rm-name      { font-size: 13px; font-weight: 600; }
-    [data-theme="deepnavy"] .rm-rank      { font-size: 12px; font-weight: 500; }
-    [data-theme="deepnavy"] .footer       { font-size: 11px; font-weight: 400; }
-
-
-      --font-pixel: 'Rajdhani', sans-serif;
-      --font-body:  'Rajdhani', sans-serif;
-      --bg:            #0D0D0D;
-      --surface:       #161616;
-      --surface2:      #1E1E1E;
-      --surface3:      #262626;
-      --border-color:  #2C2C2C;
-      --border:        1px solid #2C2C2C;
-      --text:          #F0F0F0;
-      --text-dim:      #484848;
-      --accent:        #107C10;
-      --gold:          #52B043;
-      --correct-bg:    rgba(16,124,16,0.1);
-      --correct-b:     #107C10;
-      --correct-t:     #52B043;
-      --wrong-bg:      rgba(180,0,0,0.08);
-      --wrong-b:       #B40000;
-      --wrong-t:       #E03030;
-      --wrong-chip-bg: rgba(180,0,0,0.12);
-      --wrong-chip-b:  #B40000;
-      --wrong-chip-t:  #E05050;
-      --btn:           #107C10;
-      --btn-t:         #FFFFFF;
-      --btn-h:         #13A113;
-      --input-bg:      #0A0A0A;
-      --input-b:       #2C2C2C;
-      --sugg-bg:       #161616;
-      --sugg-h:        #1E1E1E;
-      --radius:        3px;
-      --glow-accent:   0 0 12px rgba(16,124,16,0.4);
-      --glow-correct:  0 0 10px rgba(82,176,67,0.3);
-      --glow-btn:      0 0 14px rgba(16,124,16,0.5);
-    }
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(16,124,16,0.07) 0%, transparent 65%);
-    }
-      border: none; border-top: 2px solid #107C10;
-      background: #161616; box-shadow: 0 2px 0 rgba(16,124,16,0.2);
-    }
-
-    /* ══════════════════════════════════════════════════════════════
        STEAM — CSS vars
        ══════════════════════════════════════════════════════════════ */
-    [data-theme="steam"] {
       --font-pixel: 'Rajdhani', sans-serif;
       --font-body:  'Rajdhani', sans-serif;
       --bg:            #1b2838;
@@ -875,7 +645,6 @@
   <div class="theme-menu" id="themeMenu">
     <div class="theme-option active" data-t="gameboy"  onclick="setTheme('gameboy')">RETRO</div>
     <div class="theme-option"        data-t="deepnavy" onclick="setTheme('deepnavy')">MIDNIGHT</div>
-    <div class="theme-option"        data-t="steam"    onclick="setTheme('steam')">STEEL</div>
     <div class="theme-option"        data-t="chrome"   onclick="setTheme('chrome')">MONO</div>
   </div>
 </div>
@@ -900,6 +669,14 @@
 </div>
 
 <!-- Result modal -->
+<div id="wbModal" onclick="if(event.target===this)closeWordBank()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--surface);border:var(--border);border-radius:var(--radius);padding:20px 24px;max-width:700px;width:100%;max-height:80vh;overflow-y:auto;position:relative;">
+    <button onclick="closeWordBank()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:var(--text-dim);font-size:18px;cursor:pointer;">✕</button>
+    <div style="font-family:var(--font-pixel);font-size:9px;letter-spacing:2px;color:var(--text-dim);margin-bottom:14px;">WORD BANK</div>
+    <div id="wbBody" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+  </div>
+</div>
+
 <div class="result-modal" id="resultModal" onclick="if(event.target===this)closeResult()">
   <div class="rm-box">
     <button class="rm-close" onclick="closeResult()">✕</button>
@@ -913,8 +690,6 @@
     <div class="rm-countdown" id="rmCountdown">--:--:--</div>
     <button class="share-btn" onclick="copyShare()">📋 SHARE RESULT</button>
     <div class="rm-nav">
-      <button id="rmPrev" class="next-day-btn" onclick="navDate(-1);closeResult()">◀ PREV DAY</button>
-      <button id="rmNext" class="next-day-btn" onclick="navDate(1);closeResult()">NEXT DAY ▶</button>
     </div>
   </div>
 </div>
@@ -1588,7 +1363,7 @@ window.closeResult = function() {
 //  THEME
 // ═══════════════════════════════════════════════════════════════
 
-const THEME_LABELS = { gameboy:'RETRO', deepnavy:'MIDNIGHT', steam:'STEEL', chrome:'MONO' };
+const THEME_LABELS = { gameboy:'RETRO', deepnavy:'MIDNIGHT', chrome:'MONO' };
 let currentTheme = localStorage.getItem('top5-theme')||'gameboy';
 if(!THEME_LABELS[currentTheme]) currentTheme = 'gameboy';
 document.body.dataset.theme = currentTheme;
@@ -1614,8 +1389,11 @@ document.addEventListener('click', ()=>document.getElementById('themeMenu').clas
 // ═══════════════════════════════════════════════════════════════
 
 let activeIdx = -1;
+let adminMode = false;
+
 function getSugg(val, q) {
   if(!val||val.length<2) return [];
+  if(val.startsWith('/')) return [];
   const n=norm(val);
   return (q.pool||[]).filter(x=>norm(x).includes(n)).sort((a,b)=>(norm(a).startsWith(n)?0:1)-(norm(b).startsWith(n)?0:1)||a.localeCompare(b)).slice(0,6);
 }
@@ -1680,9 +1458,12 @@ function render() {
       <h1 class="logo">TOP 5</h1>
       <div class="header-clock" id="headerClock">--:--:--</div>
       <div class="date-nav">
-        <button class="nav-btn" onclick="navDate(-1)">◀</button>
+        ${adminMode?`<button class="nav-btn" onclick="navDate(-1)">◀</button>`:''}
         <span class="date-label">${fmtDate(currentDate)}</span>
-        <button class="nav-btn" onclick="navDate(1)">▶</button>
+        ${adminMode?`<button class="nav-btn" onclick="navDate(1)">▶</button>`:''}
+        ${adminMode?`<button class="nav-btn" style="margin-left:8px;font-size:9px;" onclick="openWordBank()">BANK</button>`:''}
+        ${adminMode?`<a href="https://api.top5trivia.com/dashboard?secret=${encodeURIComponent('REPLACE_WITH_A_STRONG_SECRET')}" target="_blank" class="nav-btn" style="margin-left:4px;font-size:9px;text-decoration:none;">STATS</a>`:''}
+
       </div>
     </div>
     <div class="q-card">
@@ -1728,9 +1509,35 @@ function fb(msg, type) {
 }
 function shake(){const inp=document.getElementById('gi');if(!inp)return;inp.classList.add('shake');setTimeout(()=>inp.classList.remove('shake'),500);}
 
+function trackEvent(payload) {
+  try {
+    navigator.sendBeacon('https://api.top5trivia.com/event',
+      new Blob([JSON.stringify(payload)], { type: 'application/json' }));
+  } catch {}
+}
+
+window.openWordBank = function() {
+  const q = getQuestion();
+  const all = [...(q.pool || [])].sort();
+  const answered = new Set(state.revealed.map(i => q.answers[i].name));
+  const html = all.map(n => {
+    const isAnswer = q.answers.some(a => a.name === n);
+    const got = answered.has(n);
+    return `<span class="wb-word${isAnswer?' wb-ans':''}${got?' wb-got':''}">${n}</span>`;
+  }).join('');
+  document.getElementById('wbModal').style.display = 'flex';
+  document.getElementById('wbBody').innerHTML = html;
+};
+window.closeWordBank = function() { document.getElementById('wbModal').style.display = 'none'; };
+
 function doGuess(raw) {
   const q=getQuestion(); if(state.status!=='playing') return;
   hideSugg();
+  if(raw.trim()==='/prod1'){
+    adminMode=true;
+    const inp=document.getElementById('gi'); if(inp){inp.value='';inp.focus();}
+    render(); return;
+  }
   if(state.wrong.some(g=>g.toLowerCase()===raw.toLowerCase())){fb('ALREADY GUESSED THAT','dupe');shake();return;}
   if(state.revealed.some(idx=>matches(raw,q.answers[idx]))){fb('ALREADY FOUND THAT ONE','dupe');shake();return;}
   const mi=q.answers.findIndex((ans,idx)=>!state.revealed.includes(idx)&&matches(raw,ans));
@@ -1738,12 +1545,21 @@ function doGuess(raw) {
     state.revealed=[...state.revealed,mi];
     if(state.revealed.length===q.answers.length) state.status='won';
     save();
-    if(state.status==='won'){render();setTimeout(openResult,350);return;}
+    trackEvent({ event:'guess', q_id:q.id, guess:q.answers[mi].name, correct:true, rank:mi+1 });
+    if(state.status==='won'){
+      trackEvent({ event:'game_complete', q_id:q.id, score:state.revealed.length, wrongs:state.wrong.length });
+      render();setTimeout(openResult,350);return;
+    }
     updateBoard();
     const inp=document.getElementById('gi'); if(inp){inp.value='';inp.focus();}
   } else {
     shake(); state.wrong=[...state.wrong,raw]; state.lives-=1; save(); updateLives();
-    if(state.lives===0){state.status='lost';save();render();setTimeout(openResult,350);return;}
+    trackEvent({ event:'guess', q_id:q.id, guess:raw, correct:false });
+    if(state.lives===0){
+      state.status='lost';save();
+      trackEvent({ event:'game_complete', q_id:q.id, score:state.revealed.length, wrongs:state.wrong.length });
+      render();setTimeout(openResult,350);return;
+    }
     updateWrong(); fb('NOT IN THE TOP 5!','wrong');
     const inp=document.getElementById('gi'); if(inp){inp.value='';inp.focus();}
   }
