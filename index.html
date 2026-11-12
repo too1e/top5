@@ -115,6 +115,7 @@
     /* ── MOBILE: title → question → input → lives → answers ───── */
     @media (max-width: 479px) {
       .game { gap: 12px; }
+      .logo        { font-size: clamp(28px, 9vw, 42px); }
       .q-card      { order: 1; }
       .input-wrap  { order: 2; }
       .lives-row   { order: 3; }
@@ -123,9 +124,6 @@
       .show-result-btn { order: 6; }
       .replay-wrap { order: 7; }
       .footer      { order: 8; }
-      /* prevent button clipping on narrow screens */
-      .guess-form  { gap: 6px; }
-      .guess-btn   { padding: 0 12px; flex-shrink: 0; }
     }
     /* hide search input clear button (×) on WebKit */
     .guess-input[type="search"]::-webkit-search-cancel-button { display: none; }
@@ -1489,7 +1487,7 @@ function render() {
     </div>
     ${!over?`<div class="lives-row"><span class="lives-label">LIVES:</span><div class="lives-icons" id="lives">${livesHtml}</div></div>`:''}
     <div class="answer-board" id="board">${boardHTML}</div>
-    ${!over?`<div class="input-wrap"><form class="guess-form" id="gf" onsubmit="return false"><input id="gi" class="guess-input" type="search" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" name="top5guess_x" placeholder="Type a name…"/><button class="guess-btn" type="submit">GUESS</button></form><div class="suggestions" id="sugg"></div></div><div class="feedback" id="fb"></div>`:''}
+    ${!over?`<div class="input-wrap"><form class="guess-form" id="gf" onsubmit="return false"><input id="gi" class="guess-input" type="search" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" name="top5guess_x" placeholder="Type a name…"/></form><div class="suggestions" id="sugg"></div></div><div class="feedback" id="fb"></div>`:''}
     <div id="wrong-wrap">${wrongHtml}</div>
     ${over?`<button class="show-result-btn" onclick="openResult()">📊 VIEW RESULTS</button>`:''}
     <div class="replay-wrap"><button class="replay-btn" onclick="replayConfirm()">↺ RESET DAY</button></div>
