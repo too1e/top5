@@ -386,7 +386,6 @@
     [data-theme="gameboy"] .leaflet-tile-pane,
     [data-theme="deepnavy"] .leaflet-tile-pane,
     [data-theme="steam"] .leaflet-tile-pane,
-    [data-theme="xbox"] .leaflet-tile-pane,
     [data-theme="chrome"] .leaflet-tile-pane { filter: invert(100%) hue-rotate(180deg) brightness(0.88) contrast(0.9); }
     .leaflet-popup-content-wrapper {
       background: var(--surface2) !important; border: 1px solid var(--border-color) !important;
@@ -635,96 +634,6 @@
     [data-theme="steam"] .rm-rank      { font-size: 14px; font-weight: 500; }
     [data-theme="steam"] .footer       { font-size: 12px; font-weight: 400; }
 
-    /* ══════════════════════════════════════════════════════════════
-       XBOX 360 — NXE Dashboard
-       ══════════════════════════════════════════════════════════════ */
-    [data-theme="xbox"] body::after {
-      content:''; position:fixed; top:0; left:0; right:0; height:4px; z-index:200;
-      background:linear-gradient(90deg,#107C10 0%,#52B043 50%,#107C10 100%);
-      box-shadow:0 0 18px rgba(16,124,16,0.8);
-    }
-    [data-theme="xbox"] body::before {
-      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-      background:
-        radial-gradient(ellipse 130% 80% at 115% 50%, rgba(16,124,16,0.08) 0%, transparent 55%),
-        radial-gradient(ellipse 80% 130% at -15% 50%, rgba(16,124,16,0.06) 0%, transparent 55%);
-    }
-    [data-theme="xbox"] #app { padding-top: 72px; }
-    [data-theme="xbox"] .q-card { border:none; border-top:2px solid #107C10; background:#161616; box-shadow:0 4px 0 rgba(16,124,16,0.2),0 8px 24px rgba(0,0,0,0.5); }
-    [data-theme="xbox"] .slot-revealed { border:none; border-left:3px solid #107C10; padding-left:13px; animation:achievementPop 0.4s cubic-bezier(0.22,1,0.36,1); }
-    [data-theme="xbox"] .slot-missed   { border:none; border-left:3px solid #333; padding-left:13px; }
-    [data-theme="xbox"] .slot-hidden   { border:none; border-left:3px solid #1C1C1C; padding-left:13px; }
-    @keyframes achievementPop {
-      0%  { transform:translateX(-14px); opacity:0; }
-      65% { transform:translateX(2px); }
-      100%{ transform:translateX(0); opacity:1; }
-    }
-    [data-theme="xbox"] .logo         { letter-spacing:6px; font-weight:700; font-size:clamp(24px,6vw,36px); }
-    [data-theme="xbox"] .q-category   { font-size:13px; font-weight:600; letter-spacing:3px; }
-    [data-theme="xbox"] .q-text       { font-size:clamp(14px,3vw,17px); font-weight:500; line-height:1.6; }
-    [data-theme="xbox"] .slot-rank    { font-size:14px; font-weight:600; }
-    [data-theme="xbox"] .slot-rank-rev{ font-size:14px; font-weight:600; }
-    [data-theme="xbox"] .slot-name    { font-size:15px; font-weight:600; }
-    [data-theme="xbox"] .slot-primary { font-size:13px; font-weight:500; }
-    [data-theme="xbox"] .slot-got-it  { font-size:12px; font-weight:700; }
-    [data-theme="xbox"] .lives-label  { font-size:14px; font-weight:500; }
-    [data-theme="xbox"] .feedback     { font-size:14px; font-weight:600; }
-    [data-theme="xbox"] .wrong-label  { font-size:12px; font-weight:600; letter-spacing:2px; }
-    [data-theme="xbox"] .guess-btn    { font-size:14px; font-weight:700; letter-spacing:1px; }
-    [data-theme="xbox"] .date-label   { font-size:13px; font-weight:500; }
-    [data-theme="xbox"] .nav-btn      { font-size:13px; font-weight:600; }
-    [data-theme="xbox"] .header-clock { font-size:13px; font-weight:500; letter-spacing:2px; }
-    [data-theme="xbox"] .rm-title     { font-size:20px; font-weight:700; }
-    [data-theme="xbox"] .rm-name      { font-size:14px; font-weight:600; }
-    [data-theme="xbox"] .rm-rank      { font-size:13px; font-weight:500; }
-    [data-theme="xbox"] .footer       { font-size:12px; font-weight:400; }
-
-    /* ══════════════════════════════════════════════════════════════
-       SWITCH — Nintendo Switch home screen
-       ══════════════════════════════════════════════════════════════ */
-    [data-theme="switch"] body::before { display:none; }
-    [data-theme="switch"] body::after {
-      content:''; position:fixed; top:0; left:0; right:0; height:5px; z-index:200;
-      background:#E4000F;
-    }
-    [data-theme="switch"] #app::after {
-      content:''; position:fixed; bottom:0; left:0; right:0; height:52px; z-index:100; pointer-events:none;
-      background:rgba(255,255,255,0.92); border-top:1px solid #DCDCDC;
-      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-    }
-    [data-theme="switch"] #app { padding-top:72px; padding-bottom:80px; }
-    [data-theme="switch"] .game {
-      background:#FFFFFF; border-radius:20px; padding:20px 16px;
-      box-shadow:0 12px 48px rgba(0,0,0,0.14),0 2px 8px rgba(0,0,0,0.07); border:none;
-    }
-    [data-theme="switch"] .q-card { box-shadow:0 2px 16px rgba(0,0,0,0.08),0 1px 3px rgba(0,0,0,0.05); border:1px solid #E8E8E8; }
-    [data-theme="switch"] .slot-hidden { box-shadow:0 1px 8px rgba(0,0,0,0.06); border:1px solid #E8E8E8; }
-    [data-theme="switch"] .slot-revealed { box-shadow:0 2px 12px rgba(228,0,15,0.1); animation:switchPop 0.45s cubic-bezier(0.34,1.56,0.64,1); }
-    @keyframes switchPop { from{transform:scale(0.9);opacity:0} to{transform:scale(1);opacity:1} }
-    [data-theme="switch"] .slot-bar { background:linear-gradient(90deg,#E8E8E8,#DCDCDC); border-radius:4px; }
-    [data-theme="switch"] .logo::after  { display:none; }
-    [data-theme="switch"] .logo         { color:#E4000F; text-shadow:none; letter-spacing:4px; font-weight:800; font-size:clamp(26px,7vw,38px); }
-    [data-theme="switch"] .q-category   { font-size:13px; font-weight:700; letter-spacing:3px; }
-    [data-theme="switch"] .q-text       { font-size:clamp(14px,3vw,17px); font-weight:600; line-height:1.6; }
-    [data-theme="switch"] .slot-rank    { font-size:14px; font-weight:700; }
-    [data-theme="switch"] .slot-rank-rev{ font-size:14px; font-weight:700; }
-    [data-theme="switch"] .slot-name    { font-size:15px; font-weight:700; }
-    [data-theme="switch"] .slot-primary { font-size:13px; font-weight:600; }
-    [data-theme="switch"] .slot-got-it  { font-size:12px; font-weight:700; }
-    [data-theme="switch"] .lives-label  { font-size:14px; font-weight:600; }
-    [data-theme="switch"] .feedback     { font-size:14px; font-weight:700; }
-    [data-theme="switch"] .wrong-label  { font-size:12px; font-weight:700; letter-spacing:2px; }
-    [data-theme="switch"] .guess-btn    { font-size:14px; font-weight:700; }
-    [data-theme="switch"] .date-label   { font-size:13px; font-weight:600; }
-    [data-theme="switch"] .nav-btn      { font-size:13px; font-weight:600; }
-    [data-theme="switch"] .header-clock { font-size:13px; font-weight:600; }
-    [data-theme="switch"] .rm-title     { font-size:20px; font-weight:800; }
-    [data-theme="switch"] .rm-name      { font-size:14px; font-weight:700; }
-    [data-theme="switch"] .rm-rank      { font-size:13px; font-weight:600; }
-    [data-theme="switch"] .footer       { font-size:12px; font-weight:400; }
-    [data-theme="switch"] .theme-btn    { color:#888; }
-    [data-theme="switch"] .theme-option { color:#888; }
-    [data-theme="switch"] .theme-menu   { box-shadow:0 8px 28px rgba(0,0,0,0.12); }
 
     /* ══════════════════════════════════════════════════════════════
        CHROME — Monochrome Terminal / Data Dashboard
@@ -835,10 +744,7 @@
     [data-theme="deepnavy"] .rm-rank      { font-size: 12px; font-weight: 500; }
     [data-theme="deepnavy"] .footer       { font-size: 11px; font-weight: 400; }
 
-    /* ══════════════════════════════════════════════════════════════
-       XBOX 360 — Dashboard / Achievement UI
-       ══════════════════════════════════════════════════════════════ */
-    [data-theme="xbox"] {
+
       --font-pixel: 'Rajdhani', sans-serif;
       --font-body:  'Rajdhani', sans-serif;
       --bg:            #0D0D0D;
@@ -872,36 +778,12 @@
       --glow-correct:  0 0 10px rgba(82,176,67,0.3);
       --glow-btn:      0 0 14px rgba(16,124,16,0.5);
     }
-    [data-theme="xbox"] body::before {
       content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background: radial-gradient(ellipse at 50% 0%, rgba(16,124,16,0.07) 0%, transparent 65%);
     }
-    [data-theme="xbox"] .q-card {
       border: none; border-top: 2px solid #107C10;
       background: #161616; box-shadow: 0 2px 0 rgba(16,124,16,0.2);
     }
-    [data-theme="xbox"] .slot-revealed { border: none; border-left: 3px solid #107C10; padding-left: 13px; }
-    [data-theme="xbox"] .slot-missed   { border: none; border-left: 3px solid #333;    padding-left: 13px; }
-    [data-theme="xbox"] .slot-hidden   { border: none; border-left: 3px solid #222;    padding-left: 13px; }
-    [data-theme="xbox"] .logo          { letter-spacing: 6px; font-weight: 700; font-size: clamp(24px, 6vw, 36px); }
-    [data-theme="xbox"] .q-category    { font-size: 13px; font-weight: 600; letter-spacing: 3px; }
-    [data-theme="xbox"] .q-text        { font-size: clamp(14px, 3vw, 17px); font-weight: 500; line-height: 1.6; }
-    [data-theme="xbox"] .slot-rank     { font-size: 14px; font-weight: 600; }
-    [data-theme="xbox"] .slot-rank-rev { font-size: 14px; font-weight: 600; }
-    [data-theme="xbox"] .slot-name     { font-size: 15px; font-weight: 600; }
-    [data-theme="xbox"] .slot-primary  { font-size: 13px; font-weight: 500; }
-    [data-theme="xbox"] .slot-got-it   { font-size: 12px; font-weight: 700; }
-    [data-theme="xbox"] .lives-label   { font-size: 14px; font-weight: 500; }
-    [data-theme="xbox"] .feedback      { font-size: 14px; font-weight: 600; }
-    [data-theme="xbox"] .wrong-label   { font-size: 12px; font-weight: 600; letter-spacing: 2px; }
-    [data-theme="xbox"] .guess-btn     { font-size: 14px; font-weight: 700; letter-spacing: 1px; }
-    [data-theme="xbox"] .date-label    { font-size: 13px; font-weight: 500; }
-    [data-theme="xbox"] .nav-btn       { font-size: 13px; font-weight: 600; }
-    [data-theme="xbox"] .header-clock  { font-size: 13px; font-weight: 500; letter-spacing: 2px; }
-    [data-theme="xbox"] .rm-title      { font-size: 20px; font-weight: 700; }
-    [data-theme="xbox"] .rm-name       { font-size: 14px; font-weight: 600; }
-    [data-theme="xbox"] .rm-rank       { font-size: 13px; font-weight: 500; }
-    [data-theme="xbox"] .footer        { font-size: 12px; font-weight: 400; }
 
     /* ══════════════════════════════════════════════════════════════
        STEAM — CSS vars
@@ -941,10 +823,6 @@
       --glow-btn:      0 0 14px rgba(102,192,244,0.4);
     }
 
-    /* ══════════════════════════════════════════════════════════════
-       SWITCH — Nintendo Switch Home Screen (2017)
-       ══════════════════════════════════════════════════════════════ */
-    [data-theme="switch"] {
       --font-pixel: 'Nunito', sans-serif;
       --font-body:  'Nunito', sans-serif;
       --bg:            #EFEFEF;
@@ -978,127 +856,12 @@
       --glow-correct:  0 3px 14px rgba(228,0,15,0.14);
       --glow-btn:      0 3px 16px rgba(228,0,15,0.22);
     }
-    [data-theme="switch"] body::before { display: none; }
-    [data-theme="switch"] .q-card {
       box-shadow: 0 2px 16px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
       border: 1px solid #E8E8E8;
     }
-    [data-theme="switch"] .slot-hidden  { box-shadow: 0 1px 8px rgba(0,0,0,0.06); border: 1px solid #E8E8E8; }
-    [data-theme="switch"] .slot-revealed { box-shadow: 0 2px 12px rgba(228,0,15,0.1); }
-    [data-theme="switch"] .slot-bar {
       background: linear-gradient(90deg, #E8E8E8, #DCDCDC); border-radius: 4px;
     }
-    [data-theme="switch"] .logo::after  { display: none; }
-    [data-theme="switch"] .logo         { color: #E4000F; text-shadow: none; letter-spacing: 4px; font-weight: 800; font-size: clamp(26px, 7vw, 38px); }
-    [data-theme="switch"] .q-category   { font-size: 13px; font-weight: 700; letter-spacing: 3px; }
-    [data-theme="switch"] .q-text       { font-size: clamp(14px, 3vw, 17px); font-weight: 600; line-height: 1.6; }
-    [data-theme="switch"] .slot-rank    { font-size: 14px; font-weight: 700; }
-    [data-theme="switch"] .slot-rank-rev{ font-size: 14px; font-weight: 700; }
-    [data-theme="switch"] .slot-name    { font-size: 15px; font-weight: 700; }
-    [data-theme="switch"] .slot-primary { font-size: 13px; font-weight: 600; }
-    [data-theme="switch"] .slot-got-it  { font-size: 12px; font-weight: 700; }
-    [data-theme="switch"] .lives-label  { font-size: 14px; font-weight: 600; }
-    [data-theme="switch"] .feedback     { font-size: 14px; font-weight: 700; }
-    [data-theme="switch"] .wrong-label  { font-size: 12px; font-weight: 700; letter-spacing: 2px; }
-    [data-theme="switch"] .guess-btn    { font-size: 14px; font-weight: 700; }
-    [data-theme="switch"] .date-label   { font-size: 13px; font-weight: 600; }
-    [data-theme="switch"] .nav-btn      { font-size: 13px; font-weight: 600; }
-    [data-theme="switch"] .header-clock { font-size: 13px; font-weight: 600; }
-    [data-theme="switch"] .rm-title     { font-size: 20px; font-weight: 800; }
-    [data-theme="switch"] .rm-name      { font-size: 14px; font-weight: 700; }
-    [data-theme="switch"] .rm-rank      { font-size: 13px; font-weight: 600; }
-    [data-theme="switch"] .footer       { font-size: 12px; font-weight: 400; }
-    [data-theme="switch"] .theme-btn    { color: #888; }
-    [data-theme="switch"] .theme-option { color: #888; }
-    [data-theme="switch"] .theme-menu   { box-shadow: 0 8px 28px rgba(0,0,0,0.12); }
 
-    /* ══════════════════════════════════════════════════════════════
-       NEXGEN — PS5 / Series X Activity Cards (2020+)
-       ══════════════════════════════════════════════════════════════ */
-    [data-theme="nexgen"] {
-      --font-pixel: 'Barlow', sans-serif;
-      --font-body:  'Barlow', sans-serif;
-      --bg:            #080810;
-      --surface:       rgba(255,255,255,0.05);
-      --surface2:      rgba(255,255,255,0.08);
-      --surface3:      rgba(255,255,255,0.12);
-      --border-color:  rgba(255,255,255,0.1);
-      --border:        1px solid rgba(255,255,255,0.08);
-      --text:          #E8E8F8;
-      --text-dim:      rgba(180,180,210,0.4);
-      --accent:        #0088FF;
-      --gold:          #00CCFF;
-      --correct-bg:    rgba(0,136,255,0.08);
-      --correct-b:     rgba(0,136,255,0.6);
-      --correct-t:     #44AAFF;
-      --wrong-bg:      rgba(220,60,60,0.08);
-      --wrong-b:       rgba(220,60,60,0.5);
-      --wrong-t:       #E07070;
-      --wrong-chip-bg: rgba(220,60,60,0.1);
-      --wrong-chip-b:  rgba(220,60,60,0.4);
-      --wrong-chip-t:  #E09090;
-      --btn:           #0088FF;
-      --btn-t:         #FFFFFF;
-      --btn-h:         #2299FF;
-      --input-bg:      rgba(255,255,255,0.04);
-      --input-b:       rgba(255,255,255,0.12);
-      --sugg-bg:       rgba(8,8,20,0.96);
-      --sugg-h:        rgba(255,255,255,0.07);
-      --radius:        16px;
-      --glow-accent:   0 0 24px rgba(0,136,255,0.3);
-      --glow-correct:  0 0 20px rgba(0,136,255,0.25);
-      --glow-btn:      0 0 20px rgba(0,136,255,0.4);
-    }
-    [data-theme="nexgen"] body::before {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background: radial-gradient(ellipse at 30% 20%, rgba(0,80,180,0.12) 0%, transparent 55%),
-                  radial-gradient(ellipse at 80% 80%, rgba(60,0,120,0.1) 0%, transparent 50%);
-    }
-    [data-theme="nexgen"] .q-card {
-      background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
-    }
-    [data-theme="nexgen"] .slot-hidden {
-      background: rgba(255,255,255,0.04);
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.07);
-    }
-    [data-theme="nexgen"] .slot-revealed {
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,136,255,0.3);
-    }
-    [data-theme="nexgen"] .slot-missed {
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    }
-    [data-theme="nexgen"] .slot-bar {
-      background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(0,136,255,0.2));
-      border-radius: 8px;
-    }
-    [data-theme="nexgen"] .guess-btn {
-      background: linear-gradient(135deg, #0099FF, #0066CC);
-      box-shadow: 0 4px 14px rgba(0,136,255,0.35);
-    }
-    [data-theme="nexgen"] .logo         { letter-spacing: 5px; font-weight: 700; font-size: clamp(26px, 7vw, 38px); }
-    [data-theme="nexgen"] .q-category   { font-size: 13px; font-weight: 600; letter-spacing: 3px; }
-    [data-theme="nexgen"] .q-text       { font-size: clamp(14px, 3vw, 17px); font-weight: 500; line-height: 1.7; }
-    [data-theme="nexgen"] .slot-rank    { font-size: 14px; font-weight: 600; }
-    [data-theme="nexgen"] .slot-rank-rev{ font-size: 14px; font-weight: 600; }
-    [data-theme="nexgen"] .slot-name    { font-size: 15px; font-weight: 600; }
-    [data-theme="nexgen"] .slot-primary { font-size: 13px; font-weight: 500; }
-    [data-theme="nexgen"] .slot-got-it  { font-size: 12px; font-weight: 600; }
-    [data-theme="nexgen"] .lives-label  { font-size: 14px; font-weight: 500; }
-    [data-theme="nexgen"] .feedback     { font-size: 14px; font-weight: 600; }
-    [data-theme="nexgen"] .wrong-label  { font-size: 12px; font-weight: 600; letter-spacing: 2px; }
-    [data-theme="nexgen"] .guess-btn    { font-size: 14px; font-weight: 600; letter-spacing: 0.5px; }
-    [data-theme="nexgen"] .date-label   { font-size: 13px; font-weight: 500; }
-    [data-theme="nexgen"] .nav-btn      { font-size: 13px; font-weight: 500; }
-    [data-theme="nexgen"] .header-clock { font-size: 13px; font-weight: 500; letter-spacing: 2px; }
-    [data-theme="nexgen"] .rm-title     { font-size: 20px; font-weight: 700; }
-    [data-theme="nexgen"] .rm-name      { font-size: 14px; font-weight: 600; }
-    [data-theme="nexgen"] .rm-rank      { font-size: 13px; font-weight: 500; }
-    [data-theme="nexgen"] .footer       { font-size: 12px; font-weight: 400; }
   </style>
 </head>
 <body data-theme="gameboy">
@@ -1110,12 +873,10 @@
     <span class="theme-arrow">▾</span>
   </button>
   <div class="theme-menu" id="themeMenu">
-    <div class="theme-option active" data-t="gameboy"  onclick="setTheme('gameboy')">GAMEBOY</div>
-    <div class="theme-option"        data-t="deepnavy" onclick="setTheme('deepnavy')">DEEP NAVY</div>
-    <div class="theme-option"        data-t="steam"    onclick="setTheme('steam')">STEAM</div>
-    <div class="theme-option"        data-t="xbox"     onclick="setTheme('xbox')">XBOX 360</div>
-    <div class="theme-option"        data-t="switch"   onclick="setTheme('switch')">SWITCH</div>
-    <div class="theme-option"        data-t="chrome"   onclick="setTheme('chrome')">CHROME</div>
+    <div class="theme-option active" data-t="gameboy"  onclick="setTheme('gameboy')">RETRO</div>
+    <div class="theme-option"        data-t="deepnavy" onclick="setTheme('deepnavy')">MIDNIGHT</div>
+    <div class="theme-option"        data-t="steam"    onclick="setTheme('steam')">STEEL</div>
+    <div class="theme-option"        data-t="chrome"   onclick="setTheme('chrome')">MONO</div>
   </div>
 </div>
 
@@ -1827,7 +1588,7 @@ window.closeResult = function() {
 //  THEME
 // ═══════════════════════════════════════════════════════════════
 
-const THEME_LABELS = { gameboy:'GAMEBOY', deepnavy:'DEEP NAVY', steam:'STEAM', xbox:'XBOX 360', switch:'SWITCH', chrome:'CHROME' };
+const THEME_LABELS = { gameboy:'RETRO', deepnavy:'MIDNIGHT', steam:'STEEL', chrome:'MONO' };
 let currentTheme = localStorage.getItem('top5-theme')||'gameboy';
 if(!THEME_LABELS[currentTheme]) currentTheme = 'gameboy';
 document.body.dataset.theme = currentTheme;
