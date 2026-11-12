@@ -112,6 +112,13 @@
     #app { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 28px 10px 40px; position: relative; z-index: 1; }
     .game { width: 100%; max-width: min(680px, 98vw); display: flex; flex-direction: column; gap: 16px; }
 
+    /* ── MOBILE: input above board, no zoom ────────────────────── */
+    @media (max-width: 479px) {
+      .game { gap: 12px; }
+      .input-wrap  { order: -1; }
+      .lives-row   { order: -2; }
+    }
+
     /* ── THEME SELECTOR (fixed) ────────────────────────────────── */
     .theme-select {
       position: fixed; top: 16px; right: 16px; z-index: 500;
@@ -508,7 +515,10 @@
     [data-theme="gameboy"] .q-card { outline:1px solid rgba(44,64,104,0.55); outline-offset:3px; }
     [data-theme="gameboy"] .q-category::before { content:'> '; }
     [data-theme="gameboy"] .slot-bar { background:repeating-linear-gradient(90deg,var(--surface3) 0,var(--surface3) 6px,var(--surface2) 6px,var(--surface2) 12px); border-radius:0; }
-    [data-theme="gameboy"] .guess-input { font-family:var(--font-pixel); font-size:10px; letter-spacing:0.5px; }
+    [data-theme="gameboy"] .guess-input { font-family:var(--font-pixel); font-size:16px; letter-spacing:0.5px; }
+    @media (min-width: 480px) {
+      [data-theme="gameboy"] .guess-input { font-size:10px; }
+    }
     [data-theme="gameboy"] .logo        { font-size: clamp(20px, 5vw, 28px); }
     [data-theme="gameboy"] .q-text      { font-size: clamp(10px, 2.8vw, 13px); line-height: 2.0; }
     [data-theme="gameboy"] .slot-name   { font-size: 11px; }
@@ -1462,7 +1472,7 @@ function render() {
     </div>
     ${!over?`<div class="lives-row"><span class="lives-label">LIVES:</span><div class="lives-icons" id="lives">${livesHtml}</div></div>`:''}
     <div class="answer-board" id="board">${boardHTML}</div>
-    ${!over?`<div class="input-wrap"><form class="guess-form" id="gf" onsubmit="return false"><input id="gi" class="guess-input" type="text" autocomplete="new-password" autocorrect="off" autocapitalize="none" spellcheck="false" inputmode="search" name="top5guess" placeholder="Type a name…"/><button class="guess-btn" type="submit">GUESS</button></form><div class="suggestions" id="sugg"></div></div><div class="feedback" id="fb"></div>`:''}
+    ${!over?`<div class="input-wrap"><form class="guess-form" id="gf" onsubmit="return false"><input id="gi" class="guess-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" inputmode="search" name="top5guess_x" placeholder="Type a name…"/><button class="guess-btn" type="submit">GUESS</button></form><div class="suggestions" id="sugg"></div></div><div class="feedback" id="fb"></div>`:''}
     <div id="wrong-wrap">${wrongHtml}</div>
     ${over?`<button class="show-result-btn" onclick="openResult()">📊 VIEW RESULTS</button>`:''}
     <div class="replay-wrap"><button class="replay-btn" onclick="replayConfirm()">↺ RESET DAY</button></div>
