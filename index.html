@@ -561,19 +561,19 @@
       font-family:'Press Start 2P',monospace; font-size:6px;
       color:#2E88C0; opacity:0.55; letter-spacing:3px;
     }
-    [data-theme="deepnavy"] .q-card { background: transparent; border: none; box-shadow: none; }
+    [data-theme="deepnavy"] .q-card { background: var(--surface); border: 1px solid #1A2E50; box-shadow: inset 0 1px 0 rgba(72,170,216,0.06); }
     [data-theme="deepnavy"] .slot-hidden { border:none; box-shadow:0 3px 14px rgba(0,0,0,0.55); }
     [data-theme="deepnavy"] .slot-missed { box-shadow:0 3px 14px rgba(0,0,0,0.5); }
     [data-theme="deepnavy"] .slot-bar { background:linear-gradient(90deg,var(--surface3) 0%,rgba(46,136,192,0.2) 100%); border-radius:8px; }
     [data-theme="deepnavy"] .guess-btn { background:linear-gradient(180deg,#3898D0 0%,#1E6898 100%); border:none; box-shadow:0 3px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.1); }
     [data-theme="deepnavy"] .guess-btn:hover:not(:disabled) { background:linear-gradient(180deg,#48A8E0 0%,#2878B0 100%); }
-    [data-theme="deepnavy"] .logo { font-size: clamp(28px, 7vw, 42px); letter-spacing: 8px; font-weight: 700; }
-    [data-theme="deepnavy"] .q-text { font-size: clamp(16px, 3.5vw, 20px); font-weight: 600; letter-spacing: 0.3px; }
-    [data-theme="deepnavy"] .q-category { font-size: 11px; font-weight: 700; letter-spacing: 3px; }
-    [data-theme="deepnavy"] .guess-input { font-size: 16px; font-weight: 500; letter-spacing: 0.5px; }
-    [data-theme="deepnavy"] .slot-name { font-size: 15px; font-weight: 600; letter-spacing: 0.3px; }
-    [data-theme="deepnavy"] .slot-primary { font-size: 13px; font-weight: 500; }
-    [data-theme="deepnavy"] .slot-rank, [data-theme="deepnavy"] .slot-rank-rev { font-size: 13px; font-weight: 700; }
+    [data-theme="deepnavy"] .logo { font-size: clamp(22px, 5.5vw, 30px); letter-spacing: 6px; font-weight: 700; }
+    [data-theme="deepnavy"] .q-text { font-size: clamp(13px, 2.8vw, 16px); font-weight: 600; line-height: 1.6; letter-spacing: 0.2px; }
+    [data-theme="deepnavy"] .q-category { font-size: 9px; font-weight: 700; letter-spacing: 3px; }
+    [data-theme="deepnavy"] .guess-input { font-size: 16px; font-weight: 500; letter-spacing: 0.3px; }
+    [data-theme="deepnavy"] .slot-name { font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
+    [data-theme="deepnavy"] .slot-primary { font-size: 12px; font-weight: 500; }
+    [data-theme="deepnavy"] .slot-rank, [data-theme="deepnavy"] .slot-rank-rev { font-size: 12px; font-weight: 700; }
     /* GBA-style slide-up reveal */
     [data-theme="deepnavy"] .slot-revealed { box-shadow:0 3px 14px rgba(0,0,0,0.5),0 0 12px rgba(72,170,216,0.15); animation:gbaReveal 0.35s cubic-bezier(0.22,1,0.36,1); }
     @keyframes gbaReveal { from{opacity:0;transform:translateY(10px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
