@@ -52,8 +52,8 @@
 
     /* ── DEEP NAVY ── near-black blue + ice teal ────────────────── */
     [data-theme="deepnavy"] {
-      --font-pixel: 'Inter', sans-serif;
-      --font-body:  'Inter', sans-serif;
+      --font-pixel: 'Rajdhani', sans-serif;
+      --font-body:  'Rajdhani', sans-serif;
       --bg:            #050912;
       --surface:       #0A1020;
       --surface2:      #0E182C;
@@ -537,8 +537,7 @@
     /* game area = LCD screen inside a handheld device */
     [data-theme="deepnavy"] .game {
       border-radius: 12px;
-      box-shadow: 0 0 0 2px #1A3060, 0 0 0 10px #080F1E, 0 0 0 12px #0D1830,
-                  0 28px 80px rgba(0,0,0,0.9);
+      box-shadow: 0 28px 80px rgba(0,0,0,0.9);
       padding: 4px; background: #050912;
     }
     /* LCD screen-edge vignette */
@@ -559,6 +558,13 @@
     [data-theme="deepnavy"] .slot-bar { background:linear-gradient(90deg,var(--surface3) 0%,rgba(46,136,192,0.2) 100%); border-radius:8px; }
     [data-theme="deepnavy"] .guess-btn { background:linear-gradient(180deg,#3898D0 0%,#1E6898 100%); border:none; box-shadow:0 3px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.1); }
     [data-theme="deepnavy"] .guess-btn:hover:not(:disabled) { background:linear-gradient(180deg,#48A8E0 0%,#2878B0 100%); }
+    [data-theme="deepnavy"] .logo { font-size: clamp(28px, 7vw, 42px); letter-spacing: 8px; font-weight: 700; }
+    [data-theme="deepnavy"] .q-text { font-size: clamp(16px, 3.5vw, 20px); font-weight: 600; letter-spacing: 0.3px; }
+    [data-theme="deepnavy"] .q-category { font-size: 11px; font-weight: 700; letter-spacing: 3px; }
+    [data-theme="deepnavy"] .guess-input { font-size: 16px; font-weight: 500; letter-spacing: 0.5px; }
+    [data-theme="deepnavy"] .slot-name { font-size: 15px; font-weight: 600; letter-spacing: 0.3px; }
+    [data-theme="deepnavy"] .slot-primary { font-size: 13px; font-weight: 500; }
+    [data-theme="deepnavy"] .slot-rank, [data-theme="deepnavy"] .slot-rank-rev { font-size: 13px; font-weight: 700; }
     /* GBA-style slide-up reveal */
     [data-theme="deepnavy"] .slot-revealed { box-shadow:0 3px 14px rgba(0,0,0,0.5),0 0 12px rgba(72,170,216,0.15); animation:gbaReveal 0.35s cubic-bezier(0.22,1,0.36,1); }
     @keyframes gbaReveal { from{opacity:0;transform:translateY(10px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
