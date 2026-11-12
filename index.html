@@ -25,7 +25,7 @@
       --border-color:  #2C4068;
       --border:        1px solid #2C4068;
       --text:          #D8E8F8;
-      --text-dim:      #3E5878;
+      --text-dim:      #607898;
       --accent:        #4E8EC4;
       --gold:          #C4A44A;
       --correct-bg:    rgba(196,164,74,0.07);
@@ -58,8 +58,8 @@
       --surface:       #0A1020;
       --surface2:      #0E182C;
       --surface3:      #142038;
-      --border-color:  #1A3060;
-      --border:        1px solid #1A3060;
+      --border-color:  transparent;
+      --border:        1px solid transparent;
       --text:          #A8C8E8;
       --text-dim:      #2E4868;
       --accent:        #2E88C0;
@@ -77,7 +77,7 @@
       --btn-t:         #A8C8E8;
       --btn-h:         #2E88C0;
       --input-bg:      #080E1A;
-      --input-b:       #1A3060;
+      --input-b:       transparent;
       --sugg-bg:       #0A1020;
       --sugg-h:        #0E182C;
       --radius:        14px;
@@ -106,12 +106,7 @@
         radial-gradient(circle, rgba(78,142,196,0.04) 1px, transparent 1px);
       background-size: 100% 3px, 28px 28px;
     }
-    [data-theme="deepnavy"] body::before {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background-image:
-        repeating-linear-gradient(90deg, transparent, transparent 44px, rgba(26,48,96,0.18) 44px, rgba(26,48,96,0.18) 45px),
-        repeating-linear-gradient(0deg,  transparent, transparent 44px, rgba(26,48,96,0.18) 44px, rgba(26,48,96,0.18) 45px);
-    }
+    [data-theme="deepnavy"] body::before { display: none; }
 
     /* ── LAYOUT ────────────────────────────────────────────────── */
     #app { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 28px 10px 40px; position: relative; z-index: 1; }
@@ -236,7 +231,7 @@
     .slot-missed  .slot-rank-rev { color: var(--wrong-t); }
     .slot-content { flex: 1; min-width: 0; }
     .slot-name-row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-    .slot-name { font-family: var(--font-pixel); font-size: 10px; color: var(--text); }
+    .slot-name { font-family: var(--font-pixel); font-size: 13px; color: var(--text); }
     .slot-primary { font-family: var(--font-pixel); font-size: 9px; }
     .slot-revealed .slot-primary { color: var(--correct-t); }
     .slot-missed  .slot-primary { color: var(--text-dim); }
@@ -547,7 +542,7 @@
       color:#2E88C0; opacity:0.55; letter-spacing:3px;
     }
     [data-theme="deepnavy"] .q-card { background: transparent; border: none; box-shadow: none; }
-    [data-theme="deepnavy"] .slot-hidden { border:none; box-shadow:0 3px 14px rgba(0,0,0,0.55),0 0 0 1px rgba(26,48,96,0.7); }
+    [data-theme="deepnavy"] .slot-hidden { border:none; box-shadow:0 3px 14px rgba(0,0,0,0.55); }
     [data-theme="deepnavy"] .slot-missed { box-shadow:0 3px 14px rgba(0,0,0,0.5); }
     [data-theme="deepnavy"] .slot-bar { background:linear-gradient(90deg,var(--surface3) 0%,rgba(46,136,192,0.2) 100%); border-radius:8px; }
     [data-theme="deepnavy"] .guess-btn { background:linear-gradient(180deg,#3898D0 0%,#1E6898 100%); border:none; box-shadow:0 3px 10px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.1); }
