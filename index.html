@@ -1501,8 +1501,11 @@ function shake(){const inp=document.getElementById('gi');if(!inp)return;inp.clas
 
 function trackEvent(payload) {
   try {
-    navigator.sendBeacon('https://api.top5trivia.com/event',
-      new Blob([JSON.stringify({ ...payload, user_id: USER_ID, session_id: SESSION_ID })], { type: 'application/json' }));
+    fetch('https://api.top5trivia.com/event', {
+      method: 'POST', keepalive: true,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...payload, user_id: USER_ID, session_id: SESSION_ID })
+    }).catch(() => {});
   } catch {}
 }
 
