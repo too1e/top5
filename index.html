@@ -112,11 +112,13 @@
     #app { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 28px 10px 40px; position: relative; z-index: 1; }
     .game { width: 100%; max-width: min(680px, 98vw); display: flex; flex-direction: column; gap: 16px; }
 
-    /* ── MOBILE: input above board, no zoom ────────────────────── */
+    /* ── MOBILE: title → question → input → lives → answers ───── */
     @media (max-width: 479px) {
       .game { gap: 12px; }
-      .input-wrap  { order: -1; }
-      .lives-row   { order: -2; }
+      .q-card      { order: 1; }
+      .input-wrap  { order: 2; }
+      .lives-row   { order: 3; }
+      .answer-board{ order: 4; }
     }
 
     /* ── THEME SELECTOR (fixed) ────────────────────────────────── */
