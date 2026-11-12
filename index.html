@@ -1333,7 +1333,7 @@ window.openResult = function() {
     const got = state.revealed.includes(i);
     return `<div class="rm-row ${got?'rm-got':'rm-miss'}">
       <span class="rm-rank">#${i+1}</span>
-      <span class="rm-name">${got ? ans.name : '???'}</span>
+      <span class="rm-name">${ans.name}</span>
       <span class="rm-check">${got ? '✓' : '✗'}</span>
     </div>`;
   }).join('');
