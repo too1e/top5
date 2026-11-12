@@ -115,6 +115,7 @@
     /* ── MOBILE: title → question → input → lives → answers ───── */
     @media (max-width: 479px) {
       .game { gap: 12px; }
+      .header { margin-bottom: -6px; } /* tighten space to question box */
       .logo        { font-size: clamp(32px, 11vw, 48px) !important; }
       /* hide fixed theme selector; show inline one at bottom */
       #themeSelect { display: none; }
@@ -1399,7 +1400,10 @@ document.querySelectorAll('.theme-option').forEach(el => el.classList.toggle('ac
 
 window.toggleThemeMenu = function(e) {
   e.stopPropagation();
-  document.getElementById('themeMenu').classList.toggle('open');
+  const inline = document.getElementById('themeMenuInline');
+  const fixed  = document.getElementById('themeMenu');
+  const target = (inline && inline.closest('.theme-inline') && getComputedStyle(inline.closest('.theme-inline')).display !== 'none') ? inline : fixed;
+  target.classList.toggle('open');
 };
 window.setTheme = function(t) {
   currentTheme = t;
