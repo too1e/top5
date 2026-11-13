@@ -690,7 +690,7 @@
 
 const EPOCH = '2026-06-11'; // question 1 = today, extends forward
 
-function dateStr(d)        { return d.toISOString().split('T')[0]; }
+function dateStr(d)        { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 function parseDate(s)      { return new Date(s+'T12:00:00'); }
 function offsetFromEpoch(s){ return Math.round((parseDate(s)-parseDate(EPOCH))/86400000); }
 function dateOfOffset(n)   { const d=parseDate(EPOCH); d.setDate(d.getDate()+n); return dateStr(d); }
