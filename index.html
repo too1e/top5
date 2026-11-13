@@ -117,9 +117,6 @@
       .game { gap: 12px; }
       .header { margin-bottom: -6px; } /* tighten space to question box */
       .logo        { font-size: clamp(32px, 11vw, 48px) !important; }
-      /* hide fixed theme selector; show inline one at bottom */
-      #themeSelect { display: none; }
-      .theme-inline { display: flex !important; }
       .q-card      { order: 1; }
       .input-wrap  { order: 2; }
       .lives-row   { order: 3; }
@@ -127,11 +124,7 @@
       #wrong-wrap  { order: 5; }
       .show-result-btn { order: 6; }
       .replay-wrap { order: 7; }
-      .theme-inline{ order: 8; }
-      .footer      { order: 9; }
-    }
-    .theme-inline {
-      display: none; justify-content: center; position: relative;
+      .footer      { order: 8; }
     }
     /* hide search input clear button (×) on WebKit */
     .guess-input[type="search"]::-webkit-search-cancel-button { display: none; }
@@ -640,17 +633,6 @@
 <body data-theme="gameboy">
 
 <!-- Theme selector (fixed, outside render loop) -->
-<div class="theme-select" id="themeSelect">
-  <button class="theme-btn" onclick="toggleThemeMenu(event)">
-    <span id="themeLabel">GAMEBOY</span>
-    <span class="theme-arrow">▾</span>
-  </button>
-  <div class="theme-menu" id="themeMenu">
-    <div class="theme-option active" data-t="gameboy"  onclick="setTheme('gameboy')">RETRO</div>
-    <div class="theme-option"        data-t="deepnavy" onclick="setTheme('deepnavy')">MIDNIGHT</div>
-    <div class="theme-option"        data-t="chrome"   onclick="setTheme('chrome')">MONO</div>
-  </div>
-</div>
 
 <!-- Map modal -->
 <div class="map-modal" id="mapModal" onclick="if(event.target===this)closeMap()">
@@ -789,7 +771,7 @@ const QUESTIONS = [
     id:'nba-pts', question:'Top 5: NBA Career Points Leaders', category:'Sports', emoji:'🏀',
     pool:['LeBron James','Kareem Abdul-Jabbar','Karl Malone','Kobe Bryant','Kevin Durant','Michael Jordan','Dirk Nowitzki','Wilt Chamberlain','Shaquille O\'Neal','Moses Malone','Elvin Hayes','Hakeem Olajuwon','Oscar Robertson','Dominique Wilkins','Tim Duncan','Paul Pierce','Carmelo Anthony','Vince Carter','Reggie Miller','Patrick Ewing','Charles Barkley','John Havlicek','Clyde Drexler','Ray Allen','Kevin Garnett','Stephen Curry','James Harden','Chris Paul','Bob Cousy','Rick Barry','Julius Erving','Bob Pettit','Isiah Thomas','Magic Johnson','Larry Bird','Jerry West','Pete Maravich','Allen Iverson','Tracy McGrady','Russell Westbrook','Kawhi Leonard','Jimmy Butler'],
     answers:[
-      {name:'LeBron James',aliases:['lbj','lebron','king james'],primary:'~42,000 pts (active)',stats:[['Seasons','23'],['Championships','4'],['Teams','CLE · MIA · LAL']],extra:[['Draft','#1 overall pick, 2003 (at 18)'],['Youngest to 30K','Broke record in 2018'],['Games played','1,450+ career games']]},
+      {name:'LeBron James',aliases:['lbj','lebron','king james'],primary:'~43,500 pts (active)',stats:[['Seasons','23+'],['Championships','4'],['Teams','CLE · MIA · LAL']],extra:[['Draft','#1 overall pick, 2003 (at 18)'],['All-time leader','Surpassed Kareem Abdul-Jabbar in 2023'],['Games played','1,600+ career games']]},
       {name:'Kareem Abdul-Jabbar',aliases:['kareem','jabbar','cap','alcindor'],primary:'38,387 pts',stats:[['Seasons','20'],['Championships','6'],['MVPs','6']],extra:[['Sky hook','Virtually unblockable signature shot'],['High school','Power Memorial, NYC — 71-game win streak'],['Author','Wrote 6 books, history advocate']]},
       {name:'Karl Malone',aliases:['malone','mailman','the mailman'],primary:'36,928 pts',stats:[['Seasons','19'],['MVPs','2'],['Team','Utah Jazz']],extra:[['Games missed','Only 5 in 18 NBA seasons'],['All-Star','14 appearances'],['Nickname origin','"Mailman" — always delivered']]},
       {name:'Kobe Bryant',aliases:['kobe','mamba','black mamba'],primary:'33,643 pts',stats:[['Seasons','20'],['Championships','5'],['Team','LA Lakers']],extra:[['81-point game','2nd-highest single-game total ever (2006)'],['Two retired numbers','Both #8 and #24 retired by Lakers'],['Italian fluent','Grew up in Italy, spoke the language natively']]},
@@ -855,7 +837,7 @@ const QUESTIONS = [
     id:'grammys', question:'Top 5: Most Grammy Awards Won (All Time)', category:'Music', emoji:'🎵',
     pool:['Beyoncé','Georg Solti','Quincy Jones','Alison Krauss','Chick Corea','Taylor Swift','Stevie Wonder','Paul Simon','Frank Sinatra','U2','Adele','Billie Eilish','Bruno Mars','Eminem','Kendrick Lamar','Michael Jackson','Barbra Streisand','Carlos Santana','Kanye West','John Legend','Sting','Aretha Franklin','Tony Bennett','Jay-Z','Bruce Springsteen','Bob Dylan','Herbie Hancock','Ella Fitzgerald','Johnny Cash','Dolly Parton','Metallica','Eric Clapton','Paul McCartney'],
     answers:[
-      {name:'Beyoncé',aliases:['beyonce','queen bey','bey'],primary:'32 Grammys',stats:[['Nominations','88+'],['First win','2001'],['Genre','R&B, Pop']],extra:[['Single-night record','Won 4 Grammys in one night at the 2010 ceremony'],['Lemonade','First visual album to receive Album of the Year nomination'],['HBCU donations','Donated millions to HBCUs following Grammy wins']]},
+      {name:'Beyoncé',aliases:['beyonce','queen bey','bey'],primary:'35 Grammys',stats:[['Nominations','99+'],['First win','2001'],['Genre','R&B, Pop']],extra:[['Single-night record','Won 4 Grammys in one night at the 2010 ceremony'],['Cowboy Carter','Won Album of the Year at the 2025 ceremony'],['Most nominated','99+ nominations — the most of any artist in Grammy history']]},
       {name:'Georg Solti',aliases:['solti','sir georg solti'],primary:'31 Grammys',stats:[['Profession','Classical Conductor'],['Orchestra','Chicago Symphony'],['Active','1937–1997']],extra:[['Born','Budapest, Hungary, 1912'],['Knighted','1972 by Queen Elizabeth II'],['Chicago tenure','Principal conductor for 22 years (1969–1991)']]},
       {name:'Quincy Jones',aliases:['quincy','q jones'],primary:'28 Grammys',stats:[['Nominations','80'],['Known for','Producing Thriller (MJ)'],['Grammy Legend','Yes (1991)']],extra:[['Thriller','Produced the best-selling album in history'],['Film scores','Composed for In Cold Blood, The Italian Job'],['Jazz roots','Played trumpet with Count Basie\'s big band']]},
       {name:'Alison Krauss',aliases:['krauss'],primary:'27 Grammys',stats:[['Genre','Bluegrass, Country'],['First win','1991'],['Instruments','Fiddle, Vocals']],extra:[['Age at debut','Won first Grammy at age 19'],['Robert Plant collab','Raising Sand (2007) won 5 Grammys incl. Album of Year'],['Youngest champion','Won national fiddle competition at 12 years old']]},
@@ -869,7 +851,7 @@ const QUESTIONS = [
       {name:'Nile',aliases:['nile river','river nile'],primary:'6,650 km (4,130 mi)',coords:[25.0000,32.9000],mapZoom:5,mapPath:'nile',stats:[['Countries','11 (Egypt, Sudan, Uganda…)'],['Flows into','Mediterranean Sea'],['Known for','Cradle of civilization']]},
       {name:'Amazon',aliases:['amazon river','rio amazonas'],primary:'6,400 km (3,976 mi)',coords:[-3.4653,-62.2159],mapZoom:5,mapPath:'amazon',stats:[['Countries','Brazil, Peru, Colombia'],['Discharge','Largest in world'],['Basin','Amazon Rainforest']]},
       {name:'Yangtze',aliases:['yangtze river','chang jiang','chang'],primary:'6,300 km (3,917 mi)',coords:[30.8198,111.3561],mapZoom:6,mapPath:'yangtze',stats:[['Country','China'],['Rank in Asia','Longest'],['Famous for','Three Gorges Dam']]},
-      {name:'Mississippi',aliases:['mississippi river'],primary:'6,275 km (3,902 mi)',coords:[38.2527,-90.0490],mapZoom:5,mapPath:'mississippi',stats:[['Country','United States'],['Bordering states','10'],['Flows into','Gulf of Mexico']]},
+      {name:'Mississippi',aliases:['mississippi river'],primary:'6,275 km (3,902 mi)',coords:[38.2527,-90.0490],mapZoom:5,mapPath:'mississippi',stats:[['Country','United States'],['System','Missouri–Mississippi combined'],['Flows into','Gulf of Mexico']]},
       {name:'Yenisei',aliases:['yenisei river','yenisey'],primary:'5,539 km (3,445 mi)',coords:[61.6686,87.3342],mapZoom:4,mapPath:'yenisei',stats:[['Countries','Russia, Mongolia'],['Flows into','Kara Sea (Arctic)'],['Basin','2.58M km²']]},
     ],
   },
@@ -1343,14 +1325,14 @@ window.openResult = function() {
   window._shareText = buildShareText();
   const score = state.revealed.length;
   const perfect = won && state.wrong.length === 0;
-  // green shades brightest→dimmest for 5→1, grey for 0
-  const bgColors   = ['#0A0A0A','#0A1A0F','#0D2314','#0F2D18','#113A1D','#0D2A12'];
-  const numColors  = ['#374151','#4ADE80','#86EFAC','#A7F3D0','#BBF7D0','#22C55E'];
+  // color by score: 0=grey, 1=red, 2=orange, 3=yellow, 4=light green, 5=pure green
+  const bgColors   = ['#0A0A0A','#1A0A0A','#1A100A','#1A1A0A','#0D1F0D','#0D2A12'];
+  const numColors  = ['#374151','#F87171','#FB923C','#FDE047','#86EFAC','#22C55E'];
   const glowColors = ['none',
-    'drop-shadow(0 0 6px rgba(74,222,128,0.5))',
-    'drop-shadow(0 0 8px rgba(134,239,172,0.55))',
-    'drop-shadow(0 0 10px rgba(167,243,208,0.6))',
-    'drop-shadow(0 0 14px rgba(187,247,208,0.65))',
+    'drop-shadow(0 0 8px rgba(248,113,113,0.6))',
+    'drop-shadow(0 0 8px rgba(251,146,60,0.6))',
+    'drop-shadow(0 0 8px rgba(253,224,71,0.6))',
+    'drop-shadow(0 0 10px rgba(134,239,172,0.6))',
     'drop-shadow(0 0 20px rgba(34,197,94,0.9)) drop-shadow(0 0 40px rgba(34,197,94,0.5))'];
   const bg  = bgColors[score];
   const num = numColors[score];
@@ -1391,38 +1373,7 @@ window.closeResult = function() {
 //  THEME
 // ═══════════════════════════════════════════════════════════════
 
-const THEME_LABELS = { gameboy:'RETRO', deepnavy:'MIDNIGHT', chrome:'MONO' };
-let currentTheme = localStorage.getItem('top5-theme')||'gameboy';
-if(!THEME_LABELS[currentTheme]) currentTheme = 'gameboy';
-document.body.dataset.theme = currentTheme;
-document.getElementById('themeLabel').textContent = THEME_LABELS[currentTheme];
-document.querySelectorAll('.theme-option').forEach(el => el.classList.toggle('active', el.dataset.t===currentTheme));
-
-window.toggleThemeMenu = function(e) {
-  e.stopPropagation();
-  document.getElementById('themeMenu').classList.toggle('open');
-};
-window.toggleInlineThemeMenu = function(e) {
-  e.stopPropagation();
-  const m = document.getElementById('themeMenuInline');
-  if(m) m.classList.toggle('open');
-};
-window.setTheme = function(t) {
-  currentTheme = t;
-  document.body.dataset.theme = t;
-  localStorage.setItem('top5-theme',t);
-  document.getElementById('themeLabel').textContent = THEME_LABELS[t];
-  const inlineLabel = document.getElementById('themeLabelInline');
-  if(inlineLabel) inlineLabel.textContent = THEME_LABELS[t];
-  document.getElementById('themeMenu').classList.remove('open');
-  const inlineMenu = document.getElementById('themeMenuInline');
-  if(inlineMenu) inlineMenu.classList.remove('open');
-  document.querySelectorAll('.theme-option').forEach(el=>el.classList.toggle('active',el.dataset.t===t));
-};
-document.addEventListener('click', ()=>{
-  document.getElementById('themeMenu').classList.remove('open');
-  const m=document.getElementById('themeMenuInline'); if(m) m.classList.remove('open');
-});
+document.body.dataset.theme = 'gameboy';
 
 // ═══════════════════════════════════════════════════════════════
 //  SUGGESTIONS
@@ -1516,14 +1467,6 @@ function render() {
     <div id="wrong-wrap">${wrongHtml}</div>
     ${over?`<button class="show-result-btn" onclick="openResult()">📊 VIEW RESULTS</button>`:''}
     <div class="replay-wrap"><button class="replay-btn" onclick="replayConfirm()">↺ RESET DAY</button></div>
-    <div class="theme-inline">
-      <button class="theme-btn" onclick="toggleInlineThemeMenu(event)"><span id="themeLabelInline">${THEME_LABELS[currentTheme]||'RETRO'}</span><span class="theme-arrow">▾</span></button>
-      <div class="theme-menu" id="themeMenuInline" style="bottom:calc(100% + 4px);top:auto;right:auto;left:50%;transform:translateX(-50%)">
-        <div class="theme-option${currentTheme==='gameboy'?' active':''}"  data-t="gameboy"  onclick="setTheme('gameboy')">RETRO</div>
-        <div class="theme-option${currentTheme==='deepnavy'?' active':''}" data-t="deepnavy" onclick="setTheme('deepnavy')">MIDNIGHT</div>
-        <div class="theme-option${currentTheme==='chrome'?' active':''}"   data-t="chrome"   onclick="setTheme('chrome')">MONO</div>
-      </div>
-    </div>
     <div class="footer">TOP 5 · Daily Trivia</div>
   </div>`;
 
