@@ -536,11 +536,13 @@ function normalize(s) { return s.trim().toLowerCase().replace(/[^a-z0-9 ]/g, '')
 
 function findMatch(guess) {
   const g = normalize(guess);
+  if (g.length < 3) return -1;
   for (let i = 0; i < TODAY.answers.length; i++) {
     if (revealed.has(i)) continue;
     const ans = TODAY.answers[i];
     const all = [normalize(ans.text), ...ans.aliases.map(normalize)];
-    if (all.some(a => a === g || a.includes(g) || g.includes(a))) return i;
+    // exact match or substring match only when guess is meaningful length
+    if (all.some(a => a === g || (g.length >= 4 && (a.includes(g) || g.includes(a))))) return i;
   }
   return -1;
 }
