@@ -247,8 +247,8 @@ body {
       <div id="stats-your-score" style="font-size:44px;line-height:1;letter-spacing:-2px;color:var(--gold)">—</div>
       <div id="stats-percentile" style="font-size:8px;color:var(--green);margin-top:5px">—</div>
     </div>
-    <div class="modal-tag">Today's players</div>
-    <div id="stats-kpis" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
+    <div class="modal-tag" id="stats-today-label" style="display:none">Today's players</div>
+    <div id="stats-kpis" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div>
     <div id="stats-dist" style="display:flex;flex-direction:column;gap:3px"></div>
     <div class="modal-tag">Your career</div>
     <div id="stats-career" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
@@ -699,30 +699,38 @@ async function openStats() {
   document.getElementById('stats-your-score').textContent = score;
   document.getElementById('stats-your-score').style.color =
     score === 100 ? 'var(--green)' : score > 0 && strikes < 3 ? 'var(--gold)' : 'var(--strike)';
+  const STATS_THRESHOLD = 25;
+  const hasData = total >= STATS_THRESHOLD;
+
   document.getElementById('stats-percentile').textContent =
-    total > 1 ? `Top ${100 - pct}% of today's players` : 'Be the first to play today!';
+    hasData ? `Top ${100 - pct}% of today's players` : 'Be the first to play today!';
 
-  document.getElementById('stats-kpis').innerHTML =
-    kpiTile('Players', total, 'var(--green)') +
-    kpiTile('Avg score', avgToday, 'var(--gold)') +
-    kpiTile('Swept board', sweepPct + '%', 'var(--green)');
+  document.getElementById('stats-today-label').style.display = hasData ? '' : 'none';
+  document.getElementById('stats-kpis').innerHTML = hasData
+    ? kpiTile('Avg score', avgToday, 'var(--gold)') +
+      kpiTile('Swept board', sweepPct + '%', 'var(--green)')
+    : '';
 
-  // All possible score buckets 0–100 by 10
-  const buckets = [100,90,80,70,60,50,40,30,20,10,0];
-  const distMap = Object.fromEntries(dist.map(d => [d.score, d.n]));
-  const maxN = Math.max(...buckets.map(b => distMap[b] ?? 0), 1);
-  document.getElementById('stats-dist').innerHTML = buckets.map(b => {
-    const n = distMap[b] ?? 0;
-    const barW = Math.round(n / maxN * 100);
-    const isYours = b === score;
-    return `<div style="display:grid;grid-template-columns:28px 1fr 22px;gap:6px;align-items:center;font-size:6px">
-      <span style="color:${isYours ? 'var(--green)' : 'var(--dim)'};text-align:right">${b}</span>
-      <div style="background:var(--dark);height:7px;border-radius:2px;overflow:hidden">
-        <div style="width:${barW}%;height:100%;background:${isYours ? 'var(--green)' : 'var(--bg2)'};border-radius:2px"></div>
-      </div>
-      <span style="color:var(--dim);text-align:right">${n}</span>
-    </div>`;
-  }).join('');
+  const distEl = document.getElementById('stats-dist');
+  if (hasData) {
+    const buckets = [100,90,80,70,60,50,40,30,20,10,0];
+    const distMap = Object.fromEntries(dist.map(d => [d.score, d.n]));
+    const maxN = Math.max(...buckets.map(b => distMap[b] ?? 0), 1);
+    distEl.innerHTML = buckets.map(b => {
+      const n = distMap[b] ?? 0;
+      const barW = Math.round(n / maxN * 100);
+      const isYours = b === score;
+      return `<div style="display:grid;grid-template-columns:28px 1fr 22px;gap:6px;align-items:center;font-size:6px">
+        <span style="color:${isYours ? 'var(--green)' : 'var(--dim)'};text-align:right">${b}</span>
+        <div style="background:var(--dark);height:7px;border-radius:2px;overflow:hidden">
+          <div style="width:${barW}%;height:100%;background:${isYours ? 'var(--green)' : 'var(--bg2)'};border-radius:2px"></div>
+        </div>
+        <span style="color:var(--dim);text-align:right">${n}</span>
+      </div>`;
+    }).join('');
+  } else {
+    distEl.innerHTML = '';
+  }
 
   // Career from localStorage
   const career = getCareer();
