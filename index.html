@@ -31,15 +31,14 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--pixel);
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   image-rendering: pixelated;
 }
-@media (max-width: 600px) {
-  body { height: 100dvh; overflow: hidden; }
-}
+@media (max-width: 600px) { body { height: 100dvh; } }
 
 .header {
   width: 100%; max-width: 600px;
@@ -294,7 +293,7 @@ const QUESTIONS = [
   {
     q_id: 'morning-routine',
     question: 'Name something people do first thing in the morning.',
-    survey_responses: 847,
+    survey_responses: 312,
     answers: [
       { text: 'Check their phone',  pts: 34, aliases: ['phone','check phone','look at phone','scroll','scroll phone'] },
       { text: 'Make coffee',         pts: 26, aliases: ['coffee','brew coffee','drink coffee','espresso','caffeine'] },
@@ -307,7 +306,7 @@ const QUESTIONS = [
   {
     q_id: 'junk-drawer',
     question: "Name something you'd find in a junk drawer.",
-    survey_responses: 612,
+    survey_responses: 274,
     answers: [
       { text: 'Batteries',      pts: 35, aliases: ['battery','aa','aaa','batteries'] },
       { text: 'Old chargers',   pts: 24, aliases: ['charger','cable','charging cable','phone charger','old cable'] },
@@ -320,7 +319,7 @@ const QUESTIONS = [
   {
     q_id: 'late-to-work',
     question: 'Name a reason someone might be late to work.',
-    survey_responses: 731,
+    survey_responses: 298,
     answers: [
       { text: 'Traffic',         pts: 42, aliases: ['traffic','traffic jam','stuck in traffic','bad traffic'] },
       { text: 'Overslept',       pts: 28, aliases: ['slept in','oversleep','slept through alarm','alarm','woke up late','late start'] },
@@ -333,7 +332,7 @@ const QUESTIONS = [
   {
     q_id: 'lunch-break',
     question: 'Name something people do on their lunch break.',
-    survey_responses: 583,
+    survey_responses: 241,
     answers: [
       { text: 'Eat out',          pts: 36, aliases: ['go out to eat','restaurant','grab food','eat outside','get food','eat lunch'] },
       { text: 'Scroll their phone', pts: 28, aliases: ['phone','scroll','browse phone','social media','tiktok','instagram'] },
@@ -346,7 +345,7 @@ const QUESTIONS = [
   {
     q_id: 'fast-food',
     question: 'Name a popular fast food chain.',
-    survey_responses: 924,
+    survey_responses: 347,
     answers: [
       { text: "McDonald's",   pts: 41, aliases: ['mcdonalds','mcdonald','mickey d','mickey ds','the golden arches','mcds'] },
       { text: "Chick-fil-A",  pts: 25, aliases: ['chick fil a','chickfila','chick-fil-a','cfa','chick fila'] },
@@ -359,7 +358,7 @@ const QUESTIONS = [
   {
     q_id: 'before-bed',
     question: 'Name something people do before bed.',
-    survey_responses: 698,
+    survey_responses: 289,
     answers: [
       { text: 'Scroll their phone', pts: 34, aliases: ['phone','scroll','look at phone','browse phone','tiktok','instagram','social media'] },
       { text: 'Brush their teeth',  pts: 29, aliases: ['brush teeth','teeth','brush','toothbrush'] },
@@ -372,7 +371,7 @@ const QUESTIONS = [
   {
     q_id: 'binge-watch',
     question: 'Name something people binge watch.',
-    survey_responses: 541,
+    survey_responses: 263,
     answers: [
       { text: 'Netflix shows', pts: 38, aliases: ['netflix','show','shows','tv show','series','streaming'] },
       { text: 'Reality TV',    pts: 26, aliases: ['reality tv','reality show','real housewives','bachelor','survivor','love island'] },
@@ -602,8 +601,8 @@ function endGame(won) {
 
   if (!won) {
     const unrevealed = [4,3,2,1,0].filter(i => !revealed.has(i));
-    unrevealed.forEach((i, pos) => setTimeout(() => revealRow(i, false), 400 + pos * 650));
-    setTimeout(() => openResult(false), 400 + unrevealed.length * 650 + 1200);
+    unrevealed.forEach((i, pos) => setTimeout(() => revealRow(i, false), 150 + pos * 650));
+    setTimeout(() => openResult(false), 150 + unrevealed.length * 650 + 1200);
   } else {
     setTimeout(() => openResult(true), 400);
   }
