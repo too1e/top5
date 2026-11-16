@@ -223,7 +223,7 @@ body {
   </div>
 </main>
 
-<footer class="footer">top5trivia.com · survey edition</footer>
+<footer class="footer" id="footer-text">top5trivia.com · answers sourced from player surveys</footer>
 
 <!-- Result modal -->
 <div class="overlay" id="result-overlay">
@@ -435,6 +435,8 @@ function loadDay(ds) {
   document.getElementById('submit-btn').disabled = false;
   document.getElementById('view-results-btn').style.display = 'none';
   document.getElementById('wrong-msg').textContent = '';
+  document.getElementById('footer-text').textContent =
+    `top5trivia.com · answers sourced from ${TODAY.survey_responses.toLocaleString()} survey responses`;
 
   renderBoard();
   renderStrikes();
