@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>TOP 5 — Survey Edition</title>
+<title>TOP 5 — Daily Trivia</title>
+<meta property="og:title" content="TOP 5 — Daily Trivia"/>
+<meta property="og:site_name" content="TOP 5"/>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230f380f'/><text x='50%25' y='24' text-anchor='middle' font-family='monospace' font-size='22' font-weight='900' fill='%239bbc0f'>5</text></svg>"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -638,7 +640,7 @@ function shareResult() {
   const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   const strikeStr = '✕'.repeat(strikes) + '  '.repeat(3 - strikes);
   const blocks = TODAY.answers.map((_, i) => revealed.has(i) ? '🟩' : '⬛').join('');
-  const text = `TOP 5 · Survey Edition\n${dateStr}\n\nScore: ${score}/100\n${strikeStr}\n${blocks}\n\ntop5trivia.com`;
+  const text = `TOP 5 · Daily Trivia\n${dateStr}\n\nScore: ${score}/100\n${strikeStr}\n${blocks}\n\ntop5trivia.com`;
   const btn = document.getElementById('share-btn');
   if (navigator.share) {
     navigator.share({ text }).catch(() => copyFallback(btn, text));
