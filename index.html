@@ -763,5 +763,36 @@ window.endGame = function(won) { // eslint-disable-line
 
 init();
 </script>
+<script>
+// ── Desktop fit-to-window ────────────────────────────────────────────────────
+// Desktop uses zoom 1.5 by default; shrink it just enough that header, board,
+// answer box and footer all fit in the window. Phones (≤600px) are untouched.
+(() => {
+  const MAX_ZOOM = 1.5, MIN_ZOOM = 1;
+  const mobile = window.matchMedia('(max-width: 600px)');
+  const root = document.documentElement, body = document.body;
+  const parts = ['.header', '#game', '.footer'].map(s => document.querySelector(s));
+  let queued = false;
+
+  function fit() {
+    queued = false;
+    if (mobile.matches) { root.style.zoom = ''; body.style.height = ''; return; }
+    root.style.zoom = 1;
+    body.style.height = 'auto';
+    const natural = parts.reduce((h, el) => h + (el ? el.offsetHeight : 0), 0);
+    const z = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, (window.innerHeight - 4) / natural));
+    root.style.zoom = z;
+    body.style.height = (window.innerHeight / z) + 'px';
+  }
+  const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(fit); } };
+
+  fit();
+  window.addEventListener('resize', schedule);
+  mobile.addEventListener('change', schedule);
+  if (document.fonts) document.fonts.ready.then(schedule);
+  new MutationObserver(schedule).observe(document.getElementById('game'),
+    { subtree: true, childList: true, characterData: true, attributes: true });
+})();
+</script>
 </body>
 </html>
