@@ -290,7 +290,6 @@ const SESSION_ID = (() => { let id = sessionStorage.getItem('top5_sid'); if (!id
 
 // ── Question bank ────────────────────────────────────────────────────────────
 // EPOCH: day 0. Each day advances by 1 index (mod count).
-// survey_q = the prompt players answer after playing (becomes next week's board)
 // Seeded with realistic fake response counts for launch week.
 const EPOCH = '2026-11-16';
 
@@ -306,7 +305,6 @@ const QUESTIONS = [
       { text: 'Use the bathroom',    pts: 13, aliases: ['bathroom','toilet','shower','pee','restroom','go to bathroom'] },
       { text: 'Hit snooze',          pts:  8, aliases: ['snooze','alarm','sleep more','sleep in','snooze button'] },
     ],
-    survey_q: 'Name something people eat for breakfast.',
   },
   {
     q_id: 'junk-drawer',
@@ -319,7 +317,6 @@ const QUESTIONS = [
       { text: 'Rubber bands',   pts: 13, aliases: ['rubber band','elastic','band'] },
       { text: 'Takeout menus',  pts:  9, aliases: ['menu','menus','takeout menu','delivery menu','restaurant menu'] },
     ],
-    survey_q: 'Name something always in your car.',
   },
   {
     q_id: 'late-to-work',
@@ -332,7 +329,6 @@ const QUESTIONS = [
       { text: 'Kids',            pts: 10, aliases: ['kids','children','child','baby','dropped kids off','school','daycare'] },
       { text: 'Bad weather',     pts:  6, aliases: ['weather','snow','rain','ice','storm'] },
     ],
-    survey_q: 'Name something people do on their lunch break.',
   },
   {
     q_id: 'lunch-break',
@@ -345,7 +341,6 @@ const QUESTIONS = [
       { text: 'Nap',              pts: 12, aliases: ['sleep','nap','take a nap','rest','power nap'] },
       { text: 'Run errands',      pts:  7, aliases: ['errands','run errands','grocery store','store','pick something up'] },
     ],
-    survey_q: 'Name a popular fast food chain.',
   },
   {
     q_id: 'fast-food',
@@ -358,7 +353,6 @@ const QUESTIONS = [
       { text: 'Burger King',  pts: 11, aliases: ['bk','burger king'] },
       { text: 'Taco Bell',    pts:  7, aliases: ['taco bell','tb','tacos'] },
     ],
-    survey_q: 'Name something you do before bed.',
   },
   {
     q_id: 'before-bed',
@@ -371,7 +365,6 @@ const QUESTIONS = [
       { text: 'Read',               pts: 12, aliases: ['read','reading','book','read a book'] },
       { text: 'Set an alarm',       pts:  7, aliases: ['alarm','set alarm','set an alarm','phone alarm'] },
     ],
-    survey_q: 'Name something people binge watch.',
   },
   {
     q_id: 'binge-watch',
@@ -384,13 +377,30 @@ const QUESTIONS = [
       { text: 'YouTube',       pts: 12, aliases: ['youtube','yt','videos','youtube videos'] },
       { text: 'Documentaries', pts:  7, aliases: ['documentary','documentaries','doc','docs','true crime'] },
     ],
-    survey_q: 'Name something people do first thing in the morning.',
   },
+];
+
+// ── Survey schedule ──────────────────────────────────────────────────────────
+// One survey question per day, the same for everyone. The question asked on
+// day N is sourced for the board that goes live 7 days later (day N + 7).
+// Index = days since EPOCH. No wrap-around: if a day has no entry, the survey
+// button is hidden rather than asking a random question.
+const SURVEY_SCHEDULE = [
+  /* 2026-11-16 → board 11-23 */ { id: 'always-in-car',       text: 'Name something always in your car.' },
+  /* 2026-11-17 → board 11-24 */ { id: 'breakfast-food',      text: 'Name something people eat for breakfast.' },
+  /* 2026-11-18 → board 11-25 */ { id: 'chore-hate',          text: 'Name a household chore people hate doing.' },
+  /* 2026-11-19 → board 11-26 */ { id: 'forget-vacation',     text: 'Name something people forget to pack for vacation.' },
+  /* 2026-11-20 → board 11-27 */ { id: 'thanksgiving-dish',   text: 'Name a dish you\'d see at Thanksgiving dinner.' },
+  /* 2026-11-21 → board 11-28 */ { id: 'road-trip',           text: 'Name something people do on a road trip.' },
+  /* 2026-11-22 → board 11-29 */ { id: 'excuse-skip-gym',     text: 'Name an excuse people use to skip the gym.' },
 ];
 
 // ── Date helpers ─────────────────────────────────────────────────────────────
 function parseDate(s) { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
-function todayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+// "Today" is the same day for every player worldwide: the date in New York.
+const GAME_TZ = 'America/New_York';
+function todayStr() { return new Intl.DateTimeFormat('en-CA', { timeZone: GAME_TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); }
+function getSurveyForDate(ds) { return SURVEY_SCHEDULE[offsetFromEpoch(ds)] || null; }
 function offsetFromEpoch(s) { return Math.round((parseDate(s) - parseDate(EPOCH)) / 86400000); }
 function dateOfOffset(n) { const d = parseDate(EPOCH); d.setDate(d.getDate() + n); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 
@@ -404,7 +414,8 @@ function getQuestionForDate(ds) {
 let adminMode  = false;
 let adminDate  = null; // null = today
 let TODAY      = null;
-let SURVEY_Q   = null;
+let SURVEY_Q   = null; // { id, text } or null
+let DAY_STR    = null;
 let revealed   = new Set();
 let strikes    = 0;
 let score      = 0;
@@ -425,7 +436,10 @@ function trackEvent(payload) {
 // ── Init ─────────────────────────────────────────────────────────────────────
 function loadDay(ds) {
   TODAY    = getQuestionForDate(ds);
-  SURVEY_Q = QUESTIONS[(QUESTIONS.indexOf(TODAY) + 1) % QUESTIONS.length].survey_q;
+  SURVEY_Q = getSurveyForDate(ds);
+  DAY_STR  = ds;
+  const ctaWrap = document.querySelector('.cta-wrap');
+  if (ctaWrap) ctaWrap.style.display = SURVEY_Q ? '' : 'none';
 
   revealed  = new Set();
   strikes   = 0;
@@ -447,9 +461,8 @@ function loadDay(ds) {
 }
 
 function init() {
-  const d = new Date();
   document.getElementById('date-display').textContent =
-    d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+    parseDate(todayStr()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
 
   function updateClock() {
     const now = new Date();
@@ -740,7 +753,7 @@ function saveCareerResult(won) {
 // ── Survey ────────────────────────────────────────────────────────────────────
 function openSurvey() {
   closeResult();
-  document.getElementById('survey-question-text').textContent = SURVEY_Q;
+  document.getElementById('survey-question-text').textContent = SURVEY_Q ? SURVEY_Q.text : '';
   document.getElementById('survey-answer').value = '';
   document.getElementById('survey-answer').style.display = '';
   document.getElementById('survey-submit').style.display = '';
@@ -750,7 +763,7 @@ function openSurvey() {
 
 async function submitSurvey() {
   const val = document.getElementById('survey-answer').value.trim();
-  if (!val) return;
+  if (!val || !SURVEY_Q) return;
 
   // POST to worker
   try {
@@ -759,7 +772,10 @@ async function submitSurvey() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         q_id: TODAY.q_id,
-        survey_q_id: QUESTIONS[(QUESTIONS.indexOf(TODAY) + 1) % QUESTIONS.length].q_id,
+        survey_q_id: SURVEY_Q.id,
+        survey_q: SURVEY_Q.text,
+        survey_date: DAY_STR,
+        board_date: dateOfOffset(offsetFromEpoch(DAY_STR) + 7),
         answer: val,
         user_id: USER_ID,
       }),
