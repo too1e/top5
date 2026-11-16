@@ -171,6 +171,7 @@ body {
 .survey-input::placeholder { color: var(--dim); font-size: 7px; }
 .survey-thanks { font-size: 8px; color: var(--green); text-align: center; display: none; line-height: 2; }
 
+.modal-btn.secondary.copied { border-color: var(--green); color: var(--green); }
 .cta-wrap { display: flex; flex-direction: column; gap: 8px; }
 .cta-sub { font-size: 6px; color: var(--dim); text-align: center; line-height: 1.9; letter-spacing: 1px; }
 .footer { font-size: 6px; color: var(--dim); padding: 10px 16px 24px; text-align: center; letter-spacing: 1px; max-width: 600px; width: 100%; }
@@ -647,24 +648,47 @@ function shareResult() {
   const blocks = TODAY.answers.map((_, i) => revealed.has(i) ? '🟩' : '⬛').join('');
   const text = `TOP 5 · Daily Trivia\n${dateStr}\n\nScore: ${score}/100\n${strikeStr}\n${blocks}\n\ntop5trivia.com`;
   const btn = document.getElementById('share-btn');
-  if (navigator.share) {
-    navigator.share({ text }).catch(() => copyFallback(btn, text));
-  } else {
-    copyFallback(btn, text);
+  copyText(text).then(ok => flashCopied(btn, ok));
+
+  // Phones: open Messages with the result typed out, ready to send.
+  const ua = navigator.userAgent;
+  const isIOS = /iPhone|iPod/.test(ua);
+  const isAndroidPhone = /Android/.test(ua) && /Mobile/.test(ua);
+  if (isIOS || isAndroidPhone) {
+    const body = encodeURIComponent(text);
+    window.location.href = isIOS ? `sms:&body=${body}` : `sms:?body=${body}`;
   }
 }
 
-function copyFallback(btn, text) {
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text).then(() => true, () => legacyCopy(text));
+  }
+  return Promise.resolve(legacyCopy(text));
+}
+
+function legacyCopy(text) {
   const ta = document.createElement('textarea');
   ta.value = text;
+  ta.setAttribute('readonly', '');
   ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
-  document.body.appendChild(ta); ta.focus(); ta.select();
-  try {
-    document.execCommand('copy');
-    const orig = btn.textContent; btn.textContent = 'Copied!';
-    setTimeout(() => { btn.textContent = orig; }, 1800);
-  } catch { prompt('Copy this:', text); }
+  document.body.appendChild(ta); ta.select();
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch {}
   document.body.removeChild(ta);
+  return ok;
+}
+
+let copiedTimer;
+function flashCopied(btn, ok) {
+  if (!btn.dataset.label) btn.dataset.label = btn.textContent;
+  btn.textContent = ok ? 'Copied to clipboard ✓' : 'Copy failed — try again';
+  btn.classList.toggle('copied', ok);
+  clearTimeout(copiedTimer);
+  copiedTimer = setTimeout(() => {
+    btn.textContent = btn.dataset.label;
+    btn.classList.remove('copied');
+  }, 2000);
 }
 
 // ── Stats ─────────────────────────────────────────────────────────────────────
