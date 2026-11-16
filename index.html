@@ -245,11 +245,7 @@ body {
     <div style="text-align:center">
       <div class="modal-tag" style="margin-bottom:6px">Your score today</div>
       <div id="stats-your-score" style="font-size:44px;line-height:1;letter-spacing:-2px;color:var(--gold)">—</div>
-      <div id="stats-percentile" style="font-size:8px;color:var(--green);margin-top:5px">—</div>
     </div>
-    <div class="modal-tag" id="stats-today-label" style="display:none">Today's players</div>
-    <div id="stats-kpis" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div>
-    <div id="stats-dist" style="display:flex;flex-direction:column;gap:3px"></div>
     <div class="modal-tag">Your career</div>
     <div id="stats-career" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
     <button class="modal-btn secondary" id="stats-back">← Back to results</button>
@@ -675,62 +671,9 @@ async function openStats() {
   document.getElementById('result-overlay').classList.remove('open');
   document.getElementById('stats-overlay').classList.add('open');
 
-  // Fetch live distribution from worker
-  let dist = [];
-  try {
-    const r = await fetch(`https://api.top5trivia.com/stats/today?q_id=${encodeURIComponent(TODAY.q_id)}`);
-    if (r.ok) dist = await r.json();
-  } catch {}
-
-  // Fallback to empty if worker doesn't have data yet
-  if (!dist.length) {
-    dist = [{ score: score, n: 1 }];
-  }
-
-  const total = dist.reduce((s, d) => s + d.n, 0);
-  const below = dist.filter(d => d.score < score).reduce((s, d) => s + d.n, 0);
-  const tied  = dist.filter(d => d.score === score).reduce((s, d) => s + d.n, 0);
-  const pctRaw = total > 1 ? Math.round((below + tied * 0.5) / total * 100) : 50;
-  const pct = Math.min(99, Math.max(1, pctRaw));
-  const avgToday = Math.round(dist.reduce((s, d) => s + d.score * d.n, 0) / Math.max(total, 1));
-  const sweeps = dist.find(d => d.score === 100)?.n ?? 0;
-  const sweepPct = total > 0 ? Math.round(sweeps / total * 100) : 0;
-
   document.getElementById('stats-your-score').textContent = score;
   document.getElementById('stats-your-score').style.color =
     score === 100 ? 'var(--green)' : score > 0 && strikes < 3 ? 'var(--gold)' : 'var(--strike)';
-  const STATS_THRESHOLD = 25;
-  const hasData = total >= STATS_THRESHOLD;
-
-  document.getElementById('stats-percentile').textContent =
-    hasData ? `Top ${100 - pct}% of today's players` : 'Be the first to play today!';
-
-  document.getElementById('stats-today-label').style.display = hasData ? '' : 'none';
-  document.getElementById('stats-kpis').innerHTML = hasData
-    ? kpiTile('Avg score', avgToday, 'var(--gold)') +
-      kpiTile('Swept board', sweepPct + '%', 'var(--green)')
-    : '';
-
-  const distEl = document.getElementById('stats-dist');
-  if (hasData) {
-    const buckets = [100,90,80,70,60,50,40,30,20,10,0];
-    const distMap = Object.fromEntries(dist.map(d => [d.score, d.n]));
-    const maxN = Math.max(...buckets.map(b => distMap[b] ?? 0), 1);
-    distEl.innerHTML = buckets.map(b => {
-      const n = distMap[b] ?? 0;
-      const barW = Math.round(n / maxN * 100);
-      const isYours = b === score;
-      return `<div style="display:grid;grid-template-columns:28px 1fr 22px;gap:6px;align-items:center;font-size:6px">
-        <span style="color:${isYours ? 'var(--green)' : 'var(--dim)'};text-align:right">${b}</span>
-        <div style="background:var(--dark);height:7px;border-radius:2px;overflow:hidden">
-          <div style="width:${barW}%;height:100%;background:${isYours ? 'var(--green)' : 'var(--bg2)'};border-radius:2px"></div>
-        </div>
-        <span style="color:var(--dim);text-align:right">${n}</span>
-      </div>`;
-    }).join('');
-  } else {
-    distEl.innerHTML = '';
-  }
 
   // Career from localStorage
   const career = getCareer();
