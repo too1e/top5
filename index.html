@@ -31,18 +31,20 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--pixel);
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: hidden;
   image-rendering: pixelated;
+}
+@media (max-width: 600px) {
+  body { height: 100dvh; overflow: hidden; }
 }
 
 .header {
   width: 100%; max-width: 600px;
   display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 16px 8px;
+  padding: 14px 16px 10px;
   border-bottom: 2px solid var(--dim);
   flex-shrink: 0;
 }
@@ -60,13 +62,19 @@ body {
 
 .game {
   width: 100%; max-width: 600px;
-  padding: 14px 16px 10px;
-  display: flex; flex-direction: column; gap: 12px;
-  flex: 1; overflow: hidden;
+  padding: 20px 16px 40px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+@media (max-width: 600px) {
+  .game { padding: 14px 16px 10px; gap: 12px; flex: 1; overflow: hidden; }
 }
 
-.question-label { font-size: 7px; color: var(--dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
-.question-text { font-size: 10px; line-height: 1.8; color: var(--green); border: 2px solid var(--dim); padding: 10px 14px; background: var(--panel); }
+.question-label { font-size: 7px; color: var(--dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.question-text { font-size: 11px; line-height: 1.9; color: var(--green); border: 2px solid var(--dim); padding: 14px 16px; background: var(--panel); }
+@media (max-width: 600px) {
+  .question-label { margin-bottom: 6px; }
+  .question-text { font-size: 10px; line-height: 1.8; padding: 10px 14px; }
+}
 
 .status-bar { display: flex; justify-content: space-between; align-items: center; }
 .score-block { display: flex; flex-direction: column; gap: 4px; }
@@ -83,27 +91,46 @@ body {
 .strike-slot.hit { border-color: var(--strike); color: var(--strike); background: rgba(230,57,70,0.12); animation: strike-pop 0.3s ease; }
 @keyframes strike-pop { 0%{transform:scale(1)} 40%{transform:scale(1.4)} 100%{transform:scale(1)} }
 
-.board { display: flex; flex-direction: column; gap: 3px; }
+.board { display: flex; flex-direction: column; gap: 4px; }
 .board-row {
-  display: grid; grid-template-columns: 26px 1fr 44px;
+  display: grid; grid-template-columns: 28px 1fr 48px;
   align-items: center; gap: 0;
   border: 2px solid var(--dim); background: var(--panel);
-  min-height: 38px; position: relative; overflow: hidden; transition: border-color 0.2s;
+  min-height: 44px; position: relative; overflow: hidden; transition: border-color 0.2s;
+}
+@media (max-width: 600px) {
+  .board { gap: 3px; }
+  .board-row { grid-template-columns: 26px 1fr 44px; min-height: 38px; }
 }
 .board-row.revealed { border-color: var(--green); background: var(--bg2); animation: row-reveal 0.4s ease; }
 .board-row.revealed .row-num { color: var(--green); border-right-color: var(--green); }
 .board-row.revealed .row-pts { color: var(--gold); border-left-color: var(--green); background: var(--dark); }
 @keyframes row-reveal { 0%{transform:scaleY(0.8);opacity:0.3} 60%{transform:scaleY(1.04)} 100%{transform:scaleY(1);opacity:1} }
 .row-num { font-size: 8px; color: var(--dim); text-align: center; border-right: 2px solid var(--dim); height: 100%; display: flex; align-items: center; justify-content: center; transition: color 0.2s, border-color 0.2s; }
-.row-answer { padding: 8px 12px; font-size: 8px; line-height: 1.5; letter-spacing: 1px; }
+.row-answer { padding: 10px 14px; font-size: 9px; line-height: 1.6; letter-spacing: 1px; }
+@media (max-width: 600px) {
+  .row-answer { padding: 8px 12px; font-size: 8px; line-height: 1.5; }
+}
 .row-answer.hidden { display: flex; gap: 3px; flex-wrap: wrap; align-items: center; }
 .block { display: inline-block; width: 7px; height: 7px; background: var(--dim); }
 .row-pts { font-size: 9px; text-align: center; border-left: 2px solid var(--dim); height: 100%; display: flex; align-items: center; justify-content: center; color: var(--dim); transition: color 0.2s, border-color 0.2s; }
 
-.input-row { border: 2px solid var(--dim); }
+.input-row { display: flex; gap: 0; border: 2px solid var(--dim); }
 .input-row:focus-within { border-color: var(--green); }
-.guess-input { width: 100%; background: var(--panel); border: none; outline: none; color: var(--green); font-family: var(--pixel); font-size: 10px; padding: 12px 14px; caret-color: var(--green); display: block; }
+.guess-input { flex: 1; background: var(--panel); border: none; outline: none; color: var(--green); font-family: var(--pixel); font-size: 10px; padding: 12px 14px; caret-color: var(--green); }
 .guess-input::placeholder { color: var(--dim); font-size: 8px; }
+.submit-btn { background: var(--dim); border: none; color: var(--dark); font-family: var(--pixel); font-size: 7px; padding: 0 14px; cursor: pointer; letter-spacing: 1px; transition: background 0.1s; }
+.submit-btn:hover { background: var(--green); }
+.submit-btn:active { background: var(--green2); }
+@media (max-width: 600px) {
+  .submit-btn { display: none; }
+  .guess-input { width: 100%; }
+  #question-block { order: 1; }
+  #input-row      { order: 2; }
+  .status-bar     { order: 3; }
+  .board          { order: 4; }
+  .wrong-flash    { order: 5; }
+}
 
 .wrong-flash { font-size: 8px; color: var(--strike); text-align: center; letter-spacing: 1px; min-height: 20px; animation: fade-in 0.2s ease; }
 @keyframes fade-in { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
@@ -163,17 +190,9 @@ body {
 </header>
 
 <main class="game" id="game">
-  <div>
+  <div id="question-block">
     <div class="question-label">Today's question</div>
     <div class="question-text" id="question-text"></div>
-  </div>
-
-  <div class="input-row" id="input-row">
-    <input class="guess-input" id="guess-input" type="text"
-      autocomplete="new-password" autocorrect="off" autocapitalize="none"
-      autocomplete="off" spellcheck="false"
-      inputmode="text" enterkeyhint="go"
-      placeholder="Type your answer..." name="top5guess_nofill"/>
   </div>
 
   <div class="status-bar">
@@ -194,7 +213,17 @@ body {
 
   <div class="board" id="board"></div>
   <div class="wrong-flash" id="wrong-msg"></div>
+
+  <div class="input-row" id="input-row">
+    <input class="guess-input" id="guess-input" type="text"
+      autocomplete="new-password" autocorrect="off" autocapitalize="none"
+      spellcheck="false" inputmode="text" enterkeyhint="go"
+      placeholder="Type your answer..." name="top5guess_nofill"/>
+    <button class="submit-btn" id="submit-btn">GO</button>
+  </div>
 </main>
+
+<footer class="footer">top5trivia.com · survey edition</footer>
 
 <!-- Result modal -->
 <div class="overlay" id="result-overlay">
@@ -403,6 +432,7 @@ function loadDay(ds) {
   document.getElementById('score-display').textContent = '0';
   document.getElementById('input-row').style.opacity = '1';
   document.getElementById('guess-input').disabled = false;
+  document.getElementById('submit-btn').disabled = false;
   document.getElementById('view-results-btn').style.display = 'none';
   document.getElementById('wrong-msg').textContent = '';
 
@@ -426,6 +456,8 @@ function init() {
   loadDay(todayStr());
 
   const inp = document.getElementById('guess-input');
+  const btn = document.getElementById('submit-btn');
+  btn.addEventListener('click', submitGuess);
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submitGuess(); } });
 
   document.getElementById('close-result').addEventListener('click', closeResult);
@@ -562,6 +594,7 @@ function endGame(won) {
   gameOver = true;
   document.getElementById('input-row').style.opacity = '0.3';
   document.getElementById('guess-input').disabled = true;
+  document.getElementById('submit-btn').disabled = true;
 
   trackEvent({ event: 'game_complete', q_id: TODAY.q_id, score, wrongs: strikes, correct: won ? 1 : 0 });
 
