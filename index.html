@@ -439,6 +439,16 @@ let gameOver   = false;
 let wrongTimer = null;
 
 // ── Test mode (type /test in the answer box to reset + stop recording; /live to exit) ──
+(function() {
+  const m = location.search.match(/[?&](test|live)\b/);
+  if (!m) return;
+  try { localStorage.setItem('top5_test', m[1] === 'test' ? '1' : '0'); } catch {}
+  try {
+    Object.keys(localStorage).filter(k => k.startsWith('top5_state_') || k.startsWith('top5_survey_'))
+      .forEach(k => localStorage.removeItem(k));
+  } catch {}
+  history.replaceState(null, '', location.pathname);
+})();
 const TEST = (() => { try { return localStorage.getItem('top5_test') === '1'; } catch { return false; } })();
 function clearLocalPlay() {
   try {
@@ -829,7 +839,7 @@ function setupSurvey() {
 
 async function submitSurvey() {
   const val = document.getElementById('survey-answer').value.trim();
-  if (!val || !SURVEY_Q) return;
+  if (!val || !SURVEY_Q || val.startsWith('/')) return;
 
   // POST to worker
   if (!TEST) try {
