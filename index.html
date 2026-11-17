@@ -107,7 +107,7 @@ body {
 .board-row.revealed { border-color: var(--green); background: var(--bg2); }
 .board-row.revealed .row-num { color: var(--green); border-right-color: var(--green); }
 .board-row.revealed .row-pts { color: var(--gold); border-left-color: var(--green); background: var(--dark); }
-.board-row.flip-reveal { animation: flip-in 0.45s ease forwards; }
+.board-row.flip-reveal { animation: flip-in 0.8s ease forwards; }
 @keyframes flip-in {
   0%  { transform: perspective(400px) rotateX(-90deg); opacity: 0; }
   60% { transform: perspective(400px) rotateX(10deg); }
@@ -116,14 +116,14 @@ body {
 .pts-pop {
   position: absolute; right: 56px; top: 50%; transform: translateY(-50%);
   font-size: 11px; font-weight: 800; color: var(--gold); letter-spacing: 1px;
-  pointer-events: none; animation: pts-fly 0.9s ease forwards; z-index: 10;
+  pointer-events: none; animation: pts-fly 1.5s ease forwards; z-index: 10;
 }
 @keyframes pts-fly {
   0%  { opacity: 1; transform: translateY(-50%); }
   60% { opacity: 1; transform: translateY(calc(-50% - 18px)); }
   100%{ opacity: 0; transform: translateY(calc(-50% - 32px)); }
 }
-.score-flash { animation: score-pulse 0.4s ease; }
+.score-flash { animation: score-pulse 0.7s ease; }
 @keyframes score-pulse { 0%{transform:scale(1)} 40%{transform:scale(1.35);color:#ffd166} 100%{transform:scale(1)} }
 .row-num { font-size: 8px; color: var(--dim); text-align: center; border-right: 2px solid var(--dim); height: 100%; display: flex; align-items: center; justify-content: center; transition: color 0.2s, border-color 0.2s; }
 .row-answer { padding: 10px 14px; font-size: 9px; line-height: 1.6; letter-spacing: 1px; }
@@ -154,7 +154,7 @@ body {
 .wrong-flash { font-size: 8px; color: var(--strike); text-align: center; letter-spacing: 1px; min-height: 20px; animation: fade-in 0.2s ease; }
 @keyframes fade-in { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
 @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
-.shake { animation: shake 0.35s ease; }
+.shake { animation: shake 0.5s ease; }
 
 .overlay { display: none; position: fixed; inset: 0; background: rgba(7,26,7,0.92); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
 .overlay.open { display: flex; }
@@ -172,7 +172,7 @@ body {
 .modal-close { position: absolute; top: 10px; right: 12px; background: none; border: none; color: var(--dim); font-family: var(--pixel); font-size: 14px; cursor: pointer; padding: 4px 6px; line-height: 1; }
 .modal-close:hover { color: var(--green); }
 .modal-reveal { display: flex; flex-direction: column; gap: 6px; }
-.reveal-row { display: grid; grid-template-columns: 20px 1fr 40px; gap: 8px; align-items: center; font-size: 8px; padding: 7px 0; border-bottom: 1px solid var(--bg2); color: var(--dim); }
+.reveal-row { display: grid; grid-template-columns: 20px 1fr 40px; gap: 8px; align-items: center; font-size: 8px; padding: 5px 0; border-bottom: 1px solid var(--bg2); color: var(--dim); }
 .reveal-row.got { color: var(--green); }
 .reveal-row .rpts { color: var(--gold); text-align: right; }
 .modal-btn { background: var(--green); color: var(--dark); border: none; font-family: var(--pixel); font-size: 8px; padding: 14px; cursor: pointer; letter-spacing: 1px; width: 100%; transition: background 0.1s; }
@@ -189,6 +189,11 @@ body {
 .survey-thanks { font-size: 8px; color: var(--green); text-align: center; display: none; line-height: 2; }
 
 .modal-btn.secondary.copied { border-color: var(--green); color: var(--green); }
+.survey-inline { display: flex; flex-direction: column; gap: 10px; border: 2px solid var(--green); padding: 12px; background: var(--bg); }
+.survey-tag { font-size: 7px; color: var(--gold); letter-spacing: 1px; line-height: 1.8; text-align: center; }
+.survey-inline .survey-q { border: none; padding: 0; text-align: center; font-size: 10px; line-height: 1.8; }
+.modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.modal-actions .modal-btn.secondary { margin-top: 0; }
 .cta-wrap { display: flex; flex-direction: column; gap: 8px; }
 .cta-sub { font-size: 6px; color: var(--dim); text-align: center; line-height: 1.9; letter-spacing: 1px; }
 .footer { font-size: 6px; color: var(--dim); padding: 10px 16px 24px; text-align: center; letter-spacing: 1px; max-width: 600px; width: 100%; }
@@ -255,12 +260,21 @@ body {
     <div class="modal-score" id="result-score" style="color:var(--gold)">0</div>
     <div class="modal-verdict" id="result-verdict"></div>
     <div class="modal-reveal" id="result-reveal"></div>
-    <button class="modal-btn secondary" id="share-btn" style="margin-top:0">Share result</button>
-    <div class="cta-wrap">
-      <button class="modal-btn" id="survey-cta">Answer next week's question →</button>
-      <div class="cta-sub">Every board is built from player answers. The top 5 responses become next week's board.</div>
+    <div class="survey-inline" id="survey-inline">
+      <div class="survey-tag">Your turn · help build next week's board</div>
+      <div class="survey-q" id="survey-question-text"></div>
+      <div class="survey-input-wrap" id="survey-form">
+        <input class="survey-input" id="survey-answer" type="text"
+          autocomplete="off" autocorrect="off" autocapitalize="sentences"
+          placeholder="Type your answer..." maxlength="60"/>
+        <button class="modal-btn" id="survey-submit">Submit my answer</button>
+      </div>
+      <div class="survey-thanks" id="survey-thanks">Answer submitted.<br>Come back in 7 days to see if it made the board.</div>
     </div>
-    <button class="modal-btn secondary" id="stats-cta">Today's stats →</button>
+    <div class="modal-actions">
+      <button class="modal-btn secondary" id="share-btn">Share result</button>
+      <button class="modal-btn secondary" id="stats-cta">My stats →</button>
+    </div>
   </div>
 </div>
 
@@ -275,28 +289,6 @@ body {
     <div class="modal-tag">Your career</div>
     <div id="stats-career" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
     <button class="modal-btn secondary" id="stats-back">← Back to results</button>
-  </div>
-</div>
-
-<!-- Survey modal -->
-<div class="overlay" id="survey-overlay">
-  <div class="modal" style="gap:12px">
-    <div class="modal-tag">Next week's question</div>
-    <div class="survey-q" id="survey-question-text"></div>
-    <div class="survey-input-wrap">
-      <input class="survey-input" id="survey-answer" type="text"
-        autocomplete="off" autocorrect="off" autocapitalize="sentences"
-        placeholder="Type your answer..." maxlength="60"/>
-      <button class="modal-btn" id="survey-submit">Submit my answer</button>
-    </div>
-    <div class="survey-note">
-      Your answer could make the board 7 days from now.<br>
-      Top 5 responses become the answers — weighted by votes.
-    </div>
-    <div class="survey-thanks" id="survey-thanks">
-      Answer submitted.<br>Come back in 7 days to see if it made the board.
-    </div>
-    <button class="modal-btn secondary" id="close-survey">Close</button>
   </div>
 </div>
 
@@ -324,15 +316,15 @@ const QUESTIONS = [
     ],
   },
   {
-    q_id: 'junk-drawer',
-    question: "Name something you'd find in a junk drawer.",
+    q_id: 'take-with-you',
+    question: 'Name something you take with you when you leave the house.',
     survey_responses: 274,
     answers: [
-      { text: 'Batteries',      pts: 35, aliases: ['battery','aa','aaa','batteries'] },
-      { text: 'Old chargers',   pts: 24, aliases: ['charger','cable','charging cable','phone charger','old cable'] },
-      { text: 'Random keys',    pts: 19, aliases: ['keys','key','mystery key','old key'] },
-      { text: 'Rubber bands',   pts: 13, aliases: ['rubber band','elastic','band'] },
-      { text: 'Takeout menus',  pts:  9, aliases: ['menu','menus','takeout menu','delivery menu','restaurant menu'] },
+      { text: 'Phone',       pts: 36, aliases: ['cell','cellphone','cell phone','iphone','smartphone','mobile','my phone'] },
+      { text: 'Keys',        pts: 28, aliases: ['key','car keys','house keys','keychain'] },
+      { text: 'Wallet',      pts: 20, aliases: ['purse','billfold','credit card','cards','money','cash'] },
+      { text: 'Headphones',  pts:  9, aliases: ['earbuds','airpods','earphones','headset','ear buds'] },
+      { text: 'Water bottle',pts:  7, aliases: ['water','bottle','drink','tumbler','hydroflask','stanley'] },
     ],
   },
   {
@@ -455,8 +447,7 @@ function loadDay(ds) {
   TODAY    = getQuestionForDate(ds);
   SURVEY_Q = getSurveyForDate(ds);
   DAY_STR  = ds;
-  const ctaWrap = document.querySelector('.cta-wrap');
-  if (ctaWrap) ctaWrap.style.display = SURVEY_Q ? '' : 'none';
+  setupSurvey();
 
   revealed  = new Set();
   strikes   = 0;
@@ -498,7 +489,6 @@ function init() {
 
   document.getElementById('close-result').addEventListener('click', closeResult);
   document.getElementById('share-btn').addEventListener('click', shareResult);
-  document.getElementById('survey-cta').addEventListener('click', openSurvey);
   document.getElementById('stats-cta').addEventListener('click', openStats);
   document.getElementById('view-results-btn').addEventListener('click', () => document.getElementById('result-overlay').classList.add('open'));
 
@@ -506,7 +496,6 @@ function init() {
   document.getElementById('stats-back').addEventListener('click', () => { closeStats(); document.getElementById('result-overlay').classList.add('open'); });
 
   document.getElementById('survey-submit').addEventListener('click', submitSurvey);
-  document.getElementById('close-survey').addEventListener('click', closeSurvey);
   document.getElementById('survey-answer').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submitSurvey(); } });
 
   // /prod1 admin
@@ -564,7 +553,7 @@ function revealRow(idx, awardPts = true) {
     pop.className = 'pts-pop';
     pop.textContent = `+${ans.pts}`;
     row.appendChild(pop);
-    setTimeout(() => pop.remove(), 950);
+    setTimeout(() => pop.remove(), 1550);
     // Score counter flash
     const scoreEl = document.getElementById('score-display');
     scoreEl.textContent = score;
@@ -623,14 +612,14 @@ function addStrike(val) {
   renderStrikes();
   showWrong(val);
   shakeGame();
-  if (strikes >= 3) setTimeout(() => endGame(false), 700);
+  if (strikes >= 3) setTimeout(() => endGame(false), 1400);
 }
 
 function showWrong(val) {
   clearWrong();
   const el = document.getElementById('wrong-msg');
   el.textContent = `"${val}" — not on the board`;
-  wrongTimer = setTimeout(() => { el.textContent = ''; }, 2200);
+  wrongTimer = setTimeout(() => { el.textContent = ''; }, 3800);
 }
 
 function clearWrong() {
@@ -641,7 +630,7 @@ function clearWrong() {
 function shakeGame() {
   const g = document.getElementById('game');
   g.classList.remove('shake'); void g.offsetWidth; g.classList.add('shake');
-  setTimeout(() => g.classList.remove('shake'), 400);
+  setTimeout(() => g.classList.remove("shake"), 550);
 }
 
 // ── End game ──────────────────────────────────────────────────────────────────
@@ -655,10 +644,10 @@ function endGame(won) {
 
   if (!won) {
     const unrevealed = [4,3,2,1,0].filter(i => !revealed.has(i));
-    unrevealed.forEach((i, pos) => setTimeout(() => revealRow(i, false), 150 + pos * 650));
-    setTimeout(() => openResult(false), 150 + unrevealed.length * 650 + 1200);
+    unrevealed.forEach((i, pos) => setTimeout(() => revealRow(i, false), 150 + pos * 900));
+    setTimeout(() => openResult(false), 150 + unrevealed.length * 900 + 1500);
   } else {
-    setTimeout(() => openResult(true), 400);
+    setTimeout(() => openResult(true), 1500);
   }
 }
 
@@ -785,14 +774,19 @@ function saveCareerResult(won) {
 }
 
 // ── Survey ────────────────────────────────────────────────────────────────────
-function openSurvey() {
-  closeResult();
-  document.getElementById('survey-question-text').textContent = SURVEY_Q ? SURVEY_Q.text : '';
+function surveyKey() { return SURVEY_Q ? 'top5_survey_' + SURVEY_Q.id : null; }
+
+function setupSurvey() {
+  const box = document.getElementById('survey-inline');
+  if (!box) return;
+  if (!SURVEY_Q) { box.style.display = 'none'; return; }
+  box.style.display = '';
+  document.getElementById('survey-question-text').textContent = SURVEY_Q.text;
+  let done = false;
+  try { done = !!localStorage.getItem(surveyKey()); } catch {}
   document.getElementById('survey-answer').value = '';
-  document.getElementById('survey-answer').style.display = '';
-  document.getElementById('survey-submit').style.display = '';
-  document.getElementById('survey-thanks').style.display = 'none';
-  document.getElementById('survey-overlay').classList.add('open');
+  document.getElementById('survey-form').style.display = done ? 'none' : '';
+  document.getElementById('survey-thanks').style.display = done ? 'block' : 'none';
 }
 
 async function submitSurvey() {
@@ -816,14 +810,9 @@ async function submitSurvey() {
     }).catch(() => {});
   } catch {}
 
-  document.getElementById('survey-answer').style.display = 'none';
-  document.getElementById('survey-submit').style.display = 'none';
+  try { localStorage.setItem(surveyKey(), '1'); } catch {}
+  document.getElementById('survey-form').style.display = 'none';
   document.getElementById('survey-thanks').style.display = 'block';
-}
-
-function closeSurvey() {
-  document.getElementById('survey-overlay').classList.remove('open');
-  document.getElementById('result-overlay').classList.add('open');
 }
 
 // ── Persist today's game to localStorage ─────────────────────────────────────
