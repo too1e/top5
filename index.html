@@ -120,16 +120,6 @@ body {
   60% { transform: perspective(400px) rotateX(10deg); }
   100%{ transform: perspective(400px) rotateX(0deg); opacity: 1; }
 }
-.pts-pop {
-  position: absolute; right: 56px; top: 50%; transform: translateY(-50%);
-  font-size: 11px; font-weight: 800; color: var(--gold); letter-spacing: 1px;
-  pointer-events: none; animation: pts-fly 1.5s ease forwards; z-index: 10;
-}
-@keyframes pts-fly {
-  0%  { opacity: 1; transform: translateY(-50%); }
-  60% { opacity: 1; transform: translateY(calc(-50% - 18px)); }
-  100%{ opacity: 0; transform: translateY(calc(-50% - 32px)); }
-}
 .score-flash { animation: score-pulse 0.7s ease; }
 @keyframes score-pulse { 0%{transform:scale(1)} 40%{transform:scale(1.35);color:#ffd166} 100%{transform:scale(1)} }
 .row-num { font-size: 8px; color: var(--dim); text-align: center; border-right: 2px solid var(--dim); height: 100%; display: flex; align-items: center; justify-content: center; transition: color 0.2s, border-color 0.2s; }
@@ -595,12 +585,6 @@ function revealRow(idx, awardPts = true) {
   row.addEventListener('animationend', () => row.classList.remove('flip-reveal'), { once: true });
   if (awardPts) {
     score += ans.pts;
-    // Points popup
-    const pop = document.createElement('span');
-    pop.className = 'pts-pop';
-    pop.textContent = `+${ans.pts}`;
-    row.appendChild(pop);
-    setTimeout(() => pop.remove(), 1550);
     // Score counter flash
     const scoreEl = document.getElementById('score-display');
     scoreEl.textContent = score;
