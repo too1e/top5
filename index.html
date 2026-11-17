@@ -524,20 +524,25 @@ function init() {
   document.getElementById('survey-answer').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submitSurvey(); } });
 
   // /prod1 admin
-  inp.addEventListener('input', () => {
-    const cmd = inp.value.trim();
+  const handleCmd = el => {
+    const cmd = el.value.trim();
     if (cmd === '/test' || cmd === '/live') {
       try { localStorage.setItem('top5_test', cmd === '/test' ? '1' : '0'); } catch {}
       clearLocalPlay();
       location.reload();
       return;
     }
-    if (inp.value.trim() === '/prod1') {
-      inp.value = '';
+    if (cmd === '/prod1') {
+      el.value = '';
       adminMode = true;
       document.getElementById('admin-nav').classList.add('show');
+      document.getElementById('result-overlay').classList.remove('open');
     }
-  });
+  };
+  inp.addEventListener('input', () => handleCmd(inp));
+  const surveyInp = document.getElementById('survey-answer');
+  surveyInp.addEventListener('input', () => handleCmd(surveyInp));
+
 }
 
 // ── Admin nav ─────────────────────────────────────────────────────────────────
