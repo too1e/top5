@@ -826,24 +826,65 @@ function closeSurvey() {
   document.getElementById('result-overlay').classList.add('open');
 }
 
-// ── Boot ──────────────────────────────────────────────────────────────────────
-// Save career result once per session
-(function() {
-  const key = 'top5_played_' + todayStr();
-  if (!sessionStorage.getItem(key)) {
-    const orig = endGame;
-    window._endGameHooked = true;
-  }
-})();
+// ── Persist today's game to localStorage ─────────────────────────────────────
+function saveGameState(won) {
+  try {
+    localStorage.setItem('top5_state_' + todayStr(), JSON.stringify({
+      score, strikes, won,
+      revealed: [...revealed],
+    }));
+  } catch {}
+}
 
-// Hook endGame to save career stats
+function loadGameState() {
+  try {
+    return JSON.parse(localStorage.getItem('top5_state_' + todayStr()) || 'null');
+  } catch { return null; }
+}
+
+// Hook endGame to persist state + save career stats
 const _endGame = endGame;
-window.endGame = function(won) { // eslint-disable-line
+window.endGame = function(won) {
   _endGame(won);
+  saveGameState(won);
   saveCareerResult(won);
 };
 
+// ── Boot ──────────────────────────────────────────────────────────────────────
 init();
+
+// After init, check if player already completed today's game
+(function() {
+  const saved = loadGameState();
+  if (!saved) return;
+
+  // Restore board state silently
+  score   = saved.score;
+  strikes = saved.strikes;
+  gameOver = true;
+  for (const i of saved.revealed) revealed.add(i);
+
+  // Rebuild board with revealed rows (no animation)
+  document.getElementById('score-display').textContent = score;
+  renderStrikes();
+  for (const i of saved.revealed) {
+    const row = document.getElementById('row-' + i);
+    if (!row) continue;
+    const ans = TODAY.answers[i];
+    row.classList.add('revealed');
+    row.innerHTML = `<div class="row-num">${i+1}</div><div class="row-answer">${ans.text}</div><div class="row-pts">${ans.pts}</div>`;
+  }
+
+  // Disable input
+  document.getElementById('guess-input').disabled = true;
+  document.getElementById('input-row').style.opacity = '0.3';
+
+  // Show result modal immediately — they already played today
+  openResult(saved.won);
+  // Show "view results" button in status bar
+  const viewBtn = document.getElementById('view-results-btn');
+  if (viewBtn) viewBtn.style.display = '';
+})();
 </script>
 <script>
 // ── Desktop fit-to-window ────────────────────────────────────────────────────
