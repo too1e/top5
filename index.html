@@ -688,7 +688,7 @@ function openResult(won) {
     lose: ['STRUCK OUT.', 'THREE STRIKES.', 'THE BOARD WINS.'],
   };
   const v = verdicts[won ? 'win' : 'lose'];
-  document.getElementById('result-tag').textContent = won ? 'Round complete' : 'Game over';
+  document.getElementById('result-tag').textContent = won ? 'You swept the board' : 'Three strikes';
   document.getElementById('result-verdict').textContent = v[Math.floor(Math.random() * v.length)];
   document.getElementById('result-score').textContent = score;
   document.getElementById('result-score').style.color = score === 100 ? 'var(--green)' : won ? 'var(--gold)' : 'var(--strike)';
