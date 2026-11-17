@@ -3,10 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>TOP 5 — Daily Trivia</title>
-<meta property="og:title" content="TOP 5 — Daily Trivia"/>
+<title>TOP 5: Guess What Everyone Else Said</title>
+<meta name="description" content="We asked real people. You guess the top 5 answers. Three strikes and you're out. A new board every day, free to play."/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="TOP 5: Guess What Everyone Else Said"/>
+<meta property="og:description" content="We asked real people. You guess the top 5 answers. Three strikes and you're out."/>
+<meta property="og:url" content="https://top5trivia.com/"/>
 <meta property="og:site_name" content="TOP 5"/>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230f380f'/><text x='50%25' y='24' text-anchor='middle' font-family='monospace' font-size='22' font-weight='900' fill='%239bbc0f'>5</text></svg>"/>
+<meta name="twitter:card" content="summary"/>
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png"/>
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
@@ -643,7 +650,7 @@ function addStrike(val) {
 function showWrong(val) {
   clearWrong();
   const el = document.getElementById('wrong-msg');
-  el.textContent = `"${val}" — not on the board`;
+  el.textContent = `"${val}" is not on the board`;
   wrongTimer = setTimeout(() => { el.textContent = ''; }, 3800);
 }
 
@@ -743,7 +750,7 @@ function legacyCopy(text) {
 let copiedTimer;
 function flashCopied(btn, ok) {
   if (!btn.dataset.label) btn.dataset.label = btn.textContent;
-  btn.textContent = ok ? 'Copied to clipboard ✓' : 'Copy failed — try again';
+  btn.textContent = ok ? 'Copied to clipboard ✓' : 'Copy failed, try again';
   btn.classList.toggle('copied', ok);
   clearTimeout(copiedTimer);
   copiedTimer = setTimeout(() => {
@@ -895,7 +902,7 @@ init();
   document.getElementById('guess-input').disabled = true;
   document.getElementById('input-row').style.opacity = '0.3';
 
-  // Show result modal immediately — they already played today
+  // Show result modal immediately, they already played today
   openResult(saved.won);
   // Show "view results" button in status bar
   const viewBtn = document.getElementById('view-results-btn');
