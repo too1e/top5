@@ -431,8 +431,26 @@ let score      = 0;
 let gameOver   = false;
 let wrongTimer = null;
 
+// ── Test mode (type /test in the answer box to reset + stop recording; /live to exit) ──
+const TEST = (() => { try { return localStorage.getItem('top5_test') === '1'; } catch { return false; } })();
+function clearLocalPlay() {
+  try {
+    Object.keys(localStorage).filter(k => k.startsWith('top5_state_') || k.startsWith('top5_survey_'))
+      .forEach(k => localStorage.removeItem(k));
+  } catch {}
+}
+if (TEST) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const b = document.createElement('div');
+    b.textContent = 'TEST MODE · nothing is recorded · /test = reset · /live = exit';
+    b.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#e63946;color:#fff;font:8px var(--pixel);text-align:center;padding:6px;letter-spacing:1px';
+    document.body.appendChild(b);
+  });
+}
+
 // ── Analytics ────────────────────────────────────────────────────────────────
 function trackEvent(payload) {
+  if (TEST) return;
   try {
     fetch('https://api.top5trivia.com/event', {
       method: 'POST', keepalive: true,
@@ -500,6 +518,13 @@ function init() {
 
   // /prod1 admin
   inp.addEventListener('input', () => {
+    const cmd = inp.value.trim();
+    if (cmd === '/test' || cmd === '/live') {
+      try { localStorage.setItem('top5_test', cmd === '/test' ? '1' : '0'); } catch {}
+      clearLocalPlay();
+      location.reload();
+      return;
+    }
     if (inp.value.trim() === '/prod1') {
       inp.value = '';
       adminMode = true;
@@ -761,6 +786,7 @@ function getCareer() {
   try { return JSON.parse(localStorage.getItem('top5_career') || '{}'); } catch { return {}; }
 }
 function saveCareerResult(won) {
+  if (TEST) return;
   try {
     const c = getCareer();
     c.played     = (c.played || 0) + 1;
@@ -794,7 +820,7 @@ async function submitSurvey() {
   if (!val || !SURVEY_Q) return;
 
   // POST to worker
-  try {
+  if (!TEST) try {
     fetch('https://api.top5trivia.com/survey', {
       method: 'POST', keepalive: true,
       headers: { 'Content-Type': 'application/json' },
@@ -810,7 +836,7 @@ async function submitSurvey() {
     }).catch(() => {});
   } catch {}
 
-  try { localStorage.setItem(surveyKey(), '1'); } catch {}
+  if (!TEST) try { localStorage.setItem(surveyKey(), '1'); } catch {}
   document.getElementById('survey-form').style.display = 'none';
   document.getElementById('survey-thanks').style.display = 'block';
 }
@@ -856,7 +882,8 @@ init();
   // Rebuild board with revealed rows (no animation)
   document.getElementById('score-display').textContent = score;
   renderStrikes();
-  for (const i of saved.revealed) {
+  const toShow = saved.won ? saved.revealed : [0,1,2,3,4];
+  for (const i of toShow) {
     const row = document.getElementById('row-' + i);
     if (!row) continue;
     const ans = TODAY.answers[i];
