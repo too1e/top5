@@ -255,6 +255,7 @@ body {
     <button class="modal-close" id="close-result">✕</button>
     <div class="modal-tag" id="result-tag">Round complete</div>
     <div class="modal-score" id="result-score" style="color:var(--gold)">0</div>
+    <div class="modal-verdict" id="result-verdict"></div>
         <div class="modal-reveal" id="result-reveal"></div>
     <div class="survey-inline" id="survey-inline">
       <div class="survey-tag">Your turn · help build next week's board</div>
@@ -682,8 +683,13 @@ function endGame(won) {
 }
 
 function openResult(won) {
-  const tags = won ? ['Flawless', 'Swept the board', 'All 5'] : ['Struck out', 'Three strikes', 'The board wins'];
-  document.getElementById('result-tag').textContent = tags[Math.floor(Math.random() * tags.length)];
+  const verdicts = {
+    win:  ['FLAWLESS.', 'ALL 5!', 'SWEPT THE BOARD.'],
+    lose: ['STRUCK OUT.', 'THREE STRIKES.', 'THE BOARD WINS.'],
+  };
+  const v = verdicts[won ? 'win' : 'lose'];
+  document.getElementById('result-tag').textContent = won ? 'Round complete' : 'Game over';
+  document.getElementById('result-verdict').textContent = v[Math.floor(Math.random() * v.length)];
   document.getElementById('result-score').textContent = score;
   document.getElementById('result-score').style.color = score === 100 ? 'var(--green)' : won ? 'var(--gold)' : 'var(--strike)';
 
