@@ -104,10 +104,27 @@ body {
   .board { gap: 3px; }
   .board-row { grid-template-columns: 26px 1fr 44px; min-height: 38px; }
 }
-.board-row.revealed { border-color: var(--green); background: var(--bg2); animation: row-reveal 0.4s ease; }
+.board-row.revealed { border-color: var(--green); background: var(--bg2); }
 .board-row.revealed .row-num { color: var(--green); border-right-color: var(--green); }
 .board-row.revealed .row-pts { color: var(--gold); border-left-color: var(--green); background: var(--dark); }
-@keyframes row-reveal { 0%{transform:scaleY(0.8);opacity:0.3} 60%{transform:scaleY(1.04)} 100%{transform:scaleY(1);opacity:1} }
+.board-row.flip-reveal { animation: flip-in 0.45s ease forwards; }
+@keyframes flip-in {
+  0%  { transform: perspective(400px) rotateX(-90deg); opacity: 0; }
+  60% { transform: perspective(400px) rotateX(10deg); }
+  100%{ transform: perspective(400px) rotateX(0deg); opacity: 1; }
+}
+.pts-pop {
+  position: absolute; right: 56px; top: 50%; transform: translateY(-50%);
+  font-size: 11px; font-weight: 800; color: var(--gold); letter-spacing: 1px;
+  pointer-events: none; animation: pts-fly 0.9s ease forwards; z-index: 10;
+}
+@keyframes pts-fly {
+  0%  { opacity: 1; transform: translateY(-50%); }
+  60% { opacity: 1; transform: translateY(calc(-50% - 18px)); }
+  100%{ opacity: 0; transform: translateY(calc(-50% - 32px)); }
+}
+.score-flash { animation: score-pulse 0.4s ease; }
+@keyframes score-pulse { 0%{transform:scale(1)} 40%{transform:scale(1.35);color:#ffd166} 100%{transform:scale(1)} }
 .row-num { font-size: 8px; color: var(--dim); text-align: center; border-right: 2px solid var(--dim); height: 100%; display: flex; align-items: center; justify-content: center; transition: color 0.2s, border-color 0.2s; }
 .row-answer { padding: 10px 14px; font-size: 9px; line-height: 1.6; letter-spacing: 1px; }
 @media (max-width: 600px) {
@@ -538,9 +555,23 @@ function revealRow(idx, awardPts = true) {
   row.classList.add('revealed');
   const ans = TODAY.answers[idx];
   row.innerHTML = `<div class="row-num">${idx+1}</div><div class="row-answer">${ans.text}</div><div class="row-pts">${ans.pts}</div>`;
+  row.classList.add('flip-reveal');
+  row.addEventListener('animationend', () => row.classList.remove('flip-reveal'), { once: true });
   if (awardPts) {
     score += ans.pts;
-    document.getElementById('score-display').textContent = score;
+    // Points popup
+    const pop = document.createElement('span');
+    pop.className = 'pts-pop';
+    pop.textContent = `+${ans.pts}`;
+    row.appendChild(pop);
+    setTimeout(() => pop.remove(), 950);
+    // Score counter flash
+    const scoreEl = document.getElementById('score-display');
+    scoreEl.textContent = score;
+    scoreEl.classList.remove('score-flash');
+    void scoreEl.offsetWidth;
+    scoreEl.classList.add('score-flash');
+    scoreEl.addEventListener('animationend', () => scoreEl.classList.remove('score-flash'), { once: true });
   }
 }
 
@@ -552,9 +583,12 @@ function renderStrikes() {
 // ── Guess logic ───────────────────────────────────────────────────────────────
 function normalize(s) { return s.trim().toLowerCase().replace(/[^a-z0-9 ]/g, ''); }
 
+const STOPWORDS = new Set(['the','a','an','and','or','but','is','it','in','on','at','to','do','my','me','i','we','he','she','they','its','was','are','be','of','so','go','get','got','has','had','did','not','for','by','as','up','if','no','ok','yes','yea','yep','nope','lol','hmm','um','uh']);
+
 function findMatch(guess) {
   const g = normalize(guess);
   if (g.length < 3) return -1;
+  if (STOPWORDS.has(g)) return -1;
   for (let i = 0; i < TODAY.answers.length; i++) {
     if (revealed.has(i)) continue;
     const ans = TODAY.answers[i];
