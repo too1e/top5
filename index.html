@@ -278,6 +278,7 @@ body {
       <div class="modal-tag" style="margin-bottom:6px">Your score today</div>
       <div id="stats-your-score" style="font-size:44px;line-height:1;letter-spacing:-2px;color:var(--gold)">—</div>
     </div>
+    <div id="stats-dist" style="min-height:120px"></div>
     <div class="modal-tag">Your career</div>
     <div id="stats-career" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
     <button class="modal-btn secondary" id="stats-back">← Back to results</button>
@@ -819,6 +820,8 @@ async function openStats() {
   document.getElementById('stats-your-score').style.color =
     score === 100 ? 'var(--green)' : score > 0 && strikes < 3 ? 'var(--gold)' : 'var(--strike)';
 
+  renderDist();
+
   // Career from localStorage
   const career = getCareer();
   document.getElementById('stats-career').innerHTML =
@@ -828,6 +831,61 @@ async function openStats() {
     kpiTile('Wins',        career.wins,                      'var(--green)') +
     kpiTile('Streak',      career.streak,                    'var(--green)') +
     kpiTile('Best streak', career.bestStreak,                'var(--green)');
+}
+
+// Smoothed score distribution of today's players, with a marker for you.
+async function renderDist() {
+  const box = document.getElementById('stats-dist');
+  box.innerHTML = '<div class="modal-tag" style="padding:40px 0">Loading…</div>';
+  let rows = [];
+  try {
+    const r = await fetch('https://api.top5trivia.com/stats/today?q_id=' + encodeURIComponent(TODAY.q_id));
+    rows = await r.json();
+  } catch {}
+  // In test mode nothing was recorded for you, so we never count you in the totals.
+  const total = rows.reduce((a, r) => a + r.n, 0);
+  if (!Array.isArray(rows) || total < 5) {
+    box.innerHTML = `<div class="modal-tag" style="padding:30px 0;line-height:2">${total} player${total === 1 ? '' : 's'} so far<br>check back later for the curve</div>`;
+    return;
+  }
+  const W = 300, H = 110, PAD = 8, BASE = 92, TOP = 10, BW = 7;
+  const xs = v => PAD + (v / 100) * (W - 2 * PAD);
+  const dens = [];
+  for (let v = 0; v <= 100; v += 2) {
+    let d = 0;
+    for (const r of rows) d += r.n * Math.exp(-0.5 * ((v - r.score) / BW) ** 2);
+    dens.push([v, d]);
+  }
+  const max = Math.max(...dens.map(d => d[1]));
+  const ys = d => BASE - (d / max) * (BASE - TOP);
+  const pts = dens.map(([v, d]) => [xs(v), ys(d)]);
+  const line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  const area = line + ` L${xs(100)} ${BASE} L${xs(0)} ${BASE} Z`;
+  const you = Math.max(0, Math.min(100, score));
+  let yd = 0; for (const r of rows) yd += r.n * Math.exp(-0.5 * ((you - r.score) / BW) ** 2);
+  const yx = xs(you), yy = ys(yd);
+  const below = rows.filter(r => r.score < you).reduce((a, r) => a + r.n, 0);
+  const pct = Math.round(below / total * 100);
+  const ticks = [0, 25, 50, 75, 100].map(t =>
+    `<line x1="${xs(t)}" y1="${BASE}" x2="${xs(t)}" y2="${BASE + 4}" stroke="#306230"/>` +
+    `<text x="${xs(t)}" y="${BASE + 15}" text-anchor="middle" fill="#8bac0f" font-size="7" font-family="inherit">${t}</text>`).join('');
+  const label = pct >= 50 || you === 100
+    ? `BETTER THAN ${pct}% OF TODAY'S PLAYERS`
+    : `${total} PLAYERS TODAY`;
+  box.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;overflow:visible">
+      <defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#9bbc0f" stop-opacity=".45"/><stop offset="1" stop-color="#9bbc0f" stop-opacity=".05"/>
+      </linearGradient></defs>
+      <path d="${area}" fill="url(#dg)"/>
+      <path d="${line}" fill="none" stroke="#9bbc0f" stroke-width="2" stroke-linejoin="round"/>
+      <line x1="${xs(0)}" y1="${BASE}" x2="${xs(100)}" y2="${BASE}" stroke="#306230"/>
+      <line x1="${yx}" y1="${yy}" x2="${yx}" y2="${BASE}" stroke="#f4d35e" stroke-width="2"/>
+      <circle cx="${yx}" cy="${yy}" r="4" fill="#f4d35e"/>
+      ${ticks}
+      <text x="${Math.max(14, Math.min(W - 14, yx))}" y="${yy - 9}" text-anchor="middle" fill="#f4d35e" font-size="8" font-family="inherit">YOU</text>
+    </svg>
+    <div class="modal-tag" style="margin-top:6px;color:var(--gold);line-height:1.8">${label}</div>`;
 }
 
 function closeStats() { document.getElementById('stats-overlay').classList.remove('open'); }
