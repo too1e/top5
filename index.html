@@ -845,7 +845,7 @@ async function renderDist() {
   // In test mode nothing was recorded for you, so we never count you in the totals.
   const total = rows.reduce((a, r) => a + r.n, 0);
   if (!Array.isArray(rows) || total < 5) {
-    box.innerHTML = `<div class="modal-tag" style="padding:30px 0;line-height:2">${total} player${total === 1 ? '' : 's'} so far<br>check back later for the curve</div>`;
+    box.innerHTML = `<div class="modal-tag" style="padding:30px 0;line-height:2">not enough players yet<br>check back later for the curve</div>`;
     return;
   }
   const W = 300, H = 110, PAD = 8, BASE = 92, TOP = 10, BW = 7;
@@ -869,9 +869,7 @@ async function renderDist() {
   const ticks = [0, 25, 50, 75, 100].map(t =>
     `<line x1="${xs(t)}" y1="${BASE}" x2="${xs(t)}" y2="${BASE + 4}" stroke="#306230"/>` +
     `<text x="${xs(t)}" y="${BASE + 15}" text-anchor="middle" fill="#8bac0f" font-size="7" font-family="inherit">${t}</text>`).join('');
-  const label = pct >= 50 || you === 100
-    ? `BETTER THAN ${pct}% OF TODAY'S PLAYERS`
-    : `${total} PLAYERS TODAY`;
+  const label = `BETTER THAN ${pct}% OF TODAY'S PLAYERS`;
   box.innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;overflow:visible">
       <defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1">
