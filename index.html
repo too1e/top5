@@ -114,7 +114,7 @@ body {
 .board-row.revealed { border-color: var(--green); background: var(--bg2); }
 .board-row.revealed .row-num { color: var(--green); border-right-color: var(--green); }
 .board-row.revealed .row-pts { color: var(--gold); border-left-color: var(--green); background: var(--dark); }
-.board-row.flip-reveal { animation: flip-in 0.8s ease forwards; }
+.board-row.flip-reveal { animation: flip-in 1s ease forwards; }
 @keyframes flip-in {
   0%  { transform: perspective(400px) rotateX(-90deg); opacity: 0; }
   60% { transform: perspective(400px) rotateX(10deg); }
@@ -607,18 +607,27 @@ function normalize(s) { return s.trim().toLowerCase().replace(/[^a-z0-9 ]/g, '')
 
 const STOPWORDS = new Set(['the','a','an','and','or','but','is','it','in','on','at','to','do','my','me','i','we','he','she','they','its','was','are','be','of','so','go','get','got','has','had','did','not','for','by','as','up','if','no','ok','yes','yea','yep','nope','lol','hmm','um','uh']);
 
+function answerMatches(ans, g) {
+  const all = [normalize(ans.text), ...ans.aliases.map(normalize)];
+  const wordIn = (hay, needle) => (' ' + hay + ' ').includes(' ' + needle + ' ');
+  return all.some(a =>
+    a === g ||
+    (g.length >= 4 && (wordIn(a, g) || wordIn(g, a))) ||
+    (a.length >= 4 && g.startsWith(a) && g.length <= a.length + 3)
+  );
+}
+
+// Returns { idx, dup }: dup is true when the guess matches an answer already revealed.
 function findMatch(guess) {
   const g = normalize(guess);
-  if (g.length < 3) return -1;
-  if (STOPWORDS.has(g)) return -1;
+  if (g.length < 3 || STOPWORDS.has(g)) return { idx: -1, dup: false };
   for (let i = 0; i < TODAY.answers.length; i++) {
-    if (revealed.has(i)) continue;
-    const ans = TODAY.answers[i];
-    const all = [normalize(ans.text), ...ans.aliases.map(normalize)];
-    // exact match or substring match only when guess is meaningful length
-    if (all.some(a => a === g || (g.length >= 4 && (a.includes(g) || g.includes(a))))) return i;
+    if (!revealed.has(i) && answerMatches(TODAY.answers[i], g)) return { idx: i, dup: false };
   }
-  return -1;
+  for (let i = 0; i < TODAY.answers.length; i++) {
+    if (revealed.has(i) && answerMatches(TODAY.answers[i], g)) return { idx: i, dup: true };
+  }
+  return { idx: -1, dup: false };
 }
 
 function submitGuess() {
@@ -628,7 +637,14 @@ function submitGuess() {
   if (!val) return;
   inp.value = '';
 
-  const idx = findMatch(val);
+  const { idx, dup } = findMatch(val);
+  if (dup) {
+    clearWrong();
+    const el = document.getElementById('wrong-msg');
+    el.textContent = `"${val}" is already on the board`;
+    wrongTimer = setTimeout(() => { el.textContent = ''; }, 3800);
+    return;
+  }
   if (idx >= 0) {
     revealRow(idx);
     clearWrong();
@@ -677,8 +693,8 @@ function endGame(won) {
 
   if (!won) {
     const unrevealed = [4,3,2,1,0].filter(i => !revealed.has(i));
-    unrevealed.forEach((i, pos) => setTimeout(() => revealRow(i, false), 150 + pos * 900));
-    setTimeout(() => openResult(false), 150 + unrevealed.length * 900 + 1500);
+    unrevealed.forEach((i, pos) => setTimeout(() => revealRow(i, false), 150 + pos * 1100));
+    setTimeout(() => openResult(false), 150 + unrevealed.length * 1100 + 1500);
   } else {
     setTimeout(() => openResult(true), 1500);
   }
