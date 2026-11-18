@@ -278,7 +278,7 @@ body {
       <div class="modal-tag" style="margin-bottom:6px">Your score today</div>
       <div id="stats-your-score" style="font-size:44px;line-height:1;letter-spacing:-2px;color:var(--gold)">—</div>
     </div>
-    <div id="stats-dist" style="min-height:120px"></div>
+    <div id="stats-dist"></div>
     <div class="modal-tag">Your career</div>
     <div id="stats-career" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
     <button class="modal-btn secondary" id="stats-back">← Back to results</button>
@@ -836,7 +836,7 @@ async function openStats() {
 // Smoothed score distribution of today's players, with a marker for you.
 async function renderDist() {
   const box = document.getElementById('stats-dist');
-  box.innerHTML = '<div class="modal-tag" style="padding:40px 0">Loading…</div>';
+  box.innerHTML = '';
   let rows = [];
   try {
     const r = await fetch('https://api.top5trivia.com/stats/today?q_id=' + encodeURIComponent(TODAY.q_id));
@@ -845,7 +845,8 @@ async function renderDist() {
   // In test mode nothing was recorded for you, so we never count you in the totals.
   const total = rows.reduce((a, r) => a + r.n, 0);
   if (!Array.isArray(rows) || total < 5) {
-    box.innerHTML = `<div class="modal-tag" style="padding:30px 0;line-height:2">not enough players yet<br>check back later for the curve</div>`;
+    box.innerHTML = '';
+    box.style.minHeight = '0';
     return;
   }
   const W = 300, H = 110, PAD = 8, BASE = 92, TOP = 10, BW = 7;
