@@ -224,7 +224,7 @@ body {
       <div class="score-label">Points</div>
       <div class="score-value" id="score-display">0</div>
     </div>
-    <button class="modal-btn secondary" id="view-results-btn" style="display:none;font-size:6px;padding:8px 12px;flex-shrink:0">Results →</button>
+    <button class="modal-btn secondary" id="view-results-btn" style="display:none;font-size:6px;padding:8px 12px;flex-shrink:0">Results</button>
     <div class="strikes-block">
       <div class="strikes-label">Strikes</div>
       <div class="strikes-row">
@@ -270,7 +270,7 @@ body {
     </div>
     <div class="modal-actions">
       <button class="modal-btn secondary" id="share-btn">Share result</button>
-      <button class="modal-btn secondary" id="stats-cta">My stats →</button>
+      <button class="modal-btn secondary" id="stats-cta">My stats</button>
     </div>
   </div>
 </div>
@@ -515,7 +515,7 @@ function init() {
   document.getElementById('close-result').addEventListener('click', closeResult);
   document.getElementById('share-btn').addEventListener('click', shareResult);
   document.getElementById('stats-cta').addEventListener('click', openStats);
-  document.getElementById('view-results-btn').addEventListener('click', () => document.getElementById('result-overlay').classList.add('open'));
+  document.getElementById('view-results-btn').addEventListener('click', () => { trackEvent({ event: 'results_reopen', q_id: TODAY.q_id }); document.getElementById('result-overlay').classList.add('open'); });
 
   document.getElementById('close-stats').addEventListener('click', closeStats);
   document.getElementById('stats-back').addEventListener('click', () => { closeStats(); document.getElementById('result-overlay').classList.add('open'); });
@@ -541,6 +541,8 @@ function init() {
   };
   inp.addEventListener('input', () => handleCmd(inp));
   const surveyInp = document.getElementById('survey-answer');
+  let surveyStarted = false;
+  surveyInp.addEventListener('focus', () => { if (!surveyStarted && SURVEY_Q) { surveyStarted = true; trackEvent({ event: 'survey_start', q_id: TODAY.q_id }); } });
   surveyInp.addEventListener('input', () => handleCmd(surveyInp));
 
 }
@@ -707,6 +709,7 @@ function closeResult() { document.getElementById('result-overlay').classList.rem
 
 // ── Share ─────────────────────────────────────────────────────────────────────
 function shareResult() {
+  trackEvent({ event: 'share_click', q_id: TODAY.q_id, score });
   const d = new Date();
   const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   const strikeStr = '✕'.repeat(strikes) + '  '.repeat(3 - strikes);
@@ -747,7 +750,7 @@ function legacyCopy(text) {
 let copiedTimer;
 function flashCopied(btn, ok) {
   if (!btn.dataset.label) btn.dataset.label = btn.textContent;
-  btn.textContent = ok ? 'Copied to clipboard ✓' : 'Copy failed, try again';
+  btn.textContent = ok ? 'Copied!' : 'Copy failed, try again';
   btn.classList.toggle('copied', ok);
   clearTimeout(copiedTimer);
   copiedTimer = setTimeout(() => {
@@ -765,6 +768,7 @@ function kpiTile(label, value, color) {
 }
 
 async function openStats() {
+  trackEvent({ event: 'stats_click', q_id: TODAY.q_id });
   document.getElementById('result-overlay').classList.remove('open');
   document.getElementById('stats-overlay').classList.add('open');
 
@@ -824,6 +828,7 @@ async function submitSurvey() {
   if (!val || !SURVEY_Q || val.startsWith('/')) return;
 
   // POST to worker
+  trackEvent({ event: 'survey_submit', q_id: TODAY.q_id });
   if (!TEST) try {
     fetch('https://api.top5trivia.com/survey', {
       method: 'POST', keepalive: true,
