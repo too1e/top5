@@ -427,6 +427,7 @@ let strikes    = 0;
 let score      = 0;
 let gameOver   = false;
 let wrongTimer = null;
+let wrongSeen  = new Set();
 
 // ── Test mode (type /test in the answer box to reset + stop recording; /live to exit) ──
 (function() {
@@ -475,6 +476,7 @@ function loadDay(ds) {
   setupSurvey();
 
   revealed  = new Set();
+  wrongSeen = new Set();
   strikes   = 0;
   score     = 0;
   gameOver  = false;
@@ -607,25 +609,53 @@ function normalize(s) { return s.trim().toLowerCase().replace(/[^a-z0-9 ]/g, '')
 
 const STOPWORDS = new Set(['the','a','an','and','or','but','is','it','in','on','at','to','do','my','me','i','we','he','she','they','its','was','are','be','of','so','go','get','got','has','had','did','not','for','by','as','up','if','no','ok','yes','yea','yep','nope','lol','hmm','um','uh']);
 
-function answerMatches(ans, g) {
-  const all = [normalize(ans.text), ...ans.aliases.map(normalize)];
+function variants(ans) { return [normalize(ans.text), ...ans.aliases.map(normalize)]; }
+
+function exactish(ans, g) {
   const wordIn = (hay, needle) => (' ' + hay + ' ').includes(' ' + needle + ' ');
-  return all.some(a =>
+  return variants(ans).some(a =>
     a === g ||
     (g.length >= 4 && (wordIn(a, g) || wordIn(g, a))) ||
     (a.length >= 4 && g.startsWith(a) && g.length <= a.length + 3)
   );
 }
 
+function editDistance(a, b) {
+  const prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    let diag = prev[0]; prev[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const tmp = prev[j];
+      prev[j] = Math.min(prev[j] + 1, prev[j - 1] + 1, diag + (a[i - 1] === b[j - 1] ? 0 : 1));
+      diag = tmp;
+    }
+  }
+  return prev[b.length];
+}
+
+// Typos: 1 edit (or one swapped pair, like "kyes") for answers of 4-7 letters, 2 edits for 8+.
+// Words under 4 letters must be exact.
+function fuzzy(ans, g) {
+  return variants(ans).some(a => {
+    if (a.length < 4) return false;
+    const max = a.length >= 8 ? 2 : 1;
+    if (Math.abs(a.length - g.length) > max) return false;
+    if (editDistance(a, g) <= max) return true;
+    for (let i = 0; i < g.length - 1; i++) {
+      if (g.slice(0, i) + g[i + 1] + g[i] + g.slice(i + 2) === a) return true;
+    }
+    return false;
+  });
+}
+
 // Returns { idx, dup }: dup is true when the guess matches an answer already revealed.
 function findMatch(guess) {
   const g = normalize(guess);
   if (g.length < 3 || STOPWORDS.has(g)) return { idx: -1, dup: false };
-  for (let i = 0; i < TODAY.answers.length; i++) {
-    if (!revealed.has(i) && answerMatches(TODAY.answers[i], g)) return { idx: i, dup: false };
-  }
-  for (let i = 0; i < TODAY.answers.length; i++) {
-    if (revealed.has(i) && answerMatches(TODAY.answers[i], g)) return { idx: i, dup: true };
+  const n = TODAY.answers.length;
+  for (const test of [exactish, fuzzy]) {
+    for (let i = 0; i < n; i++) if (!revealed.has(i) && test(TODAY.answers[i], g)) return { idx: i, dup: false };
+    for (let i = 0; i < n; i++) if (revealed.has(i) && test(TODAY.answers[i], g)) return { idx: i, dup: true };
   }
   return { idx: -1, dup: false };
 }
@@ -638,10 +668,10 @@ function submitGuess() {
   inp.value = '';
 
   const { idx, dup } = findMatch(val);
-  if (dup) {
+  if (dup || (idx < 0 && wrongSeen.has(normalize(val)))) {
     clearWrong();
     const el = document.getElementById('wrong-msg');
-    el.textContent = `"${val}" is already on the board`;
+    el.textContent = `"${val}" was already guessed`;
     wrongTimer = setTimeout(() => { el.textContent = ''; }, 3800);
     return;
   }
@@ -651,6 +681,7 @@ function submitGuess() {
     trackEvent({ event: 'guess', q_id: TODAY.q_id, guess: TODAY.answers[idx].text, correct: 1, rank: idx + 1 });
     if (revealed.size === TODAY.answers.length) endGame(true);
   } else {
+    wrongSeen.add(normalize(val));
     addStrike(val);
     trackEvent({ event: 'guess', q_id: TODAY.q_id, guess: val, correct: 0 });
   }
