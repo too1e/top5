@@ -672,7 +672,8 @@ function submitGuess() {
     clearWrong();
     const el = document.getElementById('wrong-msg');
     el.textContent = `"${val}" was already guessed`;
-    wrongTimer = setTimeout(() => { el.textContent = ''; }, 3800);
+    el.style.color = 'var(--green)';
+    wrongTimer = setTimeout(() => { el.textContent = ''; }, 2200);
     return;
   }
   if (idx >= 0) {
@@ -692,19 +693,21 @@ function addStrike(val) {
   renderStrikes();
   showWrong(val);
   shakeGame();
-  if (strikes >= 3) setTimeout(() => endGame(false), 1400);
+  if (strikes >= 3) setTimeout(() => endGame(false), 700);
 }
 
 function showWrong(val) {
   clearWrong();
   const el = document.getElementById('wrong-msg');
   el.textContent = `"${val}" is not on the board`;
-  wrongTimer = setTimeout(() => { el.textContent = ''; }, 3800);
+  wrongTimer = setTimeout(() => { el.textContent = ''; }, 2200);
 }
 
 function clearWrong() {
   if (wrongTimer) clearTimeout(wrongTimer);
-  document.getElementById('wrong-msg').textContent = '';
+  const wm = document.getElementById('wrong-msg');
+  wm.textContent = '';
+  wm.style.color = '';
 }
 
 function shakeGame() {
