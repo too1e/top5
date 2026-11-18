@@ -168,10 +168,6 @@ body {
 .modal-verdict { font-size: 10px; line-height: 1.8; color: var(--green); text-align: center; }
 .modal-close { position: absolute; top: 10px; right: 12px; background: none; border: none; color: var(--dim); font-family: var(--pixel); font-size: 14px; cursor: pointer; padding: 4px 6px; line-height: 1; }
 .modal-close:hover { color: var(--green); }
-.modal-reveal { display: flex; flex-direction: column; gap: 6px; }
-.reveal-row { display: grid; grid-template-columns: 20px 1fr 40px; gap: 8px; align-items: center; font-size: 8px; padding: 5px 0; border-bottom: 1px solid var(--bg2); color: var(--dim); }
-.reveal-row.got { color: var(--green); }
-.reveal-row .rpts { color: var(--gold); text-align: right; }
 .modal-btn { background: var(--green); color: var(--dark); border: none; font-family: var(--pixel); font-size: 8px; padding: 14px; cursor: pointer; letter-spacing: 1px; width: 100%; transition: background 0.1s; }
 .modal-btn:hover { background: var(--green2); }
 .modal-btn.secondary { background: transparent; color: var(--dim); border: 2px solid var(--dim); margin-top: -8px; }
@@ -256,8 +252,7 @@ body {
     <div class="modal-tag" id="result-tag">Round complete</div>
     <div class="modal-score" id="result-score" style="color:var(--gold)">0</div>
     <div class="modal-verdict" id="result-verdict"></div>
-        <div class="modal-reveal" id="result-reveal"></div>
-    <div class="survey-inline" id="survey-inline">
+        <div class="survey-inline" id="survey-inline">
       <div class="survey-tag">Your turn · help build next week's board</div>
       <div class="survey-q" id="survey-question-text"></div>
       <div class="survey-input-wrap" id="survey-form">
@@ -744,12 +739,6 @@ function openResult(won) {
   document.getElementById('result-verdict').textContent = v[Math.floor(Math.random() * v.length)];
   document.getElementById('result-score').textContent = score;
   document.getElementById('result-score').style.color = score === 100 ? 'var(--green)' : won ? 'var(--gold)' : 'var(--strike)';
-
-  document.getElementById('result-reveal').innerHTML = TODAY.answers.map((ans, i) =>
-    `<div class="reveal-row ${revealed.has(i) ? 'got' : ''}">
-      <span class="rnum">${i+1}</span><span>${ans.text}</span><span class="rpts">${ans.pts}</span>
-    </div>`
-  ).join('');
 
   document.getElementById('result-overlay').classList.add('open');
   document.getElementById('view-results-btn').style.display = '';
