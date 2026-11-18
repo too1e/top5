@@ -730,11 +730,15 @@ function endGame(won) {
 }
 
 function openResult(won) {
-  const verdicts = {
-    win:  ['FLAWLESS.', 'ALL 5!', 'SWEPT THE BOARD.'],
-    lose: ['STRUCK OUT.', 'THREE STRIKES.', 'THE BOARD WINS.'],
-  };
-  const v = verdicts[won ? 'win' : 'lose'];
+  const tiers = [
+    [100, ['FLAWLESS.', 'PERFECT BOARD.', 'UNBEATABLE.']],
+    [80,  ['SO CLOSE.', 'NEARLY PERFECT.', 'ALMOST FLAWLESS.']],
+    [60,  ['NICE ONE.', 'SOLID GAME.', 'STRONG FINISH.']],
+    [40,  ['NOT BAD.', 'RESPECTABLE.', 'HALFWAY THERE.']],
+    [20,  ['ROUGH ONE.', 'KEEP AT IT.', 'GETTING THERE.']],
+    [0,   ['STRUCK OUT.', 'THE BOARD WINS.', 'OUCH.']],
+  ];
+  const v = tiers.find(([min]) => score >= min)[1];
   document.getElementById('result-tag').textContent = won ? 'You swept the board' : 'Three strikes';
   document.getElementById('result-verdict').textContent = v[Math.floor(Math.random() * v.length)];
   document.getElementById('result-score').textContent = score;
