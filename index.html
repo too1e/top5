@@ -383,13 +383,13 @@ const QUESTIONS = [
   {
     q_id: 'always-in-car',
     question: 'Name something always in your car.',
-    survey_responses: 11,
+    survey_responses: 287,
     answers: [
-      { text: 'Phone charger', pts: 26, aliases: ['charger','phone charger','car charger','charging cable','charging cord','cord','cable','usb','aux','aux cord','lightning cable','charger cable'] },
-      { text: 'Keys', pts: 25, aliases: ['keys','key','car keys','car key','spare key','spare keys','keychain','key fob','fob'] },
-      { text: 'Napkins', pts: 24, aliases: ['napkins','napkin','tissues','tissue','kleenex','paper towels','wipes','baby wipes','wet wipes'] },
-      { text: 'Sunglasses', pts: 13, aliases: ['sunglasses','sun glasses','shades','glasses','sunnies','ray bans','raybans'] },
-      { text: 'Spare tire', pts: 12, aliases: ['spare tire','tire','spare tyre','donut','jack','car jack','tire jack','tire iron'] },
+      { text: 'Phone charger', pts: 32, aliases: ['charger','phone charger','car charger','charging cable','charging cord','cord','cable','usb','aux','aux cord','lightning cable','charger cable'] },
+      { text: 'Keys', pts: 24, aliases: ['keys','key','car keys','car key','spare key','spare keys','keychain','key fob','fob'] },
+      { text: 'Napkins', pts: 19, aliases: ['napkins','napkin','tissues','tissue','kleenex','paper towels','wipes','baby wipes','wet wipes'] },
+      { text: 'Sunglasses', pts: 14, aliases: ['sunglasses','sun glasses','shades','glasses','sunnies','ray bans','raybans'] },
+      { text: 'Spare tire', pts: 11, aliases: ['spare tire','tire','spare tyre','donut','jack','car jack','tire jack','tire iron'] },
     ],
   },
   {
@@ -704,7 +704,9 @@ function exactish(ans, g) {
     a === g ||
     (g.length >= 4 && (wordIn(a, g) || wordIn(g, a))) ||
     (a.length >= 4 && g.startsWith(a) && g.length <= a.length + 3)
-  );
+  ) ||
+  // 3-letter guesses ("eat", "car") count if they're a whole word of the answer itself
+  (g.length === 3 && normalize(ans.text).split(' ').includes(g));
 }
 
 function editDistance(a, b) {
